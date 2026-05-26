@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {% extends "base.html" %}
 
 {% block title %}
@@ -7,9 +8,45 @@ Login
 {% block content %}
 
 <div class="login-box">
+=======
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+
+<body>
+
+<h1>Login</h1>
+
+<form method="post">
+
+<input
+type="email"
+name="email"
+placeholder="Email"
+>
+
+<br><br>
+
+<input
+type="password"
+name="password"
+placeholder="Senha"
+>
+
+<br><br>
+
+<button>
+Entrar
+</button>
+>>>>>>> a936246745c35b8881532eedb6b8874f273673b5
 
     <h1>Login</h1>
 
+<<<<<<< HEAD
     <form action="/login" method="post">
 
         <input
@@ -43,3 +80,12 @@ Login
 </div>
 
 {% endblock %}
+=======
+{% if erro %}
+<p>{{erro}}</p>
+{% endif %}
+
+</body>
+
+</html>
+>>>>>>> a936246745c35b8881532eedb6b8874f273673b5

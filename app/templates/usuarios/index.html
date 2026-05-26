@@ -1,0 +1,58 @@
+{% extends "base.html" %}
+
+{% block titulo %}
+Usuários
+{% endblock %}
+
+{% block conteudo %}
+
+<h1>Usuários</h1>
+
+<a href="/usuarios/novo">
+Novo usuário
+</a>
+
+<table border="1">
+
+<tr>
+<th>Nome</th>
+<th>Email</th>
+<th>Perfil</th>
+<th>Ações</th>
+</tr>
+
+{% for u in usuarios %}
+
+<tr>
+
+<td>{{u.nome}}</td>
+<td>{{u.email}}</td>
+<td>{{u.role}}</td>
+
+<td>
+
+<a href="/usuarios/{{u.id}}/editar">
+Editar
+</a>
+
+<form
+action="/usuarios/{{u.id}}/excluir"
+method="post"
+style="display:inline"
+>
+
+<button>
+Excluir
+</button>
+
+</form>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+{% endblock %}

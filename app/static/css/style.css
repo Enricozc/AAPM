@@ -1,15 +1,14 @@
 /* Importação das fontes */
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Montserrat:wght@700&display=swap');
 
-/* Configurações Globais (Reseta o padrão e define as cores principais) */
+/* Configurações Globais */
 :root {
-  --senai-blue-bg: #1c49b8;
-  --senai-blue-active: #153a9e;
+  --senai-blue-bg: #0046b8;       /* Azul oficial da imagem 2 */
+  --senai-blue-active: #00378f;   /* Azul para hover */
+  --senai-orange: #ff6600;        /* Laranja oficial do logo */
   --senai-text-dark: #333333;
   --senai-text-light: #ffffff;
-  --input-bg: #f8fafc;
-  --input-border: #e2e8f0;
-  --input-focus: #1c49b8;
+  --input-bg: #fdfdfd;
   --font-body: 'Open Sans', sans-serif;
   --font-heading: 'Montserrat', sans-serif;
 }
@@ -18,34 +17,31 @@ body {
   margin: 0;
   padding: 0;
   font-family: var(--font-body);
-  background-color: #f1f3f6; /* Cor de fundo suave fora do card */
+  background-color: #ffffff; 
   color: var(--senai-text-dark);
-  display: flex;
-  justify-content: center;
-  align-items: center;
   min-height: 100vh;
+  width: 100vw;
+  overflow-x: hidden;
 }
 
-/* Container principal para centralizar e adicionar a sombra suave */
+/* Alterado para ocupar a tela cheia de ponta a ponta */
 .app-container {
   background: var(--senai-text-light);
-  border-radius: 12px;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.12); /* Sombra suave idêntica à referência */
-  overflow: hidden;
-  width: 900px; /* Largura total do "card" */
-  max-width: 95%;
-  margin: 20px;
+  width: 100%;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
 }
 
-/* --- HEADER SUPERIOR (Azul) --- */
+/* --- HEADER SUPERIOR (Tela cheia e azul mais vivo) --- */
 .app-header {
   background-color: var(--senai-blue-bg);
   color: var(--senai-text-light);
-  padding: 15px 30px;
+  padding: 18px 40px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 3px solid rgba(0,0,0,0.1);
+  box-sizing: border-box;
 }
 
 .brand-section {
@@ -54,181 +50,198 @@ body {
   gap: 15px;
 }
 
-.senai-logo {
-  height: 40px; /* Ajuste para o tamanho real do logo */
+/* Logo quadrado do SENAI idêntico à imagem 2 */
+.senai-logo-box {
+  background-color: var(--senai-orange);
+  padding: 8px 14px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.senai-logo-text {
+  color: white;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  font-size: 18px;
+  letter-spacing: -0.5px;
 }
 
 .aapm-text {
-  border-left: 2px solid rgba(255,255,255,0.3);
+  border-left: 1px solid rgba(255,255,255,0.4);
   padding-left: 15px;
 }
 
 .aapm-title {
-  font-family: var(--font-heading);
+  font-family: var(--font-body);
   font-weight: 700;
-  font-size: 14px;
+  font-size: 13px;
   margin: 0;
   color: var(--senai-text-light);
 }
 
 .aapm-subtitle {
-  font-weight: 400;
+  font-weight: 600;
   font-size: 11px;
-  color: rgba(255,255,255,0.8);
+  margin: 0;
+  color: rgba(255,255,255,0.9);
 }
 
 .nav-links {
   display: flex;
   gap: 30px;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 15px;
 }
 
 .nav-link {
   text-decoration: none;
   color: var(--senai-text-light);
-  opacity: 0.8;
-  transition: opacity 0.2s;
+  opacity: 0.9;
 }
 
-.nav-link:hover {
-  opacity: 1;
-}
-
-.active-nav-link {
-  border-bottom: 2px solid var(--senai-text-light);
-  padding-bottom: 3px;
-  opacity: 1;
-}
-
+/* Botão de Login superior com borda fina (Outline) */
 .login-btn-top {
   text-decoration: none;
-  background: var(--senai-blue-active);
+  background: transparent;
   color: var(--senai-text-light);
   font-weight: 600;
   font-size: 14px;
-  padding: 8px 18px;
+  padding: 6px 16px;
+  border: 1px solid var(--senai-text-light);
   border-radius: 4px;
   transition: background-color 0.2s;
 }
 
 .login-btn-top:hover {
-  background-color: #0e2a73;
+  background-color: rgba(255, 255, 255, 0.1);
 }
 
-/* --- ÁREA DE CONTEÚDO (Branca) --- */
+/* --- ÁREA DE CONTEÚDO --- */
 .content-area {
-  padding: 60px 20px;
+  padding: 50px 20px;
   text-align: center;
+  flex-grow: 1;
 }
 
 .page-title {
-  font-family: var(--font-heading);
-  color: var(--senai-blue-bg);
-  font-size: 28px;
+  font-family: var(--font-body);
+  color: #0046b8;
+  font-size: 26px;
   font-weight: 700;
-  margin-bottom: 10px;
+  margin-bottom: 8px;
 }
 
 .page-subtitle {
-  color: rgba(0,0,0,0.6);
-  font-size: 15px;
+  color: #94a3b8;
+  font-size: 14px;
   font-weight: 400;
-  max-width: 500px;
-  margin: 0 auto 50px;
+  margin: 0 auto 40px;
 }
 
-/* --- CARD DE ADMINISTRAÇÃO --- */
+/* --- CARD DE ADMINISTRAÇÃO (ÍCONE AZUL ESCURO) --- */
 .admin-badge-card {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-bottom: 40px;
+  margin-bottom: 35px;
 }
 
+/* Container do ícone arredondado e azul royal da Imagem 2 */
 .icon-container {
-  background-color: #dae5f9; /* Fundo azul claro suave */
-  border-radius: 12px;
-  padding: 15px;
+  background-color: #0046b8;
+  border-radius: 16px;
+  padding: 16px;
   margin-bottom: 15px;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 10px 25px rgba(0, 70, 184, 0.25);
 }
 
 .shield-icon {
   width: 28px;
   height: 28px;
-  filter: invert(13%) sepia(80%) saturate(6000%) hue-rotate(224deg) brightness(95%) contrast(100%); /* Transforma o ícone branco em azul escuro SENAI */
+  fill: #ffffff;
 }
 
 .card-title {
   font-weight: 700;
-  color: var(--senai-blue-bg);
-  font-size: 18px;
-  margin-bottom: 5px;
+  color: #0046b8;
+  font-size: 16px;
+  margin: 0 0 8px 0;
 }
 
 .card-desc {
-  color: rgba(0,0,0,0.5);
+  color: #94a3b8;
   font-size: 13px;
   font-weight: 400;
+  margin: 0;
 }
 
-/* --- FORMULÁRIO --- */
+/* --- FORMULÁRIO COM BORDAS ARREDONDADAS E BLUR/SOMBRA --- */
 .login-form {
-  max-width: 450px;
+  max-width: 480px;
   margin: 0 auto;
   text-align: left;
 }
 
 .form-group {
-  margin-bottom: 22px;
+  margin-bottom: 20px;
 }
 
 .input-label {
   display: block;
   font-size: 12px;
   font-weight: 600;
-  color: rgba(0,0,0,0.6);
-  margin-bottom: 7px;
+  color: #0046b8;
+  margin-bottom: 8px;
 }
 
+/* Customização exata das caixas de input com efeito esfumaçado (soft shadow) */
 .form-input {
   width: 100%;
   box-sizing: border-box;
-  background-color: var(--input-bg);
-  border: 1px solid var(--input-border);
-  border-radius: 8px;
-  padding: 14px;
+  background-color: #f8fafc;
+  border: 1px solid #f1f5f9;
+  border-radius: 14px;
+  padding: 16px;
   font-size: 14px;
   color: var(--senai-text-dark);
-  transition: border-color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s;
 }
 
 .form-input::placeholder {
-  color: rgba(0,0,0,0.3);
+  color: #94a3b8;
 }
 
 .form-input:focus {
   outline: none;
-  border-color: var(--input-focus);
-  box-shadow: 0 0 0 3px rgba(28, 73, 184, 0.1);
+  border-color: #0046b8;
+  box-shadow: 0 4px 14px rgba(0, 70, 184, 0.1);
 }
 
-/* --- BOTÃO ENTRAR --- */
+/* --- BOTÃO ENTRAR COMPRIDO E ARREDONDADO --- */
 .submit-btn-section {
   text-align: center;
-  margin-top: 30px;
+  margin-top: 35px;
 }
 
 .btn-entrar {
-  background-color: var(--senai-blue-bg);
+  background-color: #0046b8;
   color: var(--senai-text-light);
   border: none;
-  border-radius: 8px;
+  border-radius: 14px;
   padding: 16px;
   font-weight: 700;
   font-size: 15px;
   cursor: pointer;
-  width: 100%;
+  width: 75%; /* Não ocupa 100%, é um pouco menor e centralizado igual a imagem 2 */
+  box-shadow: 0 4px 12px rgba(0, 70, 184, 0.2);
   transition: background-color 0.2s;
 }
 
@@ -238,7 +251,9 @@ body {
 
 
 
-
+/* -------------------------------------------------------------------------- */
+/* DAQUI PARA BAIXO O SEU CODIGO DO DASHBOARD CONTINUA EXATAMENTE IGUAL      */
+/* -------------------------------------------------------------------------- */
 
 /* Layout do Dashboard */
 .dashboard-wrapper {
@@ -246,7 +261,6 @@ body {
     min-height: 100vh;
     width: 100%;
 }
-
 .sidebar {
     width: 260px;
     background-color: #1c49b8;
@@ -255,11 +269,8 @@ body {
     flex-direction: column;
     padding: 20px;
 }
-
 .sidebar h2 { font-size: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
-
 .sidebar nav { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
-
 .sidebar a {
     text-decoration: none;
     color: rgba(255,255,255,0.8);
@@ -267,12 +278,8 @@ body {
     border-radius: 6px;
     transition: 0.3s;
 }
-
 .sidebar a:hover { background: rgba(255,255,255,0.1); color: white; }
-
-/* Topbar do Dashboard */
 .main-content { flex-grow: 1; background: #f4f7f6; }
-
 .topbar-dash {
     background: white;
     padding: 15px 30px;
@@ -281,9 +288,7 @@ body {
     align-items: center;
     box-shadow: 0 2px 5px rgba(0,0,0,0.05);
 }
-
 .user-meta { display: flex; align-items: center; gap: 15px; }
-
 .profile-badge {
     padding: 4px 10px;
     border-radius: 20px;
@@ -291,62 +296,15 @@ body {
     font-weight: 700;
     text-transform: uppercase;
 }
-
 .badge-admin { background: #e3f2fd; color: #1c49b8; border: 1px solid #bbdefb; }
 .badge-func { background: #f5f5f5; color: #666; border: 1px solid #ddd; }
-
 .btn-logout {
     color: #e53e3e;
     text-decoration: none;
     font-weight: 600;
     font-size: 14px;
 }
-
-
-/* Garante que o menu lateral e o conteúdo fiquem lado a lado sem se sobrepor */
-.dashboard-wrapper {
-    display: flex;
-    min-height: 100vh;
-    width: 100%;
-}
-
-/* O conteúdo principal deve ocupar o resto da tela e empurrar os elementos corretamente */
 .main-content {
-    flex-grow: 1;
     padding: 30px;
-    background-color: #f4f7f6;
     box-sizing: border-box;
-}
-
-/* Ajuste dos estilos dos Badges que adicionamos */
-.profile-badge {
-    padding: 6px 14px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    display: inline-block;
-}
-.badge-admin { background: #e3f2fd; color: #1c49b8; border: 1px solid #bbdefb; }
-.badge-func { background: #f5f5f5; color: #666; border: 1px solid #ddd; }
-
-
-/* Badges de Perfil do Topbar */
-.profile-badge {
-  padding: 4px 12px;
-  border-radius: 12px;
-  font-size: 11px;
-  font-weight: 700;
-  display: inline-block;
-  margin-top: 3px;
-}
-.badge-admin {
-  background-color: #e3f2fd;
-  color: #1c49b8;
-  border: 1px solid #bbdefb;
-}
-.badge-func {
-  background-color: #f5f5f5;
-  color: #666;
-  border: 1px solid #dddddd;
 }

@@ -8,6 +8,7 @@ Gerenciamento de Usuários | AAPM
 Controle de Usuários
 {% endblock %}
 
+<<<<<<< HEAD
 {% block internal_content %}
 <div style="margin-top: 20px; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: start;">
     
@@ -21,6 +22,92 @@ Controle de Usuários
                 <input type="text" name="nome" placeholder="Ex: João Silva" required 
                        style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc;">
             </div>
+=======
+<<<<<<< HEAD
+<h1>
+
+Cadastro usuários
+
+</h1>
+
+<form method="POST">
+
+<input
+name="nome"
+placeholder="Nome">
+
+<input
+name="email"
+placeholder="Email">
+
+<input
+name="senha"
+placeholder="Senha">
+
+<select name="role">
+
+<option value="ADMIN">
+ADMIN
+</option>
+
+<option value="FUNCIONARIO">
+FUNCIONARIO
+</option>
+
+</select>
+
+<button>
+
+Criar usuário
+
+</button>
+
+</form>
+
+
+<table>
+
+<tr>
+
+<th>Nome</th>
+<th>Email</th>
+<th>Perfil</th>
+<th>Status</th>
+
+</tr>
+
+{% for user in usuarios %}
+
+<tr>
+
+<td>{{user.nome}}</td>
+
+<td>{{user.email}}</td>
+
+<td>{{user.role}}</td>
+
+<td>
+
+{% if user.ativo %}
+
+Ativo
+
+{% else %}
+
+Inativo
+
+{% endif %}
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+=======
+<div class="usuarios-box">
+>>>>>>> 2293a95ee9f285de3ac1217ebdab518375f12d76
 
             <div>
                 <label style="display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 6px;">E-mail Corporativo</label>
@@ -102,4 +189,9 @@ Controle de Usuários
     </div>
 
 </div>
+<<<<<<< HEAD
+=======
+>>>>>>> 95afa05d5c7bd905fe6271f0ccdbbe4cebd73174
+
+>>>>>>> 2293a95ee9f285de3ac1217ebdab518375f12d76
 {% endblock %}

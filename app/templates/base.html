@@ -27,6 +27,14 @@ href="{{ url_for('static',path='css/style.css') }}">
 Dashboard
 </a>
 
+{% if usuario and usuario.role == "ADMIN" %}
+
+<a href="/users">
+Usuários
+</a>
+
+{% endif %}
+
 {% if usuario %}
 
 <a href="/logout">

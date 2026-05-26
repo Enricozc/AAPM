@@ -1,58 +1,54 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <title>
+        {% block title %}
+        Sistema AAPM
+        {% endblock %}
+    </title>
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-
-<title>
-{% block title %}
-AAPM
-{% endblock %}
-</title>
-
-<link rel="stylesheet"
-href="{{ url_for('static',path='css/style.css') }}">
-
+    <link rel="stylesheet" href="/static/style.css">
 </head>
-
 <body>
 
-<nav>
+    <!-- MENU -->
+    <header class="topo">
 
-<a href="/">Início</a>
+        <div class="logo">
+            Sistema AAPM
+        </div>
 
-<a href="/dashboard">
-Dashboard
-</a>
+        <nav>
 
-{% if usuario %}
+            <a href="/dashboard">Dashboard</a>
 
-<a href="/logout">
-Logout
-</a>
+            <a href="/users">Usuários</a>
 
-{% endif %}
+            <a href="/">Login</a>
 
-</nav>
+        </nav>
 
+    </header>
 
-<main>
+    <!-- CONTEUDO -->
+    <main class="conteudo">
 
-{% block content %}
+        {% block content %}
+        {% endblock %}
 
-{% endblock %}
+    </main>
 
-</main>
+    <!-- RODAPE -->
+    <footer class="rodape">
 
-<footer>
+        <p>
+            © 2026 Sistema AAPM
+        </p>
 
-<p>
-© AAPM SENAI
-</p>
-
-</footer>
+    </footer>
 
 </body>
 </html>

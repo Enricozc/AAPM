@@ -6,35 +6,61 @@ Dashboard
 
 {% block content %}
 
-<h1>
+<div class="dashboard">
 
-Bem-vindo {{usuario.nome}}
+    <div class="top-dashboard">
 
-</h1>
+        <h1>
+            Bem-vindo, {{ usuario.nome }}
+        </h1>
 
-<p>
+        <a href="/logout" class="logout">
+            Sair
+        </a>
 
-Perfil:
-{{usuario.role}}
+    </div>
 
-</p>
+    <div class="perfil">
 
+        <h3>
+            Perfil:
+            <span>
+                {{ usuario.role }}
+            </span>
+        </h3>
 
-{% if usuario.role=="ADMIN" %}
+    </div>
 
-<a href="/usuarios">
+    <div class="cards">
 
-Gerenciar usuários
+        <div class="card">
+            Usuários
+        </div>
 
-</a>
+        <div class="card">
+            Produtos
+        </div>
 
-{% endif %}
+        <div class="card">
+            Relatórios
+        </div>
 
+    </div>
 
-<a href="/logout">
+    {% if usuario.role == "ADMIN" %}
 
-Logout
+    <div class="admin-menu">
 
-</a>
+        <h2>Área Administrativa</h2>
+
+        <a href="/users">
+            Gerenciar Usuários
+        </a>
+
+    </div>
+
+    {% endif %}
+
+</div>
 
 {% endblock %}

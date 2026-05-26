@@ -6,86 +6,106 @@ Usuários
 
 {% block content %}
 
-<h1>
+<div class="usuarios-box">
 
-Cadastro usuários
+    <h1>Cadastro de Usuários</h1>
 
-</h1>
+    <form action="/users/create" method="post">
 
-<form method="POST">
+        <input
+            type="text"
+            name="nome"
+            placeholder="Nome"
+            required
+        >
 
-<input
-name="nome"
-placeholder="Nome">
+        <input
+            type="email"
+            name="email"
+            placeholder="E-mail"
+            required
+        >
 
-<input
-name="email"
-placeholder="Email">
+        <input
+            type="password"
+            name="senha"
+            placeholder="Senha"
+            required
+        >
 
-<input
-name="senha"
-placeholder="Senha">
+        <select name="role">
 
-<select name="role">
+            <option value="FUNCIONARIO">
+                FUNCIONARIO
+            </option>
 
-<option value="ADMIN">
-ADMIN
-</option>
+            <option value="ADMIN">
+                ADMIN
+            </option>
 
-<option value="FUNCIONARIO">
-FUNCIONARIO
-</option>
+        </select>
 
-</select>
+        <select name="ativo">
 
-<button>
+            <option value="true">
+                Ativo
+            </option>
 
-Criar usuário
+            <option value="false">
+                Desativado
+            </option>
 
-</button>
+        </select>
 
-</form>
+        <button type="submit">
+            Cadastrar
+        </button>
 
+    </form>
 
-<table>
+    <table>
 
-<tr>
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Perfil</th>
+            <th>Status</th>
+        </tr>
 
-<th>Nome</th>
-<th>Email</th>
-<th>Perfil</th>
-<th>Status</th>
+        {% for usuario in usuarios %}
 
-</tr>
+        <tr>
 
-{% for user in usuarios %}
+            <td>{{ usuario.nome }}</td>
 
-<tr>
+            <td>{{ usuario.email }}</td>
 
-<td>{{user.nome}}</td>
+            <td>{{ usuario.role }}</td>
 
-<td>{{user.email}}</td>
+            <td>
 
-<td>{{user.role}}</td>
+                {% if usuario.ativo %}
 
-<td>
+                <span class="ativo">
+                    Ativo
+                </span>
 
-{% if user.ativo %}
+                {% else %}
 
-Ativo
+                <span class="desativado">
+                    Desativado
+                </span>
 
-{% else %}
+                {% endif %}
 
-Inativo
+            </td>
 
-{% endif %}
+        </tr>
 
-</td>
+        {% endfor %}
 
-</tr>
+    </table>
 
-{% endfor %}
-
-</table>
+</div>
 
 {% endblock %}

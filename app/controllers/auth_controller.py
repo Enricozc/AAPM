@@ -17,7 +17,6 @@ from fastapi.templating import (
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db
-from app.models.user_model import Usuario
 from app.models.user_model import User
 from app.config.security import hash_password
 

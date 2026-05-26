@@ -1,11 +1,16 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+
 from app.config.database import get_db
-from app.config.security import require_admin
 from app.services.auth_service import create_user, get_user_by_email
+
 from pydantic import BaseModel
 
-router = APIRouter(prefix="/users", tags=["users"])
+
+router = APIRouter(
+    prefix="/users",
+    tags=["users"]
+)
 
 
 class UserCreate(BaseModel):
@@ -19,9 +24,26 @@ class UserCreate(BaseModel):
 def criar_usuario(
     body: UserCreate,
     db: Session = Depends(get_db),
-    _: dict = Depends(require_admin),   # apenas ADMIN pode criar usuários
 ):
+    # verifica se já existe usuário
     if get_user_by_email(db, body.email):
-        raise HTTPException(status_code=400, detail="E-mail já cadastrado")
-    user = create_user(db, body.nome, body.email, body.password, body.role)
-    return {"id": user.id, "email": user.email, "role": user.role}
+        raise HTTPException(
+            status_code=400,
+            detail="E-mail já cadastrado"
+        )
+
+    # cria usuário
+    user = create_user(
+        db=db,
+        nome=body.nome,
+        email=body.email,
+        password=body.password,
+        role=body.role
+    )
+
+    return {
+        "id": user.id,
+        "nome": user.nome,
+        "email": user.email,
+        "role": user.role
+    }

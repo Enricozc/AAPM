@@ -11,4 +11,4 @@ create_user(
     role="ADMIN"
 )
 
-print("Usuário criado com sucesso!")z
+print("Usuário criado com sucesso!")

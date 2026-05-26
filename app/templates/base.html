@@ -25,20 +25,31 @@
         <div style="display: flex; min-height: 100vh; width: 100%;">
             
             <aside class="sidebar" style="width: 260px; background-color: #1c49b8; color: white; display: flex; flex-direction: column; padding: 25px 20px; box-sizing: border-box; flex-shrink: 0; height: 100vh; position: sticky; top: 0;">
+                
                 <div class="logo" style="margin-bottom: 30px;">
                     <h2 style="margin: 0; font-size: 20px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 15px;">AAPM SENAI</h2>
                 </div>
-                <nav style="display: flex; flex-direction: column; gap: 10px;">
-                    <a href="/dashboard?nome={{ nome }}&perfil={{ perfil }}" style="color: white; text-decoration: none; font-size: 15px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">🏠 Dashboard</a>
-                    
-                    {% if perfil == 'ADMIN' %}
-                    <a href="/usuarios?nome={{ nome }}&perfil={{ perfil }}" style="color: white; text-decoration: none; font-size: 15px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">👤 Usuários</a>
-                    {% endif %}
-                    
-                    <a href="#" style="color: rgba(255,255,255,0.7); text-decoration: none; font-size: 15px; padding: 10px 12px; border-radius: 6px; display: block;">📦 Produtos</a>
-                    <a href="/categorias?nome={{ nome }}&perfil={{ perfil }}" style="color: white; text-decoration: none; font-size: 15px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">📂 Categorias</a>
-                    <a href="/login" style="color: #ff9999; text-decoration: none; font-size: 15px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: bold; margin-top: 30px; border: 1px solid rgba(255,153,153,0.2); text-align: center;">🚪 Logout</a>
-                </nav>
+
+                <div style="display: flex; flex-direction: column; gap: 10px; padding: 15px;">
+    
+                    <a href="/dashboard?nome={{nome}}&perfil={{perfil}}" style="color: white; text-decoration: none; font-size: 16px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">
+                    🏠 Dashboard
+                    </a>
+
+                    <a href="/categorias?nome={{nome}}&perfil={{perfil}}" style="color: white; text-decoration: none; font-size: 16px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">
+                    📁 Categorias
+                    </a>
+
+                    <a href="/produtos?nome={{nome}}&perfil={{perfil}}" style="color: white; text-decoration: none; font-size: 16px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">
+                    📦 Produtos
+                    </a>
+
+                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
+
+                    <a href="/login" style="color: #ff8a8a; text-decoration: none; font-size: 16px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: bold; border: 1px solid rgba(255,138,138,0.3); text-align: center;">
+                    🚪 Logout
+                    </a>
+                </div>
             </aside>
 
             <main class="main" style="flex-grow: 1; display: flex; flex-direction: column; background-color: #f4f7f6; box-sizing: border-box; min-width: 0;">

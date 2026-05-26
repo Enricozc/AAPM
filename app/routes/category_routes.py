@@ -1,62 +1,75 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Request, Form, FastAPI
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
+from fastapi.staticfiles import StaticFiles
+import os
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
-# REQUISITO PARTE 4: Banco populado com dados reais da AAPM
-DB_CATEGORIAS = [
-    {"id": 1, "nome": "Uniformes", "descricao": "Camisetas, calças e agasalhos padrão SENAI"},
-    {"id": 2, "nome": "Papelaria", "descricao": "Cadernos, blocos, canetas e réguas"},
-    {"id": 3, "nome": "Acessórios", "descricao": "Squeezes, chaveiros e mochilas da AAPM"}
-]
+# ==========================================
+# ROTAS DE AUTENTICAÇÃO E DASHBOARD
+# ==========================================
 
-# REQUISITO: Rota para listar categorias
-@router.get("/categorias")
-async def listar_categorias(request: Request, nome: str = "Eduardo", perfil: str = "ADMIN"):
+# 1. TELA DE LOGIN (Acessível via /login ou apenas /)
+@router.get("/login")
+@router.get("/")
+async def login_page(request: Request, erro: str = None):
+    return templates.TemplateResponse("login.html", {"request": request, "erro": erro})
+
+# 2. PROCESSAMENTO DO LOGIN
+@router.post("/login")
+async def fazer_login(email: str = Form(...), senha: str = Form(...)):
+    # Validação do Administrador
+    if email == "admin@email.com" and senha == "123456":
+        return RedirectResponse(url="/dashboard?nome=Eduardo&perfil=ADMIN", status_code=303)
+    
+    # Validação de um Funcionário comum
+    elif email == "user@email.com" and senha == "123456":
+        return RedirectResponse(url="/dashboard?nome=Carlos+Souza&perfil=FUNCIONARIO", status_code=303)
+    
+    # Se errar os dados, volta para o login com a mensagem de erro
+    return RedirectResponse(url="/login?erro=E-mail+ou+senha+incorretos.", status_code=303)
+
+# 🌟 3. ROTA DO DASHBOARD (Faltava essa rota para receber os dados do login!)
+@router.get("/dashboard")
+async def exibir_dashboard(request: Request, nome: str = "Eduardo", perfil: str = "ADMIN"):
     return templates.TemplateResponse(
-        "categorias.html", 
+        "dashboard.html", 
         {
             "request": request, 
             "nome": nome, 
-            "perfil": perfil,
-            "categorias": DB_CATEGORIAS
+            "perfil": perfil
         }
     )
 
-# REQUISITO: Rota para cadastrar categorias
-@router.post("/categorias/cadastrar")
-async def cadastrar_categoria(
-    nome_cat: str = Form(...), 
-    descricao_cat: str = Form(...),
-    admin_nome: str = Form(...),
-    admin_perfil: str = Form(...)
-):
-    novo_id = max([c["id"] for c in DB_CATEGORIAS]) + 1 if DB_CATEGORIAS else 1
-    DB_CATEGORIAS.append({"id": novo_id, "nome": nome_cat, "descricao": descricao_cat})
-    
-    return RedirectResponse(url=f"/categorias?nome={admin_nome}&perfil={admin_perfil}", status_code=303)
+# 4. SAÍDA DO SISTEMA (LOGOUT)
+@router.get("/logout")
+async def logout():
+    return RedirectResponse(url="/login", status_code=303)
 
-# REQUISITO: Rota para editar categorias
-@router.post("/categorias/editar/{cat_id}")
-async def editar_categoria(
-    cat_id: int,
-    nome_cat: str = Form(...),
-    descricao_cat: str = Form(...),
-    admin_nome: str = Form(...),
-    admin_perfil: str = Form(...)
-):
-    for cat in DB_CATEGORIAS:
-        if cat["id"] == cat_id:
-            cat["nome"] = nome_cat
-            cat["descricao"] = descricao_cat
-            break
-    return RedirectResponse(url=f"/categorias?nome={admin_nome}&perfil={admin_perfil}", status_code=303)
 
-# REQUISITO: Rota para excluir categorias
-@router.get("/categorias/excluir/{cat_id}")
-async def excluir_categoria(cat_id: int, nome: str = "Eduardo", perfil: str = "ADMIN"):
-    global DB_CATEGORIAS
-    DB_CATEGORIAS = [c for c in DB_CATEGORIAS if c["id"] != cat_id]
-    return RedirectResponse(url=f"/categorias?nome={nome}&perfil={perfil}", status_code=303)
+# ==========================================
+# CONFIGURAÇÃO DO APLICATIVO FASTAPI (main.py)
+# ==========================================
+
+app = FastAPI()
+
+# Garante que as pastas do sistema existam para não dar erro de diretório
+os.makedirs("app/static", exist_ok=True)
+
+app.mount(
+    "/static",
+    StaticFiles(directory="app/static"),
+    name="static"
+)
+
+# Importação das outras rotas do seu projeto
+from app.routes import category_routes, product_routes
+
+# Inclui a rota de autenticação/dashboard que criamos acima
+app.include_router(router)
+
+# Inclui as rotas de categorias e produtos
+app.include_router(category_routes.router)
+app.include_router(product_routes.router)

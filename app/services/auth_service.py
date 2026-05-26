@@ -39,19 +39,16 @@ def create_user(
     nome: str,
     email: str,
     password: str,
-    role: str="ADMIN"
+    role: str = "FUNCIONARIO"
 ):
 
-    hashed_pwd = hash_password(
-        password
-    )
+    hashed_pwd = hash_password(password)
 
     user = User(
         nome=nome,
         email=email,
         hashed_password=hashed_pwd,
-        role=role,
-        ativo=True
+        role=role
     )
 
     db.add(user)

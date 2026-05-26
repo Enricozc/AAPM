@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from app.config.database import get_db
-from app.middlewares.auth_middleware import require_admin
+from app.config.security import require_admin
 from app.services.auth_service import create_user, get_user_by_email
 from pydantic import BaseModel
 

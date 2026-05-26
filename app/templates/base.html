@@ -1,58 +1,53 @@
 <!DOCTYPE html>
 <html lang="pt-br">
-
 <head>
-
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>{% block titulo %}{% endblock %}</title>
 
-<title>
-{% block title %}
-AAPM
-{% endblock %}
-</title>
+<style>
 
-<link rel="stylesheet"
-href="{{ url_for('static',path='css/style.css') }}">
+body{
+    margin:0;
+    font-family:Arial;
+    background:#f4f6f9;
+}
+
+nav{
+    background:#222;
+    padding:15px;
+}
+
+nav a{
+    color:white;
+    margin-right:20px;
+    text-decoration:none;
+}
+
+.container{
+    padding:30px;
+}
+
+</style>
 
 </head>
-
 <body>
 
 <nav>
 
-<a href="/">Início</a>
+<a href="/dashboard">Dashboard</a>
 
-<a href="/dashboard">
-Dashboard
-</a>
+<a href="/usuarios">Usuários</a>
 
-{% if usuario %}
-
-<a href="/logout">
-Logout
-</a>
-
-{% endif %}
+<a href="/logout">Sair</a>
 
 </nav>
 
+<div class="container">
 
-<main>
-
-{% block content %}
-
+{% block conteudo %}
 {% endblock %}
 
-</main>
-
-<footer>
-
-<p>
-© AAPM SENAI
-</p>
-
-</footer>
+</div>
 
 </body>
 </html>

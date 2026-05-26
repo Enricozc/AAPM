@@ -1,23 +1,43 @@
-<form method="POST" action="/login">
+<!DOCTYPE html>
+<html>
+
+<head>
+<meta charset="UTF-8">
+<title>Login</title>
+</head>
+
+<body>
+
+<h1>Login</h1>
+
+<form method="post">
 
 <input
 type="email"
 name="email"
-placeholder="Digite seu email"
-required>
+placeholder="Email"
+>
+
+<br><br>
 
 <input
 type="password"
-name="senha"
-placeholder="Digite sua senha"
-required>
+name="password"
+placeholder="Senha"
+>
 
-<button type="submit">
+<br><br>
+
+<button>
 Entrar
 </button>
 
 </form>
 
 {% if erro %}
-<p>{{ erro }}</p>
+<p>{{erro}}</p>
 {% endif %}
+
+</body>
+
+</html>

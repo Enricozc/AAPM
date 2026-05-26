@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block title %}
+Dashboard
+{% endblock %}
+
+{% block content %}
+
+<h1>
+
+Bem-vindo {{usuario.nome}}
+
+</h1>
+
+<p>
+
+Perfil:
+{{usuario.role}}
+
+</p>
+
+
+{% if usuario.role=="ADMIN" %}
+
+<a href="/usuarios">
+
+Gerenciar usuários
+
+</a>
+
+{% endif %}
+
+
+<a href="/logout">
+
+Logout
+
+</a>
+
+{% endblock %}

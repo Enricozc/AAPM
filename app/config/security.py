@@ -1,32 +1,45 @@
 import jwt
+
 from datetime import datetime, timedelta
+
 from typing import Optional
+
 from passlib.context import CryptContext
+
 from fastapi import Request, HTTPException
 
 from app.config.settings import settings
 
-# Criptografia de senha
+
+# CRIPTOGRAFIA
+
 pwd_context = CryptContext(
     schemes=["bcrypt"],
     deprecated="auto"
 )
 
 
-def hash_password(password: str) -> str:
+# GERAR HASH
+
+def hash_password(password: str):
+
     return pwd_context.hash(password)
 
+
+# VERIFICAR SENHA
 
 def verify_password(
     plain_password: str,
     hashed_password: str
-) -> bool:
+):
 
     return pwd_context.verify(
         plain_password,
         hashed_password
     )
 
+
+# GERAR TOKEN
 
 def create_access_token(
     data: dict,
@@ -36,8 +49,11 @@ def create_access_token(
     to_encode = data.copy()
 
     if expires_delta:
+
         expire = datetime.utcnow() + expires_delta
+
     else:
+
         expire = datetime.utcnow() + timedelta(
             minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
         )
@@ -55,6 +71,8 @@ def create_access_token(
     return encoded_jwt
 
 
+# DECODIFICAR TOKEN
+
 def decode_access_token(token: str):
 
     try:
@@ -68,10 +86,12 @@ def decode_access_token(token: str):
         return payload
 
     except jwt.PyJWTError:
+
         return None
 
 
-# Pega usuário logado
+# PEGAR USUARIO LOGADO
+
 def get_current_user(request: Request):
 
     token = request.cookies.get(
@@ -97,12 +117,11 @@ def get_current_user(request: Request):
     return payload
 
 
-# Permite apenas ADMIN
+# SOMENTE ADMIN
+
 def require_admin(request: Request):
 
-    user = get_current_user(
-        request
-    )
+    user = get_current_user(request)
 
     if user.get("role") != "ADMIN":
 

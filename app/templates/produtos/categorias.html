@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+Categorias | AAPM SENAI
+{% endblock %}
+
+{% block page %}
+Gerenciamento de Categorias
+{% endblock %}
+
+{% block internal_content %}
+<div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: start; font-family: sans-serif;">
+    
+    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); border-top: 4px solid #1c49b8;">
+        <h3 style="color: #1c49b8; margin: 0 0 20px 0; font-size: 16px; font-weight: 700;">Nova Categoria</h3>
+        
+        <form action="/categorias/cadastrar" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
+            <input type="hidden" name="admin_nome" value="{{ nome }}">
+            <input type="hidden" name="admin_perfil" value="{{ perfil }}">
+            
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 6px;">Nome da Categoria</label>
+                <input type="text" name="nome_cat" placeholder="Ex: Uniformes, Papelaria" required 
+                       style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; font-size: 14px;">
+            </div>
+
+            <div>
+                <label style="display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 6px;">Descrição</label>
+                <textarea name="descricao_cat" placeholder="Breve resumo sobre os produtos desta categoria..." rows="4" required
+                          style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; font-size: 14px; resize: none;"></textarea>
+            </div>
+
+            <button type="submit" style="background: #1c49b8; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; margin-top: 5px;">
+                Salvar Categoria
+            </button>
+        </form>
+    </div>
+
+    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+        <h3 style="color: #333; margin: 0 0 20px 0; font-size: 16px; font-weight: 700;">Categorias da AAPM</h3>
+        
+        <div style="overflow-x: auto;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+                <thead>
+                    <tr style="border-bottom: 2px solid #edf2f7; color: #718096; font-size: 12px; text-transform: uppercase;">
+                        <th style="padding: 12px 8px; width: 60px;">ID</th>
+                        <th style="padding: 12px 8px;">Categoria</th>
+                        <th style="padding: 12px 8px;">Descrição</th>
+                        <th style="padding: 12px 8px; text-align: center; width: 140px;">Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cat in categorias %}
+                    <tr style="border-bottom: 1px solid #edf2f7;">
+                        <td style="padding: 14px 8px; font-weight: bold; color: #718096;">#{{ cat.id }}</td>
+                        <td style="padding: 14px 8px;"><strong style="color: #2d3748;">{{ cat.nome }}</strong></td>
+                        <td style="padding: 14px 8px; color: #4a5568;">{{ cat.descricao }}</td>
+                        <td style="padding: 14px 8px; text-align: center;">
+                            <div style="display: flex; gap: 8px; justify-content: center;">
+                                <a href="/categorias/excluir/{{ cat.id }}?nome={{ nome }}&perfil={{ perfil }}" 
+                                   onclick="return confirm('Tem certeza que deseja excluir esta categoria?')"
+                                   style="background: #fff5f5; color: #e53e3e; text-decoration: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; border: 1px solid #fed7d7;">
+                                    Excluir
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="4" style="padding: 20px; text-align: center; color: #a0aec0; font-style: italic;">
+                            Nenhuma categoria cadastrada.
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

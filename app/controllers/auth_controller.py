@@ -1,178 +1,84 @@
-from fastapi import (
-    APIRouter,
-    Request,
-    Depends,
-    Form,
-    status
-)
+from fastapi import APIRouter, Request, Form
+from fastapi.templating import Jinja2Templates
+from fastapi.responses import RedirectResponse
 
-from fastapi.responses import (
-    RedirectResponse
-)
-
-from fastapi.templating import (
-    Jinja2Templates
-)
-
-from sqlalchemy.orm import Session
-
-from app.config.database import get_db
-from app.models.user_model import User
-from app.config.security import hash_password
-
-router = APIRouter(
-    prefix="/usuarios",
-    tags=["Usuarios"]
-)
+router = APIRouter()
 
 templates = Jinja2Templates(
     directory="app/templates"
 )
 
 
-# LISTAR
-@router.get("/")
-def listar_usuarios(
-    request: Request,
-    db: Session = Depends(get_db),
-    admin=Depends(get_admin)
-):
-
-    usuarios = db.query(
-        Usuario
-    ).order_by(
-        Usuario.nome
-    ).all()
+# ABRIR LOGIN
+@router.get("/login")
+async def login_page(request: Request):
 
     return templates.TemplateResponse(
-        "usuarios/index.html",
-        {
-            "request": request,
-            "usuarios": usuarios
-        }
-    )
-
-
-# ABRIR FORM NOVO
-@router.get("/novo")
-def novo_usuario(
-    request: Request,
-    admin=Depends(get_admin)
-):
-
-    return templates.TemplateResponse(
-        "usuarios/novo.html",
+        request,
+        "login.html",
         {
             "request": request
         }
     )
 
 
-# SALVAR USUÁRIO
-@router.post("/novo")
-def salvar_usuario(
-    nome: str = Form(...),
+# FAZER LOGIN
+@router.post("/login")
+async def fazer_login(
+    request: Request,
     email: str = Form(...),
-    senha: str = Form(...),
-    role: str = Form(...),
-
-    db: Session = Depends(get_db),
-    admin=Depends(get_admin)
+    senha: str = Form(...)
 ):
-
-    usuario = Usuario(
-        nome=nome,
-        email=email,
-        senha=hash_password(senha),
-        role=role,
-        ativo=True
-    )
-
-    db.add(usuario)
-    db.commit()
 
     return RedirectResponse(
-        "/usuarios?criado=ok",
-        status_code=status.HTTP_303_SEE_OTHER
+        "/dashboard",
+        status_code=302
     )
 
 
-# FORM EDITAR
-@router.get("/{id}/editar")
-def editar_form(
-    id: int,
-    request: Request,
-
-    db: Session = Depends(get_db),
-    admin=Depends(get_admin)
-):
-
-    usuario = db.query(
-        Usuario
-    ).filter(
-        Usuario.id == id
-    ).first()
+# DASHBOARD
+@router.get("/dashboard")
+async def dashboard(request: Request):
 
     return templates.TemplateResponse(
-        "usuarios/editar.html",
+        request,
+        "dashboard.html",
         {
-            "request": request,
-            "usuario": usuario
+            "request": request
         }
     )
 
+# EXIBIR TELA DE USUÁRIOS (PROTEGIDA PARA ADMIN)
+@router.get("/usuarios")
+async def gerenciar_usuarios(request: Request, nome: str = "Usuário", perfil: str = "FUNCIONARIO"):
+    # REGRA CRUCIAL: Se não for ADMIN, barra o acesso imediatamente
+    if perfil != "ADMIN":
+        return RedirectResponse(url="/dashboard?nome=" + nome + "&perfil=" + perfil, status_code=303)
+        
+    return templates.TemplateResponse(
+        request,
+        "usuarios.html",
+        {
+            "request": request,
+            "nome": nome,
+            "perfil": perfil
+        }
+    )
 
-# SALVAR EDIÇÃO
-@router.post("/{id}/editar")
-def editar_usuario(
-    id: int,
-
+# AÇÃO DE CRIAR USUÁRIO
+@router.post("/usuarios/criar")
+async def criar_usuario(
     nome: str = Form(...),
-    email: str = Form(...),
+    email_novo: str = Form(...),
     role: str = Form(...),
-
-    db: Session = Depends(get_db),
-    admin=Depends(get_admin)
+    status: str = Form(...)
 ):
+    # Aqui o seu backend salvaria os dados no banco de dados.
+    # Por enquanto, redirecionamos de volta para manter o fluxo funcionando.
+    return RedirectResponse(url="/usuarios?nome=Ricardo+Silva&perfil=ADMIN", status_code=303)
 
-    usuario = db.query(
-        Usuario
-    ).filter(
-        Usuario.id == id
-    ).first()
-
-    usuario.nome = nome
-    usuario.email = email
-    usuario.role = role
-
-    db.commit()
-
-    return RedirectResponse(
-        "/usuarios?editado=ok",
-        status_code=status.HTTP_303_SEE_OTHER
-    )
-
-
-# EXCLUIR
-@router.post("/{id}/excluir")
-def excluir_usuario(
-    id: int,
-
-    db: Session = Depends(get_db),
-    admin=Depends(get_admin)
-):
-
-    usuario = db.query(
-        Usuario
-    ).filter(
-        Usuario.id == id
-    ).first()
-
-    db.delete(usuario)
-
-    db.commit()
-
-    return RedirectResponse(
-        "/usuarios",
-        status_code=status.HTTP_303_SEE_OTHER
-    )
+# AÇÃO DE ATIVAR/DESATIVAR
+@router.post("/usuarios/alterar-status")
+async def alterar_status(email_usuario: str = Form(...)):
+    # Lógica para inverter o status do usuário no banco de dados.
+    return RedirectResponse(url="/usuarios?nome=Ricardo+Silva&perfil=ADMIN", status_code=303)

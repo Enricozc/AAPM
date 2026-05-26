@@ -1,58 +1,75 @@
 {% extends "base.html" %}
 
-{% block titulo %}
+{% block title %}
 Usuários
 {% endblock %}
 
-{% block conteudo %}
+{% block page %}
+Usuários
+{% endblock %}
 
-<h1>Usuários</h1>
+{% block content %}
 
-<a href="/usuarios/novo">
-Novo usuário
-</a>
+<div class="top-actions">
 
-<table border="1">
+    <a href="/usuarios/novo" class="btn">
 
-<tr>
-<th>Nome</th>
-<th>Email</th>
-<th>Perfil</th>
-<th>Ações</th>
-</tr>
+        + Novo Usuário
 
-{% for u in usuarios %}
+    </a>
 
-<tr>
+</div>
 
-<td>{{u.nome}}</td>
-<td>{{u.email}}</td>
-<td>{{u.role}}</td>
+<div class="tabela-box">
 
-<td>
+    <table>
 
-<a href="/usuarios/{{u.id}}/editar">
-Editar
-</a>
+        <tr>
 
-<form
-action="/usuarios/{{u.id}}/excluir"
-method="post"
-style="display:inline"
->
+            <th>Nome</th>
 
-<button>
-Excluir
-</button>
+            <th>Email</th>
 
-</form>
+            <th>Perfil</th>
 
-</td>
+            <th>Status</th>
 
-</tr>
+        </tr>
 
-{% endfor %}
+        {% for usuario in usuarios %}
 
-</table>
+        <tr>
+
+            <td>{{ usuario.nome }}</td>
+
+            <td>{{ usuario.email }}</td>
+
+            <td>{{ usuario.role }}</td>
+
+            <td>
+
+                {% if usuario.ativo %}
+
+                <span class="ativo">
+                    Ativo
+                </span>
+
+                {% else %}
+
+                <span class="desativado">
+                    Desativado
+                </span>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
 
 {% endblock %}

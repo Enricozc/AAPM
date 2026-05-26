@@ -1,197 +1,352 @@
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Arial;
+/* Importação das fontes */
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;600;700&family=Montserrat:wght@700&display=swap');
+
+/* Configurações Globais (Reseta o padrão e define as cores principais) */
+:root {
+  --senai-blue-bg: #1c49b8;
+  --senai-blue-active: #153a9e;
+  --senai-text-dark: #333333;
+  --senai-text-light: #ffffff;
+  --input-bg: #f8fafc;
+  --input-border: #e2e8f0;
+  --input-focus: #1c49b8;
+  --font-body: 'Open Sans', sans-serif;
+  --font-heading: 'Montserrat', sans-serif;
 }
 
-body{
-    background:#f2f5ff;
+body {
+  margin: 0;
+  padding: 0;
+  font-family: var(--font-body);
+  background-color: #f1f3f6; /* Cor de fundo suave fora do card */
+  color: var(--senai-text-dark);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
-/* TOPO */
-
-.topo{
-    width:100%;
-    background:#003bb3;
-    color:white;
-    padding:20px 50px;
-
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+/* Container principal para centralizar e adicionar a sombra suave */
+.app-container {
+  background: var(--senai-text-light);
+  border-radius: 12px;
+  box-shadow: 0 8px 30px rgba(0,0,0,0.12); /* Sombra suave idêntica à referência */
+  overflow: hidden;
+  width: 900px; /* Largura total do "card" */
+  max-width: 95%;
+  margin: 20px;
 }
 
-.topo nav{
-    display:flex;
-    gap:20px;
+/* --- HEADER SUPERIOR (Azul) --- */
+.app-header {
+  background-color: var(--senai-blue-bg);
+  color: var(--senai-text-light);
+  padding: 15px 30px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 3px solid rgba(0,0,0,0.1);
 }
 
-.topo a{
-    color:white;
-    text-decoration:none;
+.brand-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
 }
 
-.logo{
-    font-size:22px;
-    font-weight:bold;
+.senai-logo {
+  height: 40px; /* Ajuste para o tamanho real do logo */
 }
 
-/* CONTEUDO */
-
-.conteudo{
-    padding:40px;
-    min-height:80vh;
+.aapm-text {
+  border-left: 2px solid rgba(255,255,255,0.3);
+  padding-left: 15px;
 }
 
-/* LOGIN */
-
-.login-box{
-    width:400px;
-    background:white;
-    margin:60px auto;
-    padding:40px;
-    border-radius:15px;
-    box-shadow:0 0 15px rgba(0,0,0,0.1);
+.aapm-title {
+  font-family: var(--font-heading);
+  font-weight: 700;
+  font-size: 14px;
+  margin: 0;
+  color: var(--senai-text-light);
 }
 
-.login-box h1{
-    margin-bottom:20px;
-    text-align:center;
+.aapm-subtitle {
+  font-weight: 400;
+  font-size: 11px;
+  color: rgba(255,255,255,0.8);
 }
 
-.login-box input{
-    width:100%;
-    padding:12px;
-    margin-bottom:15px;
-    border:1px solid #ccc;
-    border-radius:8px;
+.nav-links {
+  display: flex;
+  gap: 30px;
+  font-weight: 600;
+  font-size: 14px;
 }
 
-.login-box button{
-    width:100%;
-    padding:12px;
-    border:none;
-    background:#003bb3;
-    color:white;
-    border-radius:8px;
-    cursor:pointer;
+.nav-link {
+  text-decoration: none;
+  color: var(--senai-text-light);
+  opacity: 0.8;
+  transition: opacity 0.2s;
 }
 
-.erro{
-    color:red;
-    margin-bottom:10px;
+.nav-link:hover {
+  opacity: 1;
 }
 
-/* DASHBOARD */
-
-.top-dashboard{
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
+.active-nav-link {
+  border-bottom: 2px solid var(--senai-text-light);
+  padding-bottom: 3px;
+  opacity: 1;
 }
 
-.logout{
-    background:red;
-    color:white;
-    padding:10px 20px;
-    border-radius:8px;
-    text-decoration:none;
+.login-btn-top {
+  text-decoration: none;
+  background: var(--senai-blue-active);
+  color: var(--senai-text-light);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 8px 18px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
 }
 
-.perfil{
-    margin:20px 0;
+.login-btn-top:hover {
+  background-color: #0e2a73;
 }
 
-.cards{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:20px;
+/* --- ÁREA DE CONTEÚDO (Branca) --- */
+.content-area {
+  padding: 60px 20px;
+  text-align: center;
 }
 
-.card{
-    background:white;
-    padding:50px;
-    border-radius:15px;
-    text-align:center;
-    font-size:22px;
-    box-shadow:0 0 10px rgba(0,0,0,0.1);
+.page-title {
+  font-family: var(--font-heading);
+  color: var(--senai-blue-bg);
+  font-size: 28px;
+  font-weight: 700;
+  margin-bottom: 10px;
 }
 
-.admin-menu{
-    margin-top:40px;
+.page-subtitle {
+  color: rgba(0,0,0,0.6);
+  font-size: 15px;
+  font-weight: 400;
+  max-width: 500px;
+  margin: 0 auto 50px;
 }
 
-.admin-menu a{
-    display:inline-block;
-    margin-top:10px;
-    background:#003bb3;
-    color:white;
-    padding:12px 20px;
-    border-radius:8px;
-    text-decoration:none;
+/* --- CARD DE ADMINISTRAÇÃO --- */
+.admin-badge-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 40px;
 }
 
-/* USUARIOS */
-
-.usuarios-box{
-    background:white;
-    padding:30px;
-    border-radius:15px;
+.icon-container {
+  background-color: #dae5f9; /* Fundo azul claro suave */
+  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 15px;
 }
 
-.usuarios-box form{
-    display:grid;
-    gap:15px;
-    margin-bottom:30px;
+.shield-icon {
+  width: 28px;
+  height: 28px;
+  filter: invert(13%) sepia(80%) saturate(6000%) hue-rotate(224deg) brightness(95%) contrast(100%); /* Transforma o ícone branco em azul escuro SENAI */
 }
 
-.usuarios-box input,
-.usuarios-box select{
-    padding:12px;
-    border:1px solid #ccc;
-    border-radius:8px;
+.card-title {
+  font-weight: 700;
+  color: var(--senai-blue-bg);
+  font-size: 18px;
+  margin-bottom: 5px;
 }
 
-.usuarios-box button{
-    padding:12px;
-    border:none;
-    background:#003bb3;
-    color:white;
-    border-radius:8px;
+.card-desc {
+  color: rgba(0,0,0,0.5);
+  font-size: 13px;
+  font-weight: 400;
 }
 
-table{
-    width:100%;
-    border-collapse:collapse;
+/* --- FORMULÁRIO --- */
+.login-form {
+  max-width: 450px;
+  margin: 0 auto;
+  text-align: left;
 }
 
-table th{
-    background:#003bb3;
-    color:white;
-    padding:15px;
+.form-group {
+  margin-bottom: 22px;
 }
 
-table td{
-    padding:15px;
-    border-bottom:1px solid #ccc;
+.input-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: rgba(0,0,0,0.6);
+  margin-bottom: 7px;
 }
 
-.ativo{
-    color:green;
-    font-weight:bold;
+.form-input {
+  width: 100%;
+  box-sizing: border-box;
+  background-color: var(--input-bg);
+  border: 1px solid var(--input-border);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 14px;
+  color: var(--senai-text-dark);
+  transition: border-color 0.2s, box-shadow 0.2s;
 }
 
-.desativado{
-    color:red;
-    font-weight:bold;
+.form-input::placeholder {
+  color: rgba(0,0,0,0.3);
 }
 
-/* RODAPE */
+.form-input:focus {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(28, 73, 184, 0.1);
+}
 
-.rodape{
-    background:#003bb3;
-    color:white;
-    text-align:center;
-    padding:20px;
+/* --- BOTÃO ENTRAR --- */
+.submit-btn-section {
+  text-align: center;
+  margin-top: 30px;
+}
+
+.btn-entrar {
+  background-color: var(--senai-blue-bg);
+  color: var(--senai-text-light);
+  border: none;
+  border-radius: 8px;
+  padding: 16px;
+  font-weight: 700;
+  font-size: 15px;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s;
+}
+
+.btn-entrar:hover {
+  background-color: var(--senai-blue-active);
+}
+
+
+
+
+
+/* Layout do Dashboard */
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.sidebar {
+    width: 260px;
+    background-color: #1c49b8;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    padding: 20px;
+}
+
+.sidebar h2 { font-size: 20px; margin-bottom: 30px; border-bottom: 1px solid rgba(255,255,255,0.2); padding-bottom: 10px; }
+
+.sidebar nav { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
+
+.sidebar a {
+    text-decoration: none;
+    color: rgba(255,255,255,0.8);
+    padding: 12px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.sidebar a:hover { background: rgba(255,255,255,0.1); color: white; }
+
+/* Topbar do Dashboard */
+.main-content { flex-grow: 1; background: #f4f7f6; }
+
+.topbar-dash {
+    background: white;
+    padding: 15px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+}
+
+.user-meta { display: flex; align-items: center; gap: 15px; }
+
+.profile-badge {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.badge-admin { background: #e3f2fd; color: #1c49b8; border: 1px solid #bbdefb; }
+.badge-func { background: #f5f5f5; color: #666; border: 1px solid #ddd; }
+
+.btn-logout {
+    color: #e53e3e;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 14px;
+}
+
+
+/* Garante que o menu lateral e o conteúdo fiquem lado a lado sem se sobrepor */
+.dashboard-wrapper {
+    display: flex;
+    min-height: 100vh;
+    width: 100%;
+}
+
+/* O conteúdo principal deve ocupar o resto da tela e empurrar os elementos corretamente */
+.main-content {
+    flex-grow: 1;
+    padding: 30px;
+    background-color: #f4f7f6;
+    box-sizing: border-box;
+}
+
+/* Ajuste dos estilos dos Badges que adicionamos */
+.profile-badge {
+    padding: 6px 14px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    display: inline-block;
+}
+.badge-admin { background: #e3f2fd; color: #1c49b8; border: 1px solid #bbdefb; }
+.badge-func { background: #f5f5f5; color: #666; border: 1px solid #ddd; }
+
+
+/* Badges de Perfil do Topbar */
+.profile-badge {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-block;
+  margin-top: 3px;
+}
+.badge-admin {
+  background-color: #e3f2fd;
+  color: #1c49b8;
+  border: 1px solid #bbdefb;
+}
+.badge-func {
+  background-color: #f5f5f5;
+  color: #666;
+  border: 1px solid #dddddd;
 }

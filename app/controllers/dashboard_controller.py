@@ -1,6 +1,10 @@
 from fastapi import APIRouter, Request
 from fastapi.responses import HTMLResponse
 from fastapi.templating import Jinja2Templates
+<<<<<<< HEAD
+=======
+from app.config.security import get_current_user
+>>>>>>> 95afa05d5c7bd905fe6271f0ccdbbe4cebd73174
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")

@@ -6,6 +6,7 @@ Usuários
 
 {% block content %}
 
+<<<<<<< HEAD
 <h1>
 
 Cadastro usuários
@@ -87,5 +88,108 @@ Inativo
 {% endfor %}
 
 </table>
+=======
+<div class="usuarios-box">
+
+    <h1>Cadastro de Usuários</h1>
+
+    <form action="/users/create" method="post">
+
+        <input
+            type="text"
+            name="nome"
+            placeholder="Nome"
+            required
+        >
+
+        <input
+            type="email"
+            name="email"
+            placeholder="E-mail"
+            required
+        >
+
+        <input
+            type="password"
+            name="senha"
+            placeholder="Senha"
+            required
+        >
+
+        <select name="role">
+
+            <option value="FUNCIONARIO">
+                FUNCIONARIO
+            </option>
+
+            <option value="ADMIN">
+                ADMIN
+            </option>
+
+        </select>
+
+        <select name="ativo">
+
+            <option value="true">
+                Ativo
+            </option>
+
+            <option value="false">
+                Desativado
+            </option>
+
+        </select>
+
+        <button type="submit">
+            Cadastrar
+        </button>
+
+    </form>
+
+    <table>
+
+        <tr>
+            <th>Nome</th>
+            <th>Email</th>
+            <th>Perfil</th>
+            <th>Status</th>
+        </tr>
+
+        {% for usuario in usuarios %}
+
+        <tr>
+
+            <td>{{ usuario.nome }}</td>
+
+            <td>{{ usuario.email }}</td>
+
+            <td>{{ usuario.role }}</td>
+
+            <td>
+
+                {% if usuario.ativo %}
+
+                <span class="ativo">
+                    Ativo
+                </span>
+
+                {% else %}
+
+                <span class="desativado">
+                    Desativado
+                </span>
+
+                {% endif %}
+
+            </td>
+
+        </tr>
+
+        {% endfor %}
+
+    </table>
+
+</div>
+>>>>>>> 95afa05d5c7bd905fe6271f0ccdbbe4cebd73174
 
 {% endblock %}

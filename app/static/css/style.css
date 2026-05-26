@@ -1,0 +1,197 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial;
+}
+
+body{
+    background:#f2f5ff;
+}
+
+/* TOPO */
+
+.topo{
+    width:100%;
+    background:#003bb3;
+    color:white;
+    padding:20px 50px;
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.topo nav{
+    display:flex;
+    gap:20px;
+}
+
+.topo a{
+    color:white;
+    text-decoration:none;
+}
+
+.logo{
+    font-size:22px;
+    font-weight:bold;
+}
+
+/* CONTEUDO */
+
+.conteudo{
+    padding:40px;
+    min-height:80vh;
+}
+
+/* LOGIN */
+
+.login-box{
+    width:400px;
+    background:white;
+    margin:60px auto;
+    padding:40px;
+    border-radius:15px;
+    box-shadow:0 0 15px rgba(0,0,0,0.1);
+}
+
+.login-box h1{
+    margin-bottom:20px;
+    text-align:center;
+}
+
+.login-box input{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.login-box button{
+    width:100%;
+    padding:12px;
+    border:none;
+    background:#003bb3;
+    color:white;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.erro{
+    color:red;
+    margin-bottom:10px;
+}
+
+/* DASHBOARD */
+
+.top-dashboard{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.logout{
+    background:red;
+    color:white;
+    padding:10px 20px;
+    border-radius:8px;
+    text-decoration:none;
+}
+
+.perfil{
+    margin:20px 0;
+}
+
+.cards{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:20px;
+}
+
+.card{
+    background:white;
+    padding:50px;
+    border-radius:15px;
+    text-align:center;
+    font-size:22px;
+    box-shadow:0 0 10px rgba(0,0,0,0.1);
+}
+
+.admin-menu{
+    margin-top:40px;
+}
+
+.admin-menu a{
+    display:inline-block;
+    margin-top:10px;
+    background:#003bb3;
+    color:white;
+    padding:12px 20px;
+    border-radius:8px;
+    text-decoration:none;
+}
+
+/* USUARIOS */
+
+.usuarios-box{
+    background:white;
+    padding:30px;
+    border-radius:15px;
+}
+
+.usuarios-box form{
+    display:grid;
+    gap:15px;
+    margin-bottom:30px;
+}
+
+.usuarios-box input,
+.usuarios-box select{
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+}
+
+.usuarios-box button{
+    padding:12px;
+    border:none;
+    background:#003bb3;
+    color:white;
+    border-radius:8px;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+table th{
+    background:#003bb3;
+    color:white;
+    padding:15px;
+}
+
+table td{
+    padding:15px;
+    border-bottom:1px solid #ccc;
+}
+
+.ativo{
+    color:green;
+    font-weight:bold;
+}
+
+.desativado{
+    color:red;
+    font-weight:bold;
+}
+
+/* RODAPE */
+
+.rodape{
+    background:#003bb3;
+    color:white;
+    text-align:center;
+    padding:20px;
+}

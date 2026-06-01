@@ -1,67 +1,163 @@
 {% extends "base.html" %}
 
-{% block title %}{{ "Editar" if editando else "Novo" }} Produto | AAPM SENAI{% endblock %}
+{% block titulo %}
+{{ "Editar" if editando else "Novo" }} Produto | AAPM SENAI
+{% endblock %}
 
 {% block conteudo %}
-<div style="max-width: 600px; background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0;">
-    <h2 style="margin-top: 0;">{{ "Editar Produto" if editando else "Novo Produto" }}</h2>
 
-    {% if erro %}
-        <p style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 20px;">{{ erro }}</p>
-    {% endif %}
+<div class="max-w-4xl mx-auto">
 
-    <form action="{{ '/produtos/' + editando.id|string + '/editar' if editando else '/produtos/novo' }}"
-          method="post" 
-          enctype="multipart/form-data">
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 p-8">
 
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Nome:</label>
-            <input type="text" name="nome" value="{{ editando.nome if editando else (valores.nome if valores else '') }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        <div class="mb-8">
+            <h1 class="text-3xl font-bold text-[#0052cc]">
+                {{ "Editar Produto" if editando else "Cadastrar Produto" }}
+            </h1>
+
+            <p class="text-gray-500 mt-2">
+                Preencha as informações do produto abaixo.
+            </p>
         </div>
 
-        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
-            <div style="flex: 1;">
-                <label style="display: block; font-weight: bold; margin-bottom: 5px;">Preço (R$):</label>
-                <input type="number" name="preco" step="0.01" min="0" value="{{ editando.preco if editando else (valores.preco if valores else '0.00') }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
-            <div style="flex: 1;">
-                <label style="display: block; font-weight: bold; margin-bottom: 5px;">Estoque:</label>
-                <input type="number" name="estoque_atual" min="0" value="{{ editando.estoque_atual if editando else (valores.estoque_atual if valores else '0') }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-            </div>
+        {% if erro %}
+        <div class="bg-red-100 border border-red-300 text-red-700 p-4 rounded-lg mb-6">
+            {{ erro }}
         </div>
-
-        <div style="margin-bottom: 15px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Categoria:</label>
-            <select name="categoria_id" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
-                <option value="0">Sem categoria</option>
-                {% for c in categorias %}
-                    <option value="{{ c.id }}" {{ 'selected' if (editando and editando.categoria_id == c.id) or (valores and valores.categoria_id == c.id) else '' }}>
-                        {{ c.nome }}
-                    </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        {% if editando and editando.imagem_path %}
-            <div style="margin-bottom: 15px;">
-                <p style="font-size: 0.9em; color: #666;">Imagem atual:</p>
-                <img src="{{ url_for('static', path=editando.imagem_path) }}" width="100" style="border-radius: 4px; border: 1px solid #ddd;">
-            </div>
         {% endif %}
 
-        <div style="margin-bottom: 20px;">
-            <label style="display: block; font-weight: bold; margin-bottom: 5px;">
-                {{ "Nova imagem (deixe vazio para manter a atual):" if editando else "Imagem do produto:" }}
-            </label>
-            <input type="file" name="imagem" accept=".jpg,.jpeg,.png,.webp" style="width: 100%;">
-        </div>
+        <form
+            action="{{ '/produtos/' + editando.id|string + '/editar' if editando else '/produtos/novo' }}"
+            method="post"
+            enctype="multipart/form-data"
+            class="space-y-6"
+        >
 
-        <div style="display: flex; gap: 10px;">
-            <button type="submit" style="padding: 10px 20px; background: #1c49b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
-                {{ "Salvar Alterações" if editando else "Criar Produto" }}
-            </button>
-            <a href="/produtos" style="padding: 10px 20px; background: #e2e8f0; color: #333; text-decoration: none; border-radius: 4px;">Cancelar</a>
-        </div>
-    </form>
+            <!-- Nome -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Nome do Produto
+                </label>
+
+                <input
+                    type="text"
+                    name="nome"
+                    value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
+                    required
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+            </div>
+
+            <!-- Preço e Estoque -->
+            <div class="grid md:grid-cols-2 gap-6">
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Preço (R$)
+                    </label>
+
+                    <input
+                        type="number"
+                        name="preco"
+                        step="0.01"
+                        min="0"
+                        value="{{ editando.preco if editando else (valores.preco if valores else '0.00') }}"
+                        required
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    >
+                </div>
+
+                <div>
+                    <label class="block text-sm font-semibold text-gray-700 mb-2">
+                        Estoque
+                    </label>
+
+                    <input
+                        type="number"
+                        name="estoque_atual"
+                        min="0"
+                        value="{{ editando.estoque_atual if editando else (valores.estoque_atual if valores else '0') }}"
+                        required
+                        class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                    >
+                </div>
+
+            </div>
+
+            <!-- Categoria -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    Categoria
+                </label>
+
+                <select
+                    name="categoria_id"
+                    class="w-full border border-gray-300 rounded-xl px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                >
+                    <option value="0">Sem categoria</option>
+
+                    {% for c in categorias %}
+                    <option
+                        value="{{ c.id }}"
+                        {{ 'selected' if (editando and editando.categoria_id == c.id) or (valores and valores.categoria_id == c.id) else '' }}
+                    >
+                        {{ c.nome }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <!-- Imagem Atual -->
+            {% if editando and editando.imagem_path %}
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-3">
+                    Imagem Atual
+                </label>
+
+                <img
+                    src="{{ url_for('static', path=editando.imagem_path) }}"
+                    class="w-40 rounded-xl border shadow-sm"
+                >
+            </div>
+            {% endif %}
+
+            <!-- Upload -->
+            <div>
+                <label class="block text-sm font-semibold text-gray-700 mb-2">
+                    {{ "Nova imagem (opcional)" if editando else "Imagem do Produto" }}
+                </label>
+
+                <input
+                    type="file"
+                    name="imagem"
+                    accept=".jpg,.jpeg,.png,.webp"
+                    class="w-full border border-gray-300 rounded-xl p-3 bg-gray-50"
+                >
+            </div>
+
+            <!-- Botões -->
+            <div class="flex gap-4 pt-4">
+
+                <button
+                    type="submit"
+                    class="bg-[#0052cc] hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-xl shadow-md transition"
+                >
+                    {{ "Salvar Alterações" if editando else "Criar Produto" }}
+                </button>
+
+                <a
+                    href="/produtos"
+                    class="bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold px-8 py-3 rounded-xl transition"
+                >
+                    Cancelar
+                </a>
+
+            </div>
+
+        </form>
+
+    </div>
+
 </div>
+
 {% endblock conteudo %}

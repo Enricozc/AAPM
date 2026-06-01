@@ -19,91 +19,61 @@
     </style>
 </head>
 
-<body class="bg-gray-50 text-gray-900 h-full flex flex-col justify-between m-0">
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
 
-    <nav class="w-full bg-[#0052cc] text-white px-6 md:px-12 py-4 flex justify-between items-center shadow-sm z-20">
+    <nav class="w-full bg-[#0052cc] text-white px-6 md:px-12 py-4 flex justify-between items-center shadow-sm">
         <div class="text-lg font-bold tracking-wide">
             AAPM SENAI
         </div>
 
         <div class="flex items-center space-x-6 text-sm font-medium">
-            <a href="/" class="hover:text-gray-200 transition">Início</a>
+            <a href="/" class="hover:text-gray-200 transition">
+                Início
+            </a>
 
             {% if usuario %}
-                <a href="/dashboard" class="hover:text-gray-200 transition">Painel</a>
+                <a href="/dashboard" class="hover:text-gray-200 transition">
+                    Painel
+                </a>
 
                 {% if usuario.role == 'ADMIN' %}
-                    <a href="/categorias" class="text-orange-400 hover:text-orange-300 font-semibold transition">Categorias</a>
+                    <a href="/categorias" class="text-orange-400 hover:text-orange-300 font-semibold transition">
+                        Categorias
+                    </a>
                 {% endif %}
 
-                <a href="/produtos" class="hover:text-gray-200 transition">Produtos</a>
+                <a href="/produtos" class="hover:text-gray-200 transition">
+                    Produtos
+                </a>
 
-                <span class="bg-white/10 text-white border border-white/20 px-3 py-1 rounded-md text-xs font-semibold">
+                <span class="bg-white/10 border border-white/20 px-3 py-1 rounded-md text-xs font-semibold">
                     {{ usuario.nome }}
                 </span>
 
-                <a href="/auth/logout" class="text-red-300 hover:text-red-400 transition font-bold">Sair</a>
+                <a href="/auth/logout" class="text-red-300 hover:text-red-400 font-bold transition">
+                    Sair
+                </a>
             {% else %}
-                <a href="/auth/login" class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-1.5 rounded transition font-semibold shadow-md">
+                <a href="/auth/login"
+                   class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-1.5 rounded font-semibold shadow-md transition">
                     Login
                 </a>
             {% endif %}
         </div>
     </nav>
 
-    <main class="flex-grow flex flex-col items-center px-4 py-12">
-
-        <!-- CONTEÚDO QUE ESTAVA EMBAIXO AGORA FICA EM CIMA -->
-        <div class="w-full max-w-7xl mx-auto mb-8">
+    <main class="flex-grow px-4 pt-2 pb-4">
+        <div class="w-full max-w-7xl mx-auto">
             {% block conteudo %}{% endblock %}
             {% block internal_content %}{% endblock %}
         </div>
-
-        <!-- CARDS -->
-        <section class="w-full max-w-5xl bg-white p-8 rounded-2xl shadow-sm border border-gray-100/80">
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:divide-x md:divide-gray-100">
-
-                <div class="flex flex-col items-center p-2">
-                    <div class="text-[#0052cc] text-2xl bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                        <i class="fa-solid fa-users"></i>
-                    </div>
-                    <span class="text-3xl font-extrabold text-[#0052cc] tracking-tight">567</span>
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mt-1.5">Membros ativos</span>
-                </div>
-
-                <div class="flex flex-col items-center p-2">
-                    <div class="text-orange-500 text-2xl bg-orange-50 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                        <i class="fa-solid fa-chart-line"></i>
-                    </div>
-                    <span class="text-3xl font-extrabold text-orange-500 tracking-tight">R$ 45k</span>
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mt-1.5">Arrecadado em 2026</span>
-                </div>
-
-                <div class="flex flex-col items-center p-2">
-                    <div class="text-[#0052cc] text-2xl bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                    <span class="text-3xl font-extrabold text-[#0052cc] tracking-tight">80</span>
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mt-1.5">Armários Livres</span>
-                </div>
-
-                <div class="flex flex-col items-center p-2">
-                    <div class="text-orange-500 text-2xl bg-orange-50 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                        <i class="fa-regular fa-star"></i>
-                    </div>
-                    <span class="text-3xl font-extrabold text-orange-500 tracking-tight">98%</span>
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider mt-1.5">Satisfação</span>
-                </div>
-
-            </div>
-        </section>
-
     </main>
 
-    <footer class="bg-[#2d2d2d] text-gray-400 text-center py-4 w-full text-xs tracking-wide border-t border-gray-800">
+    <footer class="bg-[#2d2d2d] text-gray-400 text-center py-4 text-xs tracking-wide border-t border-gray-800">
         <p>&copy; 2026 AAPM SENAI - Equipe Front-End SSR</p>
     </footer>
 
     {% block js_extra %}{% endblock %}
+
 </body>
 </html>

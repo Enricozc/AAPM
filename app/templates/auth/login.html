@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block titulo %}Login - AAPM SENAI{% endblock %}
+
+{% block conteudo %}
+<div style="max-width: 400px; margin: 60px auto; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid #0056b3;">
+    <h2 style="text-align: center; color: #333; margin-bottom: 25px;">Área de Acesso</h2>
+
+    {% if erro %}
+        <div style="background: #ffe6e6; color: #cc0000; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px;">
+            ⚠️ {{ erro }}
+        </div>
+    {% endif %}
+
+    <form action="/auth/login" method="POST">
+        <div style="margin-bottom: 15px;">
+            <label for="email" style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">E-mail</label>
+            <input type="email" id="email" name="email" placeholder="usuario@senai.com.br" required 
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        </div>
+
+        <div style="margin-bottom: 20px;">
+            <label for="senha" style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Senha</label>
+            <input type="password" id="senha" name="senha" placeholder="••••••••" required 
+                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+        </div>
+
+        <button type="submit" style="width: 100%; background: #0056b3; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">
+            Entrar
+        </button>
+    </form>
+</div>
+{% endblock %}

@@ -3,79 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}AAPM SENAI{% endblock %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', path='css/style.css') }}">
-    <style>
-        /* Correção global rápida para zerar margens e alinhar a tela */
-        html, body {
-            margin: 0;
-            padding: 0;
-            height: 100%;
-            background-color: #f4f7f6;
-            font-family: system-ui, -apple-system, sans-serif;
-        }
-    </style>
+    <title>{% block titulo %}AAPM SENAI{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+    {% block css_extra %}{% endblock %}
 </head>
 <body>
 
-    {% if request.url.path == "/login" or request.url.path == "/" %}
-        {% block content %}{% endblock %}
-    {% else %}
-        
-        <div style="display: flex; min-height: 100vh; width: 100%;">
-            
-            <aside class="sidebar" style="width: 260px; background-color: #1c49b8; color: white; display: flex; flex-direction: column; padding: 25px 20px; box-sizing: border-box; flex-shrink: 0; height: 100vh; position: sticky; top: 0;">
-                
-                <div class="logo" style="margin-bottom: 30px;">
-                    <h2 style="margin: 0; font-size: 20px; font-weight: bold; border-bottom: 1px solid rgba(255,255,255,0.15); padding-bottom: 15px;">AAPM SENAI</h2>
-                </div>
-
-                <div style="display: flex; flex-direction: column; gap: 10px; padding: 15px;">
-    
-                    <a href="/dashboard?nome={{nome}}&perfil={{perfil}}" style="color: white; text-decoration: none; font-size: 16px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">
-                    🏠 Dashboard
-                    </a>
-
-                    <a href="/categorias?nome={{nome}}&perfil={{perfil}}" style="color: white; text-decoration: none; font-size: 16px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">
-                    📁 Categorias
-                    </a>
-
-                    <a href="/produtos?nome={{nome}}&perfil={{perfil}}" style="color: white; text-decoration: none; font-size: 16px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: 500;">
-                    📦 Produtos
-                    </a>
-
-                    <hr style="border: 0; border-top: 1px solid rgba(255,255,255,0.1); margin: 15px 0;">
-
-                    <a href="/login" style="color: #ff8a8a; text-decoration: none; font-size: 16px; padding: 10px 12px; border-radius: 6px; display: block; font-weight: bold; border: 1px solid rgba(255,138,138,0.3); text-align: center;">
-                    🚪 Logout
-                    </a>
-                </div>
-            </aside>
-
-            <main class="main" style="flex-grow: 1; display: flex; flex-direction: column; background-color: #f4f7f6; box-sizing: border-box; min-width: 0;">
-                
-                <header class="topbar" style="background: white; padding: 15px 30px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; height: 70px; box-sizing: border-box;">
-                    <div>
-                        <h1 style="margin: 0; font-size: 20px; color: #2d3748; font-weight: bold;">
-                            {% block page %}Dashboard{% endblock %}
-                        </h1>
-                    </div>
-                    
-                    <div class="user-info" style="display: flex; align-items: center; gap: 10px;">
-                        <span style="font-weight: bold; color: #4a5568; font-size: 14px;">{{ nome if nome else 'Usuário' }}</span>
-                        <span class="badge" style="font-size: 11px; background: #e3f2fd; color: #1c49b8; padding: 4px 10px; border-radius: 20px; font-weight: bold; text-transform: uppercase; border: 1px solid #bbdefb;">
-                            {{ perfil if perfil else 'FUNCIONARIO' }}
-                        </span>
-                    </div>
-                </header>
-
-                <section class="content" style="padding: 30px; flex-grow: 1; box-sizing: border-box; overflow-y: auto;">
-                    {% block internal_content %}{% endblock %}
-                </section>
-                
-            </main>
+    <nav class="navbar" style="background-color: #0056b3; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
+        <div class="logo" style="font-weight: bold; font-size: 20px;">AAPM SENAI</div>
+        <div class="menu">
+            <a href="/" style="color: white; margin-right: 15px; text-decoration: none;">Início</a>
+            {% if usuario %}
+                <a href="/dashboard" style="color: white; margin-right: 15px; text-decoration: none;">Painel</a>
+                <span style="background: #ff7f32; padding: 5px 10px; border-radius: 4px; font-size: 14px; margin-right: 10px;">
+                    {{ usuario.nome }} ({{ usuario.role }})
+                </span>
+                <a href="/auth/logout" style="color: #ffcccc; text-decoration: none; font-weight: bold;">Sair</a>
+            {% else %}
+                <a href="/auth/login" style="color: white; background: #ff7f32; padding: 5px 15px; border-radius: 4px; text-decoration: none;">Login</a>
+            {% endif %}
         </div>
-    {% endif %}
+    </nav>
 
+    <main class="container" style="min-height: 75vh; padding: 20px;">
+        {% block conteudo %}{% endblock %}
+    </main>
+
+    <footer style="background: #333; color: white; text-align: center; padding: 15px; font-size: 14px;">
+        <p>&copy; 2026 AAPM SENAI - Equipe Front-End SSR</p>
+    </footer>
+
+    {% block js_extra %}{% endblock %}
 </body>
 </html>

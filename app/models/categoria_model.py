@@ -6,9 +6,14 @@ class Categoria(Base):
     __tablename__ = "categorias"
 
     id = Column(Integer, primary_key=True, autoincrement=True, index=True)
-    nome = Column(String(100), nullable=False, unique=True)
+    nome = Column(String(100), nullable=False, unique=True, index=True) # Adicionado index=True para busca rápida
     ativo = Column(Boolean, default=True)
 
-    #Relacionamento
-    # lazy="select" carrega os produtos apenas quando necessário
-    produtos = relationship("Produto", back_populates="categoria", lazy="select")
+    # Relacionamento com Produto
+    # O lazy="select" é o padrão, mas deixá-lo explícito ajuda na legibilidade
+    produtos = relationship(
+        "Produto", 
+        back_populates="categoria", 
+        cascade="all, delete-orphan", # Garante que se a categoria for deletada, a integridade é mantida
+        lazy="select"
+    )

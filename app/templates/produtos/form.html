@@ -1,86 +1,67 @@
-<!-- produtos/form.html -->
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>{{ "Editar" if editando else "Novo" }} Produto — AAPM SENAI</title>
-</head>
-<body>
-    <h1>{{ "Editar produto" if editando else "Novo produto" }}</h1>
+{% extends "base.html" %}
+
+{% block title %}{{ "Editar" if editando else "Novo" }} Produto | AAPM SENAI{% endblock %}
+
+{% block conteudo %}
+<div style="max-width: 600px; background: #ffffff; padding: 25px; border-radius: 8px; border: 1px solid #e2e8f0;">
+    <h2 style="margin-top: 0;">{{ "Editar Produto" if editando else "Novo Produto" }}</h2>
 
     {% if erro %}
-        <p style="color:red">{{ erro }}</p>
+        <p style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 5px; margin-bottom: 20px;">{{ erro }}</p>
     {% endif %}
 
-    <!--
-        enctype="multipart/form-data" é obrigatório para envio de arquivos.
-        Sem ele o FastAPI não consegue ler o UploadFile.
-    -->
     <form action="{{ '/produtos/' + editando.id|string + '/editar' if editando else '/produtos/novo' }}"
-          method="post"
+          method="post" 
           enctype="multipart/form-data">
 
-        <label>Nome:
-            <input type="text"
-                   name="nome"
-                   value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
-                   required>
-        </label>
-        <br>
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Nome:</label>
+            <input type="text" name="nome" value="{{ editando.nome if editando else (valores.nome if valores else '') }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+        </div>
 
-        <label>Preço (R$):
-            <input type="number"
-                   name="preco"
-                   step="0.01"
-                   min="0"
-                   value="{{ editando.preco if editando else (valores.preco if valores else '0.00') }}"
-                   required>
-        </label>
-        <br>
+        <div style="display: flex; gap: 15px; margin-bottom: 15px;">
+            <div style="flex: 1;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px;">Preço (R$):</label>
+                <input type="number" name="preco" step="0.01" min="0" value="{{ editando.preco if editando else (valores.preco if valores else '0.00') }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+            <div style="flex: 1;">
+                <label style="display: block; font-weight: bold; margin-bottom: 5px;">Estoque:</label>
+                <input type="number" name="estoque_atual" min="0" value="{{ editando.estoque_atual if editando else (valores.estoque_atual if valores else '0') }}" required style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
+            </div>
+        </div>
 
-        <label>Estoque atual:
-            <input type="number"
-                   name="estoque_atual"
-                   min="0"
-                   value="{{ editando.estoque_atual if editando else (valores.estoque_atual if valores else '0') }}"
-                   required>
-        </label>
-        <br>
-
-        <label>Categoria:
-            <select name="categoria_id">
+        <div style="margin-bottom: 15px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">Categoria:</label>
+            <select name="categoria_id" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px;">
                 <option value="0">Sem categoria</option>
                 {% for c in categorias %}
-                    <option value="{{ c.id }}"
-                        {{ 'selected' if (editando and editando.categoria_id == c.id) or (valores and valores.categoria_id == c.id) else '' }}>
+                    <option value="{{ c.id }}" {{ 'selected' if (editando and editando.categoria_id == c.id) or (valores and valores.categoria_id == c.id) else '' }}>
                         {{ c.nome }}
                     </option>
                 {% endfor %}
             </select>
-        </label>
-        <br>
+        </div>
 
-        <!-- Imagem atual na edição -->
         {% if editando and editando.imagem_path %}
-            <p>Imagem atual:</p>
-            <img src="{{ editando.imagem_url }}"
-                 alt="{{ editando.nome }}"
-                 width="100"
-                 style="object-fit:cover">
-            <br>
+            <div style="margin-bottom: 15px;">
+                <p style="font-size: 0.9em; color: #666;">Imagem atual:</p>
+                <img src="{{ url_for('static', path=editando.imagem_path) }}" width="100" style="border-radius: 4px; border: 1px solid #ddd;">
+            </div>
         {% endif %}
 
-        <label>{{ "Nova imagem (deixe vazio para manter a atual):" if editando else "Imagem:" }}
-            <input type="file"
-                   name="imagem"
-                   accept=".jpg,.jpeg,.png,.webp">
-        </label>
-        <br>
+        <div style="margin-bottom: 20px;">
+            <label style="display: block; font-weight: bold; margin-bottom: 5px;">
+                {{ "Nova imagem (deixe vazio para manter a atual):" if editando else "Imagem do produto:" }}
+            </label>
+            <input type="file" name="imagem" accept=".jpg,.jpeg,.png,.webp" style="width: 100%;">
+        </div>
 
-        <button type="submit">
-            {{ "Salvar alterações" if editando else "Criar produto" }}
-        </button>
-        <a href="/produtos">Cancelar</a>
+        <div style="display: flex; gap: 10px;">
+            <button type="submit" style="padding: 10px 20px; background: #1c49b8; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold;">
+                {{ "Salvar Alterações" if editando else "Criar Produto" }}
+            </button>
+            <a href="/produtos" style="padding: 10px 20px; background: #e2e8f0; color: #333; text-decoration: none; border-radius: 4px;">Cancelar</a>
+        </div>
     </form>
-</body>
-</html>
+</div>
+{% endblock conteudo %}

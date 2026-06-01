@@ -3,18 +3,13 @@
 # Operadores apenas visualizam (via select no form de produto).
 # ============================================================
 
-from fastapi import APIRouter, Depends, Request, Form
+from fastapi import APIRouter, Depends, Request, Form, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 
 from app.config.database import get_db
-
-# 1. CORRIGIDO: Certifique-se de que o nome abaixo bate exatamente com o arquivo .py na pasta models
-# Se o arquivo se chamar 'categoria.py', mantenha 'categoria'. Se for 'categoria_model.py', mude para 'categoria_model'.
 from app.models.categoria_model import Categoria
-
-# 2. CORRIGIDO: Apontando para o arquivo de segurança correto e usando a função correspondente
 from app.config.security import require_admin
 
 router = APIRouter(prefix="/categorias", tags=["Categorias"])
@@ -30,18 +25,16 @@ templates = Jinja2Templates(directory="app/templates")
 def listar_categorias(
     request: Request,
     db: Session = Depends(get_db),
-    admin = Depends(require_admin) # Atualizado para usar require_admin
+    admin = Depends(require_admin)
 ):
     """
     Lista todas as categorias ordenadas por nome.
-    Inclui a contagem de produtos de cada categoria
-    para dar contexto ao admin antes de desativar.
     """
     categorias = db.query(Categoria).order_by(Categoria.nome).all()
 
     return templates.TemplateResponse(
         request,
-        "categorias/index.html",
+        "categorias/index.html",  # ✅ CORRIGIDO: Apontando para index.html existente
         {
             "request":    request,
             "usuario":    admin,
@@ -57,16 +50,16 @@ def listar_categorias(
 @router.get("/nova")
 def form_nova_categoria(
     request: Request,
-    admin = Depends(require_admin) # Atualizado para usar require_admin
+    admin = Depends(require_admin)
 ):
     """Exibe o formulário de cadastro de categoria."""
     return templates.TemplateResponse(
         request,
-        "categorias/form.html",
+        "categorias/form.html",  # ✅ CORRIGIDO: Apontando para form.html existente
         {
             "request":  request,
             "usuario":  admin,
-            "editando": None,
+            "editando": None,  # Indica que é um formulário de criação
         }
     )
 
@@ -76,18 +69,17 @@ def criar_categoria(
     request: Request,
     nome: str = Form(...),
     db: Session = Depends(get_db),
-    admin = Depends(require_admin) # Atualizado para usar require_admin
+    admin = Depends(require_admin)
 ):
     """Cria uma nova categoria verificando duplicidade de nome."""
-
     existente = db.query(Categoria).filter(
-        Categoria.nome.ilike(nome)
+        Categoria.nome.ilike(nome.strip())
     ).first()
 
     if existente:
         return templates.TemplateResponse(
             request,
-            "categorias/form.html",
+            "categorias/form.html",  # ✅ CORRIGIDO: Retorna para form.html em caso de erro
             {
                 "request":  request,
                 "usuario":  admin,
@@ -98,10 +90,11 @@ def criar_categoria(
             status_code=400
         )
 
-    db.add(Categoria(nome=nome.strip()))
+    nova_cat = Categoria(nome=nome.strip())
+    db.add(nova_cat)
     db.commit()
 
-    return RedirectResponse(url="/categorias?criado=ok", status_code=302)
+    return RedirectResponse(url="/categorias?criado=ok", status_code=status.HTTP_303_SEE_OTHER)
 
 
 # ============================================================
@@ -113,7 +106,7 @@ def form_editar_categoria(
     categoria_id: int,
     request: Request,
     db: Session = Depends(get_db),
-    admin = Depends(require_admin) # Atualizado para usar require_admin
+    admin = Depends(require_admin)
 ):
     """Exibe o formulário preenchido com os dados da categoria."""
     editando = db.query(Categoria).filter(
@@ -121,15 +114,15 @@ def form_editar_categoria(
     ).first()
 
     if not editando:
-        return RedirectResponse(url="/categorias", status_code=302)
+        return RedirectResponse(url="/categorias", status_code=status.HTTP_303_SEE_OTHER)
 
     return templates.TemplateResponse(
         request,
-        "categorias/form.html",
+        "categorias/form.html",  # ✅ CORRIGIDO: Apontando para form.html existente
         {
             "request":  request,
             "usuario":  admin,
-            "editando": editando,
+            "editando": editando,  # Passa o objeto para preencher os campos
         }
     )
 
@@ -140,26 +133,25 @@ def editar_categoria(
     request: Request,
     nome: str = Form(...),
     db: Session = Depends(get_db),
-    admin = Depends(require_admin) # Atualizado para usar require_admin
+    admin = Depends(require_admin)
 ):
-    """Atualiza o nome da categoria."""
+    """Atualiza os dados da categoria."""
     editando = db.query(Categoria).filter(
         Categoria.id == categoria_id
     ).first()
 
     if not editando:
-        return RedirectResponse(url="/categorias", status_code=302)
+        return RedirectResponse(url="/categorias", status_code=status.HTTP_303_SEE_OTHER)
 
-    # Verifica conflito com outra categoria (ignora a própria)
     conflito = db.query(Categoria).filter(
-        Categoria.nome.ilike(nome),
+        Categoria.nome.ilike(nome.strip()),
         Categoria.id != categoria_id
     ).first()
 
     if conflito:
         return templates.TemplateResponse(
             request,
-            "categorias/form.html",
+            "categorias/form.html",  # ✅ CORRIGIDO: Retorna para form.html em caso de erro
             {
                 "request":  request,
                 "usuario":  admin,
@@ -172,40 +164,40 @@ def editar_categoria(
     editando.nome = nome.strip()
     db.commit()
 
-    return RedirectResponse(url="/categorias?editado=ok", status_code=302)
+    return RedirectResponse(url="/categorias?editado=ok", status_code=status.HTTP_303_SEE_OTHER)
 
 
 # ============================================================
-# TOGGLE ATIVO
+# TOGGLE ATIVO (ESTADO ATIVO/INATIVO NO BANCO)
 # ============================================================
 
 @router.post("/{categoria_id}/toggle-ativo")
 def toggle_ativo(
     categoria_id: int,
     db: Session = Depends(get_db),
-    admin = Depends(require_admin) # Atualizado para usar require_admin
+    admin = Depends(require_admin)
 ):
     """
-    Ativa ou desativa uma categoria.
+    Ativa ou desativa uma categoria de forma segura.
     """
+    # 🛠️ CORRIGIDO: Categoria.id com "C" maiúsculo para referenciar a classe do SQLAlchemy corretamente
     categoria = db.query(Categoria).filter(
-        Categoria.id == categoria_id
+        Categoria.id == categoria_id 
     ).first()
 
     if not categoria:
-        return RedirectResponse(url="/categorias", status_code=302)
+        return RedirectResponse(url="/categorias", status_code=status.HTTP_303_SEE_OTHER)
 
-    # Bloqueia desativação se houver produtos ativos vinculados
     if categoria.ativo:
         produtos_ativos = [p for p in categoria.produtos if p.ativo]
 
         if produtos_ativos:
             return RedirectResponse(
                 url=f"/categorias?erro=produtos_vinculados&categoria={categoria.nome}",
-                status_code=302
+                status_code=status.HTTP_303_SEE_OTHER
             )
 
     categoria.ativo = not categoria.ativo
     db.commit()
 
-    return RedirectResponse(url="/categorias", status_code=302)
+    return RedirectResponse(url="/categorias", status_code=status.HTTP_303_SEE_OTHER)

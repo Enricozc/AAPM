@@ -1,5 +1,3 @@
-# Tabela de produtos
-
 from sqlalchemy import Column, Integer, String, Float, Boolean, ForeignKey
 from sqlalchemy.orm import relationship
 from app.config.database import Base
@@ -13,15 +11,17 @@ class Produto(Base):
     estoque_atual = Column(Integer, nullable=False, default=0)
     ativo = Column(Boolean, default=True)
 
+    # Caminho do arquivo salvo no servidor
     imagem_path = Column(String(255), nullable=True)
 
+    # Relacionamento com Categoria
     categoria_id = Column(Integer, ForeignKey("categorias.id", ondelete="SET NULL"), nullable=True)
-
     categoria = relationship("Categoria", back_populates="produtos")
 
     @property
     def imagem_url(self):
+        """Retorna o caminho completo para o template ou o placeholder padrão."""
         if self.imagem_path:
+            # Garante que o caminho seja tratado como um arquivo estático
             return f"/static/{self.imagem_path}"
-        else:
-            return "/static/img/produto-placeholder.png"
+        return "/static/img/produto-placeholder.png"

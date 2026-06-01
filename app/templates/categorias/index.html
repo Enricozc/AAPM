@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+
+{% block title %}Categorias | AAPM SENAI{% endblock %}
+{% block page %}Gerenciamento de Categorias{% endblock %}
+
+{% block internal_content %}
+{% if request.query_params.get('erro') == 'produtos_vinculados' %}
+    <div style="background: #f8d7da; color: #721c24; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-weight: 600;">
+        ⚠️ Não é possível desativar a categoria "{{ request.query_params.get('categoria') }}" pois ela possui produtos ativos vinculados!
+    </div>
+{% endif %}
+{% if request.query_params.get('criado') == 'ok' %}
+    <div style="background: #d4edda; color: #155724; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-weight: 600;">
+        ✅ Categoria cadastrada com sucesso!
+    </div>
+{% endif %}
+{% if request.query_params.get('editado') == 'ok' %}
+    <div style="background: #d4edda; color: #155724; padding: 12px; border-radius: 6px; margin-bottom: 15px; font-weight: 600;">
+        ✅ Alterações salvas com sucesso!
+    </div>
+{% endif %}
+
+<div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+        <h3 style="margin: 0; color: #333;">Lista de Categorias</h3>
+        <a href="/categorias/nova" style="background: #1c49b8; color: white; text-decoration: none; padding: 10px 18px; border-radius: 6px; font-weight: 600; font-size: 14px;">
+            ➕ Nova Categoria
+        </a>
+    </div>
+
+    <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
+        <thead>
+            <tr style="background: #f8fafc; border-bottom: 2px solid #e2e8f0; color: #666;">
+                <th style="padding: 12px; width: 80px;">ID</th>
+                <th style="padding: 12px;">Nome</th>
+                <th style="padding: 12px; width: 120px;">Status</th>
+                <th style="padding: 12px; text-align: center; width: 200px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for cat in categorias %}
+            <tr style="border-bottom: 1px solid #f0f0f0; color: #444; opacity: {{ '1' if cat.ativo else '0.5' }};">
+                <td style="padding: 12px; font-weight: bold;">#{{ cat.id }}</td>
+                <td style="padding: 12px; font-weight: 600; color: #1c49b8;">{{ cat.nome }}</td>
+                <td style="padding: 12px;">
+                    {% if cat.ativo %}
+                        <span style="background: #e6f4ea; color: #137333; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">Ativo</span>
+                    {% else %}
+                        <span style="background: #fce8e6; color: #c5221f; padding: 4px 8px; border-radius: 4px; font-weight: 600; font-size: 12px;">Inativo</span>
+                    {% endif %}
+                </td>
+                <td style="padding: 12px; display: flex; gap: 8px; justify-content: center; align-items: center;">
+                    <a href="/categorias/{{ cat.id }}/editar" style="background: #f26522; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600;">Editar</a>
+                    
+                    <form action="/categorias/{{ cat.id }}/toggle-ativo" method="POST" style="margin: 0;">
+                        {% if cat.ativo %}
+                            <button type="submit" style="background: #ef4444; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Desativar</button>
+                        {% else %}
+                            <button type="submit" style="background: #10b981; color: white; border: none; padding: 6px 12px; border-radius: 4px; font-size: 12px; font-weight: 600; cursor: pointer;">Ativar</button>
+                        {% endif %}
+                    </form>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="4" style="padding: 20px; text-align: center; color: #aaa;">Nenhuma categoria cadastrada.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

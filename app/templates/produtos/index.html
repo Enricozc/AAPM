@@ -1,96 +1,77 @@
-<!-- produtos/index.html -->
-<!DOCTYPE html>
-<html lang="pt-br">
-<head>
-    <meta charset="UTF-8">
-    <title>Produtos — AAPM SENAI</title>
-</head>
-<body>
-    <h1>Produtos</h1>
+{% extends "base.html" %}
 
-    {% if request.query_params.get('criado') == 'ok' %}
-        <p style="color:green">Produto criado com sucesso!</p>
+{% block title %}Produtos | AAPM SENAI{% endblock %}
+
+{% block conteudo %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <h2>Gerenciamento de Produtos</h2>
+    {% if usuario.role == 'ADMIN' %}
+        <a href="/produtos/novo" style="background: #1c49b8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: 600;">+ Novo Produto</a>
     {% endif %}
-    {% if request.query_params.get('desativado') == 'ok' %}
-        <p style="color:green">Produto desativado.</p>
-    {% endif %}
+</div>
 
-    <!-- Filtros -->
-    <form method="get" action="/produtos">
-        <input  type="text"
-                name="busca"
-                placeholder="Buscar por nome..."
-                value="{{ busca }}">
+{% if request.query_params.get('criado') == 'ok' %}
+    <p style="color: #155724; background: #d4edda; padding: 10px; border-radius: 5px;">Produto cadastrado com sucesso!</p>
+{% endif %}
+{% if request.query_params.get('desativado') == 'ok' %}
+    <p style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 5px;">Produto desativado.</p>
+{% endif %}
 
-        <select name="categoria_id">
-            <option value="0">Todas as categorias</option>
+<div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
+    <form method="get" action="/produtos" style="display: flex; gap: 10px;">
+        <input type="text" name="busca" placeholder="Buscar produto..." value="{{ busca }}" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; flex-grow: 1;">
+        
+        <select name="categoria_id" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+            <option value="0">Todas as Categorias</option>
             {% for c in categorias %}
-                <option value="{{ c.id }}"
-                    {{ 'selected' if categoria_id == c.id else '' }}>
-                    {{ c.nome }}
-                </option>
+                <option value="{{ c.id }}" {{ 'selected' if categoria_id|int == c.id|int else '' }}>{{ c.nome }}</option>
             {% endfor %}
         </select>
-
-        <button type="submit">Filtrar</button>
-
-        {% if busca or categoria_id %}
-            <a href="/produtos">Limpar</a>
+        
+        <button type="submit" style="padding: 8px 15px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer;">Filtrar</button>
+        {% if busca or categoria_id|int > 0 %}
+            <a href="/produtos" style="padding: 8px 15px; background: #eee; color: #333; text-decoration: none; border-radius: 4px;">Limpar</a>
         {% endif %}
     </form>
+</div>
 
-    {% if usuario.role == 'admin' %}
-        <a href="/produtos/novo">+ Novo produto</a>
-    {% endif %}
+<table style="width: 100%; border-collapse: collapse; background: white;">
+    <thead>
+        <tr style="background: #f1f5f9; text-align: left;">
+            <th style="padding: 12px;">Imagem</th>
+            <th style="padding: 12px;">Nome</th>
+            <th style="padding: 12px;">Categoria</th>
+            <th style="padding: 12px;">Preço</th>
+            <th style="padding: 12px;">Estoque</th>
+            <th style="padding: 12px;">Ações</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in produtos %}
+        <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 10px;">
+                <img src="{{ p.imagem_url }}" width="50" height="50" style="object-fit: cover; border-radius: 4px;">
+            </td>
+            <td style="padding: 10px;"><a href="/produtos/{{ p.id }}" style="color: #1c49b8; text-decoration: none; font-weight: 600;">{{ p.nome }}</a></td>
+            <td style="padding: 10px;">{{ p.categoria.nome if p.categoria else "—" }}</td>
+            <td style="padding: 10px;">R$ {{ "%.2f"|format(p.preco) }}</td>
+            <td style="padding: 10px;">{{ p.estoque_atual }}</td>
+            <td style="padding: 10px;">
+                {% if usuario.role == 'ADMIN' %}
+                    <a href="/produtos/{{ p.id }}/editar" style="margin-right: 10px; color: #f59e0b;">Editar</a>
+                    <form action="/produtos/{{ p.id }}/desativar" method="post" style="display:inline" onsubmit="return confirm('Desativar {{ p.nome }}?')">
+                        <button type="submit" style="color: #ef4444; border: none; background: none; cursor: pointer;">Desativar</button>
+                    </form>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="6" style="padding: 20px; text-align: center; color: #888;">Nenhum produto encontrado.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
-    <table border="1" cellpadding="8">
-        <thead>
-            <tr>
-                <th>Imagem</th>
-                <th>Nome</th>
-                <th>Categoria</th>
-                <th>Preço</th>
-                <th>Estoque</th>
-                <th>Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for p in produtos %}
-            <tr>
-                <td>
-                    <img src="{{ p.imagem_url }}"
-                         alt="{{ p.nome }}"
-                         width="50" height="50"
-                         style="object-fit:cover">
-                </td>
-                <td><a href="/produtos/{{ p.id }}">{{ p.nome }}</a></td>
-                <td>{{ p.categoria.nome if p.categoria else "—" }}</td>
-                <td>R$ {{ "%.2f"|format(p.preco) }}</td>
-                <td>{{ p.estoque_atual }}</td>
-                <td>
-                    {% if usuario.role == 'admin' %}
-                        <a href="/produtos/{{ p.id }}/editar">Editar</a>
-                        <form action="/produtos/{{ p.id }}/desativar"
-                              method="post"
-                              style="display:inline"
-                              onsubmit="return confirm('Desativar {{ p.nome }}?')">
-                            <button type="submit">Desativar</button>
-                        </form>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-
-            {% if not produtos %}
-            <tr>
-                <td colspan="6" style="text-align:center">
-                    Nenhum produto encontrado.
-                </td>
-            </tr>
-            {% endif %}
-        </tbody>
-    </table>
-
-    <p><a href="/">← Dashboard</a></p>
-</body>
-</html>
+{% endblock conteudo %}

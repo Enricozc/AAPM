@@ -13,8 +13,16 @@
         <div class="logo" style="font-weight: bold; font-size: 20px;">AAPM SENAI</div>
         <div class="menu">
             <a href="/" style="color: white; margin-right: 15px; text-decoration: none;">Início</a>
+            
             {% if usuario %}
                 <a href="/dashboard" style="color: white; margin-right: 15px; text-decoration: none;">Painel</a>
+                
+                {% if usuario.role == 'ADMIN' %}
+                    <a href="/categorias" style="color: white; margin-right: 15px; text-decoration: none; font-weight: 600;">Categorias</a>
+                {% endif %}
+                
+                <a href="/produtos" style="color: white; margin-right: 15px; text-decoration: none;">Produtos</a>
+
                 <span style="background: #ff7f32; padding: 5px 10px; border-radius: 4px; font-size: 14px; margin-right: 10px;">
                     {{ usuario.nome }} ({{ usuario.role }})
                 </span>
@@ -27,6 +35,7 @@
 
     <main class="container" style="min-height: 75vh; padding: 20px;">
         {% block conteudo %}{% endblock %}
+        {% block internal_content %}{% endblock %}
     </main>
 
     <footer style="background: #333; color: white; text-align: center; padding: 15px; font-size: 14px;">

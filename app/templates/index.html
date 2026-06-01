@@ -6,72 +6,75 @@ Início - AAPM SENAI
 
 {% block conteudo %}
 
-<div class="text-center mb-12">
-    <h1 class="text-5xl font-extrabold text-[#0052cc]">
-        AAPM SENAI
-    </h1>
+<div class="w-full flex flex-col justify-content min-height py-20 px-4">
 
-    <p class="text-gray-500 text-lg mt-4 mb-8">
-        Promovendo a integração e assistência na comunidade escolar.
-    </p>
-
-    <a href="/auth/login"
-       class="bg-[#0052cc] hover:bg-blue-700 text-white font-semibold px-8 py-3 rounded-lg shadow-md transition">
-        Acessar Área Restrita
-    </a>
-</div>
-
-<!-- CARDS APENAS NA PÁGINA INICIAL -->
-<section class="w-full max-w-5xl mx-auto bg-white p-8 rounded-2xl shadow-sm border border-gray-100/80">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:divide-x md:divide-gray-100">
-
-        <div class="flex flex-col items-center p-2">
-            <div class="text-[#0052cc] text-2xl bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                <i class="fa-solid fa-users"></i>
-            </div>
-            <span class="text-3xl font-extrabold text-[#0052cc]">567</span>
-            <span class="text-xs font-bold text-gray-400 uppercase mt-1">
-                Membros ativos
-            </span>
-        </div>
-
-        <div class="flex flex-col items-center p-2">
-            <div class="text-orange-500 text-2xl bg-orange-50 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                <i class="fa-solid fa-chart-line"></i>
-            </div>
-            <span class="text-3xl font-extrabold text-orange-500">
-                R$ 45k
-            </span>
-            <span class="text-xs font-bold text-gray-400 uppercase mt-1">
-                Arrecadado em 2026
-            </span>
-        </div>
-
-        <div class="flex flex-col items-center p-2">
-            <div class="text-[#0052cc] text-2xl bg-blue-50 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                <i class="fa-solid fa-lock"></i>
-            </div>
-            <span class="text-3xl font-extrabold text-[#0052cc]">
-                80
-            </span>
-            <span class="text-xs font-bold text-gray-400 uppercase mt-1">
-                Armários Livres
-            </span>
-        </div>
-
-        <div class="flex flex-col items-center p-2">
-            <div class="text-orange-500 text-2xl bg-orange-50 w-12 h-12 rounded-full flex items-center justify-center mb-3">
-                <i class="fa-regular fa-star"></i>
-            </div>
-            <span class="text-3xl font-extrabold text-orange-500">
-                98%
-            </span>
-            <span class="text-xs font-bold text-gray-400 uppercase mt-1">
-                Satisfação
-            </span>
-        </div>
-
+    <div class="text-center mb-20 animate-fade-in">
+        <h1 class="text-6xl font-black tracking-tight text-[#0052cc] md:text-7xl">
+            AAPM SENAI
+        </h1>
+    
+        <p class="text-gray-500 text-xl md:text-2xl mt-6 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Promovendo a integração e assistência na comunidade escolar.
+        </p>
+    
+        <a href="/auth/login"
+           class="inline-block bg-[#0052cc] hover:bg-blue-700 text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
+            Acessar Área Restrita
+        </a>
     </div>
-</section>
+    
+    <section class="w-full max-w-6xl mx-auto bg-white p-12 rounded-3xl shadow-xl shadow-gray-100/70 border border-gray-100">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 md:divide-x-2 md:divide-gray-100">
+    
+            <div class="flex flex-col items-center p-4 transform hover:scale-105 transition duration-200">
+                <div class="text-[#0052cc] text-3xl bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
+                    <i class="fa-solid fa-users"></i>
+                </div>
+                <span class="text-4xl md:text-5xl font-black tracking-tight text-[#0052cc]">567</span>
+                <span class="text-xs md:text-sm font-extrabold text-gray-400 uppercase mt-2 tracking-wider text-center">
+                    Membros ativos
+                </span>
+            </div>
+    
+            <div class="flex flex-col items-center p-4 transform hover:scale-105 transition duration-200">
+                <div class="text-orange-500 text-3xl bg-orange-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <span class="text-4xl md:text-5xl font-black tracking-tight text-orange-500">
+                    R$ 45k
+                </span>
+                <span class="text-xs md:text-sm font-extrabold text-gray-400 uppercase mt-2 tracking-wider text-center">
+                    Arrecadado em 2026
+                </span>
+            </div>
+    
+            <div class="flex flex-col items-center p-4 transform hover:scale-105 transition duration-200">
+                <div class="text-[#0052cc] text-3xl bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
+                    <i class="fa-solid fa-lock"></i>
+                </div>
+                <span class="text-4xl md:text-5xl font-black tracking-tight text-[#0052cc]">
+                    80
+                </span>
+                <span class="text-xs md:text-sm font-extrabold text-gray-400 uppercase mt-2 tracking-wider text-center">
+                    Armários Livres
+                </span>
+            </div>
+    
+            <div class="flex flex-col items-center p-4 transform hover:scale-105 transition duration-200">
+                <div class="text-orange-500 text-3xl bg-orange-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
+                    <i class="fa-regular fa-star"></i>
+                </div>
+                <span class="text-4xl md:text-5xl font-black tracking-tight text-orange-500">
+                    98%
+                </span>
+                <span class="text-xs md:text-sm font-extrabold text-gray-400 uppercase mt-2 tracking-wider text-center">
+                    Satisfação
+                </span>
+            </div>
+    
+        </div>
+    </section>
+
+</div>
 
 {% endblock %}

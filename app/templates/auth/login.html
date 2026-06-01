@@ -1,33 +1,80 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login - AAPM SENAI</title>
 
-{% block titulo %}Login - AAPM SENAI{% endblock %}
+    <script src="https://cdn.tailwindcss.com"></script>
 
-{% block conteudo %}
-<div style="max-width: 400px; margin: 60px auto; padding: 30px; background: white; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); border-top: 5px solid #0056b3;">
-    <h2 style="text-align: center; color: #333; margin-bottom: 25px;">Área de Acesso</h2>
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col">
 
-    {% if erro %}
-        <div style="background: #ffe6e6; color: #cc0000; padding: 10px; border-radius: 4px; margin-bottom: 15px; font-size: 14px;">
-            ⚠️ {{ erro }}
-        </div>
-    {% endif %}
-
-    <form action="/auth/login" method="POST">
-        <div style="margin-bottom: 15px;">
-            <label for="email" style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">E-mail</label>
-            <input type="email" id="email" name="email" placeholder="usuario@senai.com.br" required 
-                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
-        </div>
-
-        <div style="margin-bottom: 20px;">
-            <label for="senha" style="display: block; margin-bottom: 5px; font-weight: bold; color: #555;">Senha</label>
-            <input type="password" id="senha" name="senha" placeholder="••••••••" required 
-                   style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; box-sizing: border-box;">
+    <nav class="w-full bg-[#0052cc] text-white px-6 md:px-12 py-4 flex justify-between items-center">
+        <div class="text-lg font-bold">
+            AAPM SENAI
         </div>
 
-        <button type="submit" style="width: 100%; background: #0056b3; color: white; padding: 12px; border: none; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer;">
-            Entrar
-        </button>
-    </form>
-</div>
-{% endblock %}
+        <div>
+            <a href="/"
+               class="hover:text-gray-200">
+                Início
+            </a>
+        </div>
+    </nav>
+
+    <main class="flex-1 flex items-center justify-center">
+
+        <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-lg border-t-4 border-[#0052cc]">
+
+            <h2 class="text-center text-3xl mb-8">
+                Área de Acesso
+            </h2>
+
+            <form action="/auth/login" method="post">
+
+                <div class="mb-4">
+                    <label class="block font-semibold mb-2">
+                        E-mail
+                    </label>
+
+                    <input
+                        type="email"
+                        name="email"
+                        placeholder="usuario@senai.com.br"
+                        class="w-full border rounded p-3"
+                        required>
+                </div>
+
+                <div class="mb-6">
+                    <label class="block font-semibold mb-2">
+                        Senha
+                    </label>
+
+                    <input
+                        type="password"
+                        name="senha"
+                        placeholder="********"
+                        class="w-full border rounded p-3"
+                        required>
+                </div>
+
+                <button
+                    type="submit"
+                    class="w-full bg-[#0052cc] hover:bg-blue-700 text-white py-3 rounded font-bold">
+                    Entrar
+                </button>
+
+            </form>
+
+        </div>
+
+    </main>
+
+</body>
+</html>

@@ -1,47 +1,79 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-br" class="h-full">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% block titulo %}AAPM SENAI{% endblock %}</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
+
     {% block css_extra %}{% endblock %}
+
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+    </style>
 </head>
-<body>
 
-    <nav class="navbar" style="background-color: #0056b3; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center;">
-        <div class="logo" style="font-weight: bold; font-size: 20px;">AAPM SENAI</div>
-        <div class="menu">
-            <a href="/" style="color: white; margin-right: 15px; text-decoration: none;">Início</a>
-            
+<body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
+
+    <nav class="w-full bg-[#0052cc] text-white px-6 md:px-12 py-4 flex justify-between items-center shadow-sm">
+        <div class="text-lg font-bold tracking-wide">
+            AAPM SENAI
+        </div>
+
+        <div class="flex items-center space-x-6 text-sm font-medium">
+            <a href="/" class="hover:text-gray-200 transition">
+                Início
+            </a>
+
             {% if usuario %}
-                <a href="/dashboard" style="color: white; margin-right: 15px; text-decoration: none;">Painel</a>
-                
-                {% if usuario.role == 'ADMIN' %}
-                    <a href="/categorias" style="color: white; margin-right: 15px; text-decoration: none; font-weight: 600;">Categorias</a>
-                {% endif %}
-                
-                <a href="/produtos" style="color: white; margin-right: 15px; text-decoration: none;">Produtos</a>
+                <a href="/dashboard" class="hover:text-gray-200 transition">
+                    Painel
+                </a>
 
-                <span style="background: #ff7f32; padding: 5px 10px; border-radius: 4px; font-size: 14px; margin-right: 10px;">
-                    {{ usuario.nome }} ({{ usuario.role }})
+                {% if usuario.role == 'ADMIN' %}
+                    <a href="/categorias" class="text-orange-400 hover:text-orange-300 font-semibold transition">
+                        Categorias
+                    </a>
+                {% endif %}
+
+                <a href="/produtos" class="hover:text-gray-200 transition">
+                    Produtos
+                </a>
+
+                <span class="bg-white/10 border border-white/20 px-3 py-1 rounded-md text-xs font-semibold">
+                    {{ usuario.nome }}
                 </span>
-                <a href="/auth/logout" style="color: #ffcccc; text-decoration: none; font-weight: bold;">Sair</a>
+
+                <a href="/auth/logout" class="text-red-300 hover:text-red-400 font-bold transition">
+                    Sair
+                </a>
             {% else %}
-                <a href="/auth/login" style="color: white; background: #ff7f32; padding: 5px 15px; border-radius: 4px; text-decoration: none;">Login</a>
+                <a href="/auth/login"
+                   class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-1.5 rounded font-semibold shadow-md transition">
+                    Login
+                </a>
             {% endif %}
         </div>
     </nav>
 
-    <main class="container" style="min-height: 75vh; padding: 20px;">
-        {% block conteudo %}{% endblock %}
-        {% block internal_content %}{% endblock %}
+    <main class="flex-grow px-4 pt-2 pb-4">
+        <div class="w-full max-w-7xl mx-auto">
+            {% block conteudo %}{% endblock %}
+            {% block internal_content %}{% endblock %}
+        </div>
     </main>
 
-    <footer style="background: #333; color: white; text-align: center; padding: 15px; font-size: 14px;">
+    <footer class="bg-[#2d2d2d] text-gray-400 text-center py-4 text-xs tracking-wide border-t border-gray-800">
         <p>&copy; 2026 AAPM SENAI - Equipe Front-End SSR</p>
     </footer>
 
     {% block js_extra %}{% endblock %}
+
 </body>
 </html>

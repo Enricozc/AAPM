@@ -20,6 +20,11 @@ def verify_password(
     plain_password: str,
     hashed_password: str
 ):
+    print("=" * 50)
+    print("SENHA RECEBIDA:", plain_password)
+    print("TIPO:", type(plain_password))
+    print("TAMANHO:", len(str(plain_password)))
+
     return pwd_context.verify(
         plain_password,
         hashed_password

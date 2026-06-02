@@ -10,6 +10,7 @@ from app.controllers.auth_controller import router as auth_router
 from app.controllers.admin_controller import router as admin_router
 from app.controllers.categoria_controller import router as categoria_router
 from app.controllers.produto_controller import router as produto_router
+from app.controllers.usuario_controller import router as usuario_router
 from app.config.security import get_usuario_opcional
 
 # Cria as tabelas automaticamente
@@ -29,6 +30,7 @@ app.include_router(auth_router)
 app.include_router(admin_router)
 app.include_router(categoria_router)
 app.include_router(produto_router)
+app.include_router(usuario_router)
 
 @app.get("/")
 def tela_home(request: Request, usuario=Depends(get_usuario_opcional)):

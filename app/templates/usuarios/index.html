@@ -1,75 +1,100 @@
 {% extends "base.html" %}
 
-{% block title %}
-Usuários
-{% endblock %}
+{% block title %}Usuários | AAPM SENAI{% endblock %}
+{% block page %}Controle de Usuários{% endblock %}
 
-{% block page %}
-Usuários
-{% endblock %}
+{% block conteudo %}
 
-{% block content %}
+{% if request.query_params.get('sucesso') == 'criado' %}
+<div style="background:#d4edda;color:#155724;padding:14px 18px;border-radius:8px;border:1px solid #c3e6cb;margin-bottom:20px;font-weight:600;font-family:sans-serif;">
+    ✅ Usuário criado com sucesso!
+</div>
+{% elif request.query_params.get('sucesso') == 'editado' %}
+<div style="background:#d4edda;color:#155724;padding:14px 18px;border-radius:8px;border:1px solid #c3e6cb;margin-bottom:20px;font-weight:600;font-family:sans-serif;">
+    ✅ Usuário atualizado com sucesso!
+</div>
+{% elif request.query_params.get('sucesso') == 'deletado' %}
+<div style="background:#fff3cd;color:#856404;padding:14px 18px;border-radius:8px;border:1px solid #ffeeba;margin-bottom:20px;font-weight:600;font-family:sans-serif;">
+    🗑️ Usuário removido do sistema.
+</div>
+{% endif %}
 
-<div class="top-actions">
-
-    <a href="/usuarios/novo" class="btn">
-
-        + Novo Usuário
-
+<!-- Cabeçalho -->
+<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;">
+    <div>
+        <h2 style="margin:0;font-size:20px;color:#1e293b;">Usuários Cadastrados</h2>
+        <span style="font-size:13px;color:#94a3b8;">Total: {{ usuarios|length }} usuário(s)</span>
+    </div>
+    <a href="/usuarios/novo"
+       style="background:#1c49b8;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;">
+        ➕ Novo Usuário
     </a>
-
 </div>
 
-<div class="tabela-box">
-
-    <table>
-
-        <tr>
-
-            <th>Nome</th>
-
-            <th>Email</th>
-
-            <th>Perfil</th>
-
-            <th>Status</th>
-
-        </tr>
-
-        {% for usuario in usuarios %}
-
-        <tr>
-
-            <td>{{ usuario.nome }}</td>
-
-            <td>{{ usuario.email }}</td>
-
-            <td>{{ usuario.role }}</td>
-
-            <td>
-
-                {% if usuario.ativo %}
-
-                <span class="ativo">
-                    Ativo
-                </span>
-
-                {% else %}
-
-                <span class="desativado">
-                    Desativado
-                </span>
-
-                {% endif %}
-
-            </td>
-
-        </tr>
-
-        {% endfor %}
-
+<!-- Tabela -->
+<div style="background:white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;">
+    <table style="width:100%;border-collapse:collapse;font-size:14px;">
+        <thead>
+            <tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;">
+                <th style="padding:14px 18px;text-align:left;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">ID</th>
+                <th style="padding:14px 18px;text-align:left;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Nome</th>
+                <th style="padding:14px 18px;text-align:left;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">E-mail</th>
+                <th style="padding:14px 18px;text-align:center;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Perfil</th>
+                <th style="padding:14px 18px;text-align:center;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Status</th>
+                <th style="padding:14px 18px;text-align:center;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for u in usuarios %}
+            <tr style="border-bottom:1px solid #f1f5f9;transition:background .15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
+                <td style="padding:14px 18px;color:#94a3b8;font-weight:600;">#{{ u.id }}</td>
+                <td style="padding:14px 18px;color:#1e293b;font-weight:600;">{{ u.nome }}</td>
+                <td style="padding:14px 18px;color:#475569;">{{ u.email }}</td>
+                <td style="padding:14px 18px;text-align:center;">
+                    <span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;
+                        {% if u.role == 'ADMIN' %}background:#fee2e2;color:#dc2626;
+                        {% else %}background:#e0f2fe;color:#0369a1;{% endif %}">
+                        {% if u.role == 'ADMIN' %}🛡️ ADMIN{% else %}👤 OPERADOR{% endif %}
+                    </span>
+                </td>
+                <td style="padding:14px 18px;text-align:center;">
+                    {% if u.ativo %}
+                    <span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;">● Ativo</span>
+                    {% else %}
+                    <span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:#f1f5f9;color:#94a3b8;">● Inativo</span>
+                    {% endif %}
+                </td>
+                <td style="padding:14px 18px;text-align:center;">
+                    <div style="display:inline-flex;gap:8px;align-items:center;">
+                        <a href="/usuarios/{{ u.id }}/editar"
+                           style="background:#e0f2fe;color:#0369a1;padding:6px 12px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:600;">
+                            ✏️ Editar
+                        </a>
+                        <form method="post" action="/usuarios/{{ u.id }}/deletar"
+                              onsubmit="return confirm('Tem certeza que deseja remover {{ u.nome }}?');"
+                              style="margin:0;">
+                            <button type="submit"
+                                    style="background:#fee2e2;color:#dc2626;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">
+                                🗑️ Remover
+                            </button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="padding:40px;text-align:center;color:#94a3b8;font-size:14px;">
+                    Nenhum usuário cadastrado ainda.
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
     </table>
-
 </div>
 
-{% endblock %}
+<!-- Voltar -->
+<div style="margin-top:20px;">
+    <a href="/" style="color:#64748b;text-decoration:none;font-size:13px;font-weight:500;">← Voltar ao Dashboard</a>
+</div>
+
+{% endblock conteudo %}

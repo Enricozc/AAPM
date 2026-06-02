@@ -1,49 +1,157 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Depends, Request, Form, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 
-router = APIRouter()
+from app.config.database import get_db
+from app.models.user_model import Usuario
+from app.config.security import hash_password, require_admin
+
+router = APIRouter(prefix="/usuarios", tags=["Usuários"])
+
 templates = Jinja2Templates(directory="app/templates")
 
-# 1. ROTA QUE EXIBE A TELA (O que você já tinha, agora com mensagem de erro na URL)
-@router.get("/usuarios")
-async def listar_usuarios(request: Request, nome: str = "Eduardo", perfil: str = "ADMIN"):
-    # REQUISITO: Usuários comuns não devem acessar a funcionalidade
-    if perfil != "ADMIN":
-        # REQUISITO: Redirecionamento com mensagem de erro explicativa
-        return RedirectResponse(
-            url=f"/dashboard?nome={nome}&perfil={perfil}&erro=Acesso+Negado!+Apenas+Administradores+podem+cadastrar+usuarios.", 
-            status_code=303
-        )
-        
+
+# ── LISTAR ──────────────────────────────────────────────────
+@router.get("/")
+def listar_usuarios(
+    request: Request,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    usuarios = db.query(Usuario).order_by(Usuario.id).all()
     return templates.TemplateResponse(
-        "users.html", 
-        {
-            "request": request, 
-            "nome": nome, 
-            "perfil": perfil
-        }
+        request,
+        "usuarios/index.html",
+        {"request": request, "usuarios": usuarios, "usuario": admin}
     )
 
-# 2. A ROTA QUE FALTA: RECEBE E SALVA O CADASTRO COM TRAVA DE SEGURANÇA
-@router.post("/usuarios/criar")
-async def criar_usuario(
-    nome_novo: str = Form(...),
-    email_novo: str = Form(...),
-    role_nova: str = Form(...),
-    status_novo: str = Form(...),
-    admin_nome: str = Form(...),   # Nome de quem está logado operando o sistema
-    admin_perfil: str = Form(...) # Perfil de quem está logado operando o sistema
+
+# ── FORM CRIAR ──────────────────────────────────────────────
+@router.get("/novo")
+def form_criar(
+    request: Request,
+    admin=Depends(require_admin)
 ):
-    # REQUISITO: Garantir segurança total no back-end bloqueando invasões por fora do sistema
-    if admin_perfil != "ADMIN":
-        return RedirectResponse(
-            url=f"/dashboard?nome={admin_nome}&perfil={admin_perfil}&erro=Operacao+bloqueada+por+seguranca.", 
-            status_code=303
+    return templates.TemplateResponse(
+        request,
+        "usuarios/form.html",
+        {"request": request, "usuario": admin, "editando": None}
+    )
+
+
+# ── CRIAR ────────────────────────────────────────────────────
+@router.post("/novo")
+def criar_usuario(
+    request: Request,
+    nome: str = Form(...),
+    email: str = Form(...),
+    senha: str = Form(...),
+    role: str = Form("operador"),
+    ativo: bool = Form(True),
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    existente = db.query(Usuario).filter_by(email=email).first()
+    if existente:
+        return templates.TemplateResponse(
+            request,
+            "usuarios/form.html",
+            {
+                "request": request,
+                "usuario": admin,
+                "editando": None,
+                "erro": "Este e-mail já está cadastrado."
+            }
         )
-        
-    # [O seu Banco de Dados vai salvar as variáveis aqui futuramente]
-    print(f"Usuário criado com sucesso: {nome_novo} ({role_nova})")
-    
-    # Após salvar, retorna para a página de usuários mantendo o Admin logado
-    return RedirectResponse(url=f"/usuarios?nome={admin_nome}&perfil={admin_perfil}", status_code=303)
+
+    novo = Usuario(
+        nome=nome,
+        email=email,
+        hashed_password=hash_password(senha),
+        role=role.upper(),
+        ativo=ativo
+    )
+    db.add(novo)
+    db.commit()
+    return RedirectResponse(url="/usuarios/?sucesso=criado", status_code=302)
+
+
+# ── FORM EDITAR ──────────────────────────────────────────────
+@router.get("/{usuario_id}/editar")
+def form_editar(
+    usuario_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    editando = db.query(Usuario).filter_by(id=usuario_id).first()
+    if not editando:
+        return RedirectResponse(url="/usuarios/", status_code=302)
+
+    return templates.TemplateResponse(
+        request,
+        "usuarios/form.html",
+        {"request": request, "usuario": admin, "editando": editando}
+    )
+
+
+# ── EDITAR ───────────────────────────────────────────────────
+@router.post("/{usuario_id}/editar")
+def editar_usuario(
+    usuario_id: int,
+    request: Request,
+    nome: str = Form(...),
+    email: str = Form(...),
+    senha: str = Form(""),
+    role: str = Form("operador"),
+    ativo: bool = Form(False),
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    editando = db.query(Usuario).filter_by(id=usuario_id).first()
+    if not editando:
+        return RedirectResponse(url="/usuarios/", status_code=302)
+
+    # Verifica se o novo email já pertence a outro usuário
+    conflito = db.query(Usuario).filter(
+        Usuario.email == email,
+        Usuario.id != usuario_id
+    ).first()
+    if conflito:
+        return templates.TemplateResponse(
+            request,
+            "usuarios/form.html",
+            {
+                "request": request,
+                "usuario": admin,
+                "editando": editando,
+                "erro": "Este e-mail já está em uso por outro usuário."
+            }
+        )
+
+    editando.nome = nome
+    editando.email = email
+    editando.role = role.upper()
+    editando.ativo = ativo
+
+    if senha.strip():
+        editando.hashed_password = hash_password(senha)
+
+    db.commit()
+    return RedirectResponse(url="/usuarios/?sucesso=editado", status_code=302)
+
+
+# ── DELETAR ──────────────────────────────────────────────────
+@router.post("/{usuario_id}/deletar")
+def deletar_usuario(
+    usuario_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    usuario = db.query(Usuario).filter_by(id=usuario_id).first()
+    if usuario:
+        db.delete(usuario)
+        db.commit()
+    return RedirectResponse(url="/usuarios/?sucesso=deletado", status_code=302)

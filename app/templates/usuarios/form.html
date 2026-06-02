@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}{% if editando %}Editar Usuário{% else %}Novo Usuário{% endif %} | AAPM SENAI{% endblock %}
+{% block page %}{% if editando %}Editar Usuário{% else %}Novo Usuário{% endif %}{% endblock %}
+
+{% block conteudo %}
+
+<div style="max-width:560px;margin:0 auto;">
+
+    <!-- Cabeçalho -->
+    <div style="margin-bottom:24px;">
+        <a href="/usuarios/" style="color:#64748b;text-decoration:none;font-size:13px;font-weight:500;">← Voltar à listagem</a>
+        <h2 style="margin:10px 0 4px 0;font-size:20px;color:#1e293b;">
+            {% if editando %}Editar: {{ editando.nome }}{% else %}Cadastrar Novo Usuário{% endif %}
+        </h2>
+        <p style="margin:0;font-size:13px;color:#94a3b8;">
+            {% if editando %}Altere os campos desejados. Deixe a senha em branco para não alterá-la.
+            {% else %}Preencha os dados para criar o acesso ao sistema.{% endif %}
+        </p>
+    </div>
+
+    <!-- Erro -->
+    {% if erro %}
+    <div style="background:#fee2e2;color:#dc2626;padding:14px 18px;border-radius:8px;border:1px solid #fecaca;margin-bottom:20px;font-weight:600;font-size:14px;">
+        ⚠️ {{ erro }}
+    </div>
+    {% endif %}
+
+    <!-- Card do formulário -->
+    <div style="background:white;border-radius:14px;box-shadow:0 4px 16px rgba(0,0,0,0.06);padding:32px;">
+
+        <form method="post"
+              action="{% if editando %}/usuarios/{{ editando.id }}/editar{% else %}/usuarios/novo{% endif %}">
+
+            <!-- Nome -->
+            <div style="margin-bottom:20px;">
+                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">
+                    Nome completo <span style="color:#ef4444;">*</span>
+                </label>
+                <input type="text" name="nome" required
+                       value="{{ editando.nome if editando else '' }}"
+                       placeholder="Ex: João da Silva"
+                       style="width:100%;box-sizing:border-box;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b;outline:none;transition:border .2s;"
+                       onfocus="this.style.borderColor='#1c49b8'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+
+            <!-- Email -->
+            <div style="margin-bottom:20px;">
+                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">
+                    E-mail <span style="color:#ef4444;">*</span>
+                </label>
+                <input type="email" name="email" required
+                       value="{{ editando.email if editando else '' }}"
+                       placeholder="email@exemplo.com"
+                       style="width:100%;box-sizing:border-box;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b;outline:none;transition:border .2s;"
+                       onfocus="this.style.borderColor='#1c49b8'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+
+            <!-- Senha -->
+            <div style="margin-bottom:20px;">
+                <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">
+                    Senha {% if not editando %}<span style="color:#ef4444;">*</span>{% else %}<span style="color:#94a3b8;font-weight:400;">(deixe em branco para manter)</span>{% endif %}
+                </label>
+                <input type="password" name="senha" {% if not editando %}required{% endif %}
+                       placeholder="{% if editando %}••••••••{% else %}Mínimo 6 caracteres{% endif %}"
+                       style="width:100%;box-sizing:border-box;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b;outline:none;transition:border .2s;"
+                       onfocus="this.style.borderColor='#1c49b8'" onblur="this.style.borderColor='#e2e8f0'">
+            </div>
+
+            <!-- Perfil + Status em linha -->
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:28px;">
+
+                <!-- Perfil/Role -->
+                <div>
+                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">
+                        Perfil de Acesso
+                    </label>
+                    <select name="role"
+                            style="width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b;outline:none;background:white;transition:border .2s;"
+                            onfocus="this.style.borderColor='#1c49b8'" onblur="this.style.borderColor='#e2e8f0'">
+                        <option value="operador" {% if editando and editando.role != 'ADMIN' %}selected{% endif %}>👤 Operador</option>
+                        <option value="ADMIN" {% if editando and editando.role == 'ADMIN' %}selected{% endif %}>🛡️ Admin</option>
+                    </select>
+                </div>
+
+                <!-- Status -->
+                <div>
+                    <label style="display:block;font-size:13px;font-weight:600;color:#374151;margin-bottom:6px;">
+                        Status
+                    </label>
+                    <select name="ativo"
+                            style="width:100%;padding:11px 14px;border:1.5px solid #e2e8f0;border-radius:8px;font-size:14px;color:#1e293b;outline:none;background:white;transition:border .2s;"
+                            onfocus="this.style.borderColor='#1c49b8'" onblur="this.style.borderColor='#e2e8f0'">
+                        <option value="True" {% if not editando or editando.ativo %}selected{% endif %}>● Ativo</option>
+                        <option value="False" {% if editando and not editando.ativo %}selected{% endif %}>● Inativo</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Botões -->
+            <div style="display:flex;gap:12px;">
+                <button type="submit"
+                        style="flex:1;background:#1c49b8;color:white;border:none;padding:13px;border-radius:8px;font-size:15px;font-weight:700;cursor:pointer;transition:background .2s;"
+                        onmouseover="this.style.background='#1639a0'" onmouseout="this.style.background='#1c49b8'">
+                    {% if editando %}💾 Salvar Alterações{% else %}✅ Criar Usuário{% endif %}
+                </button>
+                <a href="/usuarios/"
+                   style="flex:0 0 auto;padding:13px 20px;border-radius:8px;border:1.5px solid #e2e8f0;color:#64748b;text-decoration:none;font-size:15px;font-weight:600;display:inline-flex;align-items:center;">
+                    Cancelar
+                </a>
+            </div>
+
+        </form>
+    </div>
+</div>
+
+{% endblock conteudo %}

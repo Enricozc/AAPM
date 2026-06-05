@@ -13,9 +13,7 @@
     {% block css_extra %}{% endblock %}
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
 
@@ -41,6 +39,12 @@
                 <a href="/produtos" class="hover:text-gray-200 transition">
                     Produtos
                 </a>
+
+                {% if usuario.role == 'ADMIN' %}
+                    <a href="/armarios/" class="text-yellow-300 hover:text-yellow-200 font-semibold transition">
+                        Armários
+                    </a>
+                {% endif %}
 
                 <span class="bg-white/10 border border-white/20 px-3 py-1 rounded-md text-xs font-semibold">
                     {{ usuario.nome }}

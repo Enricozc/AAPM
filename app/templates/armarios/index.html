@@ -1,0 +1,242 @@
+{% extends "base.html" %}
+{% block titulo %}Armários | AAPM SENAI{% endblock %}
+
+{% block conteudo %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap');
+  .arm-wrap { font-family:'DM Sans',sans-serif; display:flex; flex-direction:column; gap:22px; padding-top:20px; }
+
+  .alert { padding:14px 20px; border-radius:10px; font-size:.9rem; font-weight:600; display:flex; align-items:center; gap:10px; }
+  .alert-error   { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; }
+  .alert-success { background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; }
+
+  /* STATS */
+  .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .stat-card { background:#fff; border-radius:14px; padding:20px 24px; border:1px solid #e2e8f0; border-top:4px solid transparent; box-shadow:0 2px 10px rgba(0,0,0,.05); }
+  .stat-card.blue   { border-top-color:#1a4fd6; }
+  .stat-card.green  { border-top-color:#16a34a; }
+  .stat-card.orange { border-top-color:#f97316; }
+  .stat-label { font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.8px; }
+  .stat-value { font-family:'DM Mono',monospace; font-size:2rem; font-weight:500; color:#1a1f36; margin:6px 0 0; }
+
+  /* PANEL */
+  .panel { background:#fff; border-radius:14px; border:1px solid #e2e8f0; box-shadow:0 2px 10px rgba(0,0,0,.05); overflow:hidden; }
+  .panel-header { padding:20px 24px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .panel-title { font-size:1rem; font-weight:700; color:#1a1f36; }
+
+  .form-novo { display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end; }
+  .form-novo input { padding:9px 14px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; outline:none; transition:border-color .15s; }
+  .form-novo input:focus { border-color:#1a4fd6; }
+  .form-novo input[name="numero"] { width:130px; }
+  .form-novo input[name="localizacao"] { width:190px; }
+  .btn { padding:9px 18px; border-radius:8px; font-size:.82rem; font-weight:700; border:none; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:opacity .15s, transform .12s; font-family:'DM Sans',sans-serif; }
+  .btn:hover { opacity:.88; transform:translateY(-1px); }
+  .btn-blue  { background:#1a4fd6; color:#fff; }
+  .btn-green { background:#16a34a; color:#fff; }
+  .btn-red   { background:#ef4444; color:#fff; }
+  .btn-gray  { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+  .btn-sm { padding:6px 14px; font-size:.78rem; }
+
+  /* LEGENDA */
+  .legenda { display:flex; align-items:center; gap:20px; padding:16px 24px; border-bottom:1px solid #f1f5f9; flex-wrap:wrap; }
+  .leg-item { display:flex; align-items:center; gap:8px; font-size:.8rem; color:#475569; font-weight:500; }
+  .leg-box { width:28px; height:28px; border-radius:6px; }
+  .leg-livre   { background:#dcfce7; border:2px solid #16a34a; }
+  .leg-ocupado { background:#ffedd5; border:2px solid #f97316; }
+
+  /* MAPA */
+  .mapa-container { padding:30px 24px; }
+  .mapa-grid { display:flex; flex-wrap:wrap; gap:12px; }
+
+  .arm-slot {
+    width:80px; height:80px; border-radius:10px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    cursor:pointer; border:2px solid transparent;
+    transition:transform .15s, box-shadow .15s;
+    position:relative; user-select:none;
+  }
+  .arm-slot:hover { transform:translateY(-3px); box-shadow:0 8px 20px rgba(0,0,0,.13); }
+  .arm-slot.livre {
+    background:#dcfce7; border-color:#16a34a;
+  }
+  .arm-slot.ocupado {
+    background:#ffedd5; border-color:#f97316;
+  }
+  .arm-slot .arm-num { font-family:'DM Mono',monospace; font-size:.82rem; font-weight:600; color:#1a1f36; }
+  .arm-slot .arm-ico { font-size:1.4rem; margin-bottom:2px; }
+  .arm-slot .arm-user-mini { font-size:.6rem; color:#64748b; text-align:center; max-width:72px; overflow:hidden; white-space:nowrap; text-overflow:ellipsis; margin-top:2px; }
+
+  .empty-msg { padding:40px; text-align:center; color:#94a3b8; font-size:.9rem; }
+
+  /* MODAL */
+  .modal-overlay {
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.45);
+    z-index:1000; align-items:center; justify-content:center;
+  }
+  .modal-overlay.open { display:flex; }
+  .modal {
+    background:#fff; border-radius:16px; padding:28px 32px; width:100%; max-width:420px;
+    box-shadow:0 20px 60px rgba(0,0,0,.2); position:relative;
+    animation:popIn .2s ease;
+  }
+  @keyframes popIn { from{opacity:0;transform:scale(.94)} to{opacity:1;transform:scale(1)} }
+  .modal-close { position:absolute; top:14px; right:16px; background:none; border:none; font-size:1.3rem; cursor:pointer; color:#94a3b8; }
+  .modal-close:hover { color:#1a1f36; }
+  .modal-title { font-size:1.1rem; font-weight:700; color:#1a1f36; margin-bottom:4px; }
+  .modal-sub   { font-size:.82rem; color:#94a3b8; margin-bottom:20px; }
+  .modal label { font-size:.8rem; font-weight:600; color:#475569; display:block; margin-bottom:6px; }
+  .modal select { width:100%; padding:10px 14px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:.88rem; font-family:'DM Sans',sans-serif; outline:none; margin-bottom:16px; }
+  .modal select:focus { border-color:#1a4fd6; }
+  .modal-actions { display:flex; gap:10px; }
+  .modal-actions .btn { flex:1; justify-content:center; }
+
+  /* MODAL LIBERAR */
+  .modal-info { background:#fff7ed; border:1px solid #fed7aa; border-radius:8px; padding:12px 16px; margin-bottom:16px; font-size:.85rem; color:#9a3412; }
+
+  @media(max-width:600px){
+    .stats-row { grid-template-columns:1fr; }
+    .arm-slot { width:64px; height:64px; }
+  }
+</style>
+
+<div class="arm-wrap">
+
+  {% set q = request.query_params %}
+  {% if q.get('sucesso') == 'criado'    %}<div class="alert alert-success">✅ Armário criado!</div>{% endif %}
+  {% if q.get('sucesso') == 'atribuido' %}<div class="alert alert-success">✅ Armário atribuído com sucesso!</div>{% endif %}
+  {% if q.get('sucesso') == 'liberado'  %}<div class="alert alert-success">✅ Armário liberado com sucesso!</div>{% endif %}
+  {% if q.get('sucesso') == 'desativado'%}<div class="alert alert-success">✅ Armário desativado.</div>{% endif %}
+  {% if q.get('erro') == 'numero_duplicado' %}<div class="alert alert-error">⚠️ Número já existe.</div>{% endif %}
+  {% if q.get('erro') == 'indisponivel'     %}<div class="alert alert-error">⚠️ Armário indisponível.</div>{% endif %}
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card blue">
+      <div class="stat-label">Total</div>
+      <div class="stat-value">{{ total }}</div>
+    </div>
+    <div class="stat-card green">
+      <div class="stat-label">Livres</div>
+      <div class="stat-value">{{ livres }}</div>
+    </div>
+    <div class="stat-card orange">
+      <div class="stat-label">Ocupados</div>
+      <div class="stat-value">{{ ocupados }}</div>
+    </div>
+  </div>
+
+  <!-- MAPA -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">🗄️ Mapa de Armários</span>
+      <form method="post" action="/armarios/novo" class="form-novo">
+        <input type="text" name="numero"      placeholder="Ex: A-01" required>
+        <input type="text" name="localizacao" placeholder="Localização (opcional)">
+        <button type="submit" class="btn btn-blue">＋ Adicionar</button>
+      </form>
+    </div>
+
+    <div class="legenda">
+      <div class="leg-item"><div class="leg-box leg-livre"></div> Livre — clique para atribuir</div>
+      <div class="leg-item"><div class="leg-box leg-ocupado"></div> Ocupado — clique para liberar ou ver histórico</div>
+    </div>
+
+    {% if armarios %}
+    <div class="mapa-container">
+      <div class="mapa-grid">
+        {% for a in armarios %}
+        <div class="arm-slot {{ 'ocupado' if a.ocupado else 'livre' }}"
+             onclick="abrirModal(
+               {{ a.id }},
+               '{{ a.numero }}',
+               {{ 'true' if a.ocupado else 'false' }},
+               '{{ a.usuario.nome if a.ocupado and a.usuario else '' }}',
+               '{{ a.localizacao or '' }}'
+             )">
+          <div class="arm-ico">{{ '🔒' if a.ocupado else '✅' }}</div>
+          <div class="arm-num">{{ a.numero }}</div>
+          {% if a.ocupado and a.usuario %}
+          <div class="arm-user-mini">{{ a.usuario.nome }}</div>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+    {% else %}
+    <div class="empty-msg">Nenhum armário cadastrado. Adicione o primeiro acima.</div>
+    {% endif %}
+  </div>
+</div>
+
+<!-- MODAL ATRIBUIR -->
+<div class="modal-overlay" id="modal-atribuir">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModais()">✕</button>
+    <div class="modal-title">Atribuir Armário</div>
+    <div class="modal-sub" id="modal-atribuir-sub"></div>
+    <form method="post" id="form-atribuir">
+      <label>Selecionar Associado</label>
+      <select name="usuario_id" required>
+        <option value="" disabled selected>Escolha um usuário...</option>
+        {% for u in usuarios %}
+        <option value="{{ u.id }}">{{ u.nome }} — {{ u.email }}</option>
+        {% endfor %}
+      </select>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-gray btn-sm" onclick="fecharModais()">Cancelar</button>
+        <button type="submit" class="btn btn-green btn-sm">✅ Atribuir</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- MODAL OCUPADO -->
+<div class="modal-overlay" id="modal-ocupado">
+  <div class="modal">
+    <button class="modal-close" onclick="fecharModais()">✕</button>
+    <div class="modal-title">Armário Ocupado</div>
+    <div class="modal-sub" id="modal-ocupado-sub"></div>
+    <div class="modal-info" id="modal-ocupado-info"></div>
+    <div class="modal-actions">
+      <button type="button" class="btn btn-gray btn-sm" onclick="fecharModais()">Fechar</button>
+      <a id="btn-historico" href="#" class="btn btn-blue btn-sm">📋 Histórico</a>
+      <form method="post" id="form-liberar" style="flex:1;">
+        <button type="submit" class="btn btn-red btn-sm" style="width:100%;"
+                onclick="return confirm('Liberar este armário?')">🔓 Liberar</button>
+      </form>
+    </div>
+  </div>
+</div>
+
+<script>
+  function abrirModal(id, numero, ocupado, nomeUsuario, local) {
+    fecharModais();
+    if (!ocupado) {
+      document.getElementById('modal-atribuir-sub').textContent =
+        'Armário ' + numero + (local ? ' · ' + local : '');
+      document.getElementById('form-atribuir').action = '/armarios/' + id + '/atribuir';
+      document.getElementById('modal-atribuir').classList.add('open');
+    } else {
+      document.getElementById('modal-ocupado-sub').textContent =
+        'Armário ' + numero + (local ? ' · ' + local : '');
+      document.getElementById('modal-ocupado-info').textContent =
+        '👤 Responsável: ' + (nomeUsuario || '—');
+      document.getElementById('form-liberar').action = '/armarios/' + id + '/liberar';
+      document.getElementById('btn-historico').href = '/armarios/' + id + '/historico';
+      document.getElementById('modal-ocupado').classList.add('open');
+    }
+  }
+
+  function fecharModais() {
+    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
+  }
+
+  // Fechar ao clicar fora do modal
+  document.querySelectorAll('.modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', function(e) {
+      if (e.target === overlay) fecharModais();
+    });
+  });
+</script>
+
+{% endblock conteudo %}

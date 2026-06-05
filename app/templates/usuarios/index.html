@@ -1,100 +1,166 @@
 {% extends "base.html" %}
-
-{% block title %}Usuários | AAPM SENAI{% endblock %}
-{% block page %}Controle de Usuários{% endblock %}
+{% block titulo %}Associados | AAPM SENAI{% endblock %}
 
 {% block conteudo %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap');
+  .wrap { font-family:'DM Sans',sans-serif; display:flex; flex-direction:column; gap:22px; padding-top:20px; }
 
-{% if request.query_params.get('sucesso') == 'criado' %}
-<div style="background:#d4edda;color:#155724;padding:14px 18px;border-radius:8px;border:1px solid #c3e6cb;margin-bottom:20px;font-weight:600;font-family:sans-serif;">
-    ✅ Usuário criado com sucesso!
-</div>
-{% elif request.query_params.get('sucesso') == 'editado' %}
-<div style="background:#d4edda;color:#155724;padding:14px 18px;border-radius:8px;border:1px solid #c3e6cb;margin-bottom:20px;font-weight:600;font-family:sans-serif;">
-    ✅ Usuário atualizado com sucesso!
-</div>
-{% elif request.query_params.get('sucesso') == 'deletado' %}
-<div style="background:#fff3cd;color:#856404;padding:14px 18px;border-radius:8px;border:1px solid #ffeeba;margin-bottom:20px;font-weight:600;font-family:sans-serif;">
-    🗑️ Usuário removido do sistema.
-</div>
-{% endif %}
+  .alert { padding:14px 20px; border-radius:10px; font-size:.9rem; font-weight:600; display:flex; align-items:center; gap:10px; }
+  .alert-success { background:#f0fdf4; color:#166534; border:1px solid #bbf7d0; }
+  .alert-error   { background:#fef2f2; color:#991b1b; border:1px solid #fecaca; }
 
-<!-- Cabeçalho -->
-<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:25px;">
-    <div>
-        <h2 style="margin:0;font-size:20px;color:#1e293b;">Usuários Cadastrados</h2>
-        <span style="font-size:13px;color:#94a3b8;">Total: {{ usuarios|length }} usuário(s)</span>
+  .stats-row { display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  .stat-card { background:#fff; border-radius:14px; padding:20px 24px; border:1px solid #e2e8f0; border-top:4px solid transparent; box-shadow:0 2px 10px rgba(0,0,0,.05); }
+  .stat-card.blue   { border-top-color:#1a4fd6; }
+  .stat-card.green  { border-top-color:#16a34a; }
+  .stat-card.gray   { border-top-color:#94a3b8; }
+  .stat-label { font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.8px; }
+  .stat-value { font-family:'DM Mono',monospace; font-size:2rem; font-weight:500; color:#1a1f36; margin:6px 0 0; }
+
+  .panel { background:#fff; border-radius:14px; border:1px solid #e2e8f0; box-shadow:0 2px 10px rgba(0,0,0,.05); overflow:hidden; }
+  .panel-header { padding:18px 24px; border-bottom:1px solid #f1f5f9; display:flex; align-items:center; justify-content:space-between; gap:12px; flex-wrap:wrap; }
+  .panel-title { font-size:1rem; font-weight:700; color:#1a1f36; }
+
+  .btn { padding:9px 18px; border-radius:8px; font-size:.82rem; font-weight:700; border:none; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:opacity .15s; font-family:'DM Sans',sans-serif; }
+  .btn:hover { opacity:.85; }
+  .btn-blue  { background:#1a4fd6; color:#fff; }
+  .btn-green { background:#16a34a; color:#fff; }
+  .btn-red   { background:#ef4444; color:#fff; }
+  .btn-gray  { background:#f1f5f9; color:#475569; border:1px solid #e2e8f0; }
+  .btn-sm    { padding:5px 12px; font-size:.76rem; }
+
+  /* BUSCA */
+  .search-bar { padding:14px 24px; border-bottom:1px solid #f1f5f9; }
+  .search-bar input { width:100%; max-width:360px; padding:9px 14px; border:1.5px solid #e2e8f0; border-radius:8px; font-size:.85rem; font-family:'DM Sans',sans-serif; outline:none; }
+  .search-bar input:focus { border-color:#1a4fd6; }
+
+  /* TABELA */
+  table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  thead tr { background:#f8fafc; }
+  th { padding:12px 20px; text-align:left; font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.6px; border-bottom:1px solid #f1f5f9; white-space:nowrap; }
+  td { padding:14px 20px; border-bottom:1px solid #f8fafc; color:#1a1f36; vertical-align:middle; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fafcff; }
+
+  .avatar { width:36px; height:36px; border-radius:50%; background:#eff6ff; display:inline-flex; align-items:center; justify-content:center; font-weight:700; font-size:.8rem; color:#1a4fd6; flex-shrink:0; }
+  .user-info { display:flex; align-items:center; gap:10px; }
+  .user-name  { font-weight:600; color:#1a1f36; }
+  .user-email { font-size:.76rem; color:#94a3b8; }
+
+  .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:700; }
+  .badge-admin { background:#fef2f2; color:#991b1b; }
+  .badge-op    { background:#eff6ff; color:#1e40af; }
+  .badge-ativo   { background:#f0fdf4; color:#166534; }
+  .badge-inativo { background:#f8fafc; color:#94a3b8; }
+
+  .mono { font-family:'DM Mono',monospace; font-size:.8rem; color:#64748b; }
+  .actions { display:flex; gap:6px; align-items:center; }
+
+  .empty { padding:40px; text-align:center; color:#94a3b8; }
+</style>
+
+<div class="wrap">
+
+  {% set q = request.query_params %}
+  {% if q.get('sucesso') == 'criado'     %}<div class="alert alert-success">✅ Associado cadastrado com sucesso!</div>{% endif %}
+  {% if q.get('sucesso') == 'editado'    %}<div class="alert alert-success">✅ Dados atualizados com sucesso!</div>{% endif %}
+  {% if q.get('sucesso') == 'atualizado' %}<div class="alert alert-success">✅ Status atualizado!</div>{% endif %}
+
+  <!-- STATS -->
+  <div class="stats-row">
+    <div class="stat-card blue">
+      <div class="stat-label">Total de Associados</div>
+      <div class="stat-value">{{ total }}</div>
     </div>
-    <a href="/usuarios/novo"
-       style="background:#1c49b8;color:white;padding:10px 20px;border-radius:8px;text-decoration:none;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:6px;">
-        ➕ Novo Usuário
-    </a>
-</div>
+    <div class="stat-card green">
+      <div class="stat-label">Ativos</div>
+      <div class="stat-value">{{ ativos }}</div>
+    </div>
+    <div class="stat-card gray">
+      <div class="stat-label">Inativos</div>
+      <div class="stat-value">{{ inativos }}</div>
+    </div>
+  </div>
 
-<!-- Tabela -->
-<div style="background:white;border-radius:12px;box-shadow:0 2px 8px rgba(0,0,0,0.06);overflow:hidden;">
-    <table style="width:100%;border-collapse:collapse;font-size:14px;">
-        <thead>
-            <tr style="background:#f8fafc;border-bottom:2px solid #e2e8f0;">
-                <th style="padding:14px 18px;text-align:left;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">ID</th>
-                <th style="padding:14px 18px;text-align:left;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Nome</th>
-                <th style="padding:14px 18px;text-align:left;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">E-mail</th>
-                <th style="padding:14px 18px;text-align:center;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Perfil</th>
-                <th style="padding:14px 18px;text-align:center;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Status</th>
-                <th style="padding:14px 18px;text-align:center;color:#64748b;font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.5px;">Ações</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for u in usuarios %}
-            <tr style="border-bottom:1px solid #f1f5f9;transition:background .15s;" onmouseover="this.style.background='#f8fafc'" onmouseout="this.style.background='white'">
-                <td style="padding:14px 18px;color:#94a3b8;font-weight:600;">#{{ u.id }}</td>
-                <td style="padding:14px 18px;color:#1e293b;font-weight:600;">{{ u.nome }}</td>
-                <td style="padding:14px 18px;color:#475569;">{{ u.email }}</td>
-                <td style="padding:14px 18px;text-align:center;">
-                    <span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;
-                        {% if u.role == 'ADMIN' %}background:#fee2e2;color:#dc2626;
-                        {% else %}background:#e0f2fe;color:#0369a1;{% endif %}">
-                        {% if u.role == 'ADMIN' %}🛡️ ADMIN{% else %}👤 OPERADOR{% endif %}
-                    </span>
-                </td>
-                <td style="padding:14px 18px;text-align:center;">
-                    {% if u.ativo %}
-                    <span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:#dcfce7;color:#15803d;">● Ativo</span>
-                    {% else %}
-                    <span style="padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:#f1f5f9;color:#94a3b8;">● Inativo</span>
-                    {% endif %}
-                </td>
-                <td style="padding:14px 18px;text-align:center;">
-                    <div style="display:inline-flex;gap:8px;align-items:center;">
-                        <a href="/usuarios/{{ u.id }}/editar"
-                           style="background:#e0f2fe;color:#0369a1;padding:6px 12px;border-radius:6px;text-decoration:none;font-size:12px;font-weight:600;">
-                            ✏️ Editar
-                        </a>
-                        <form method="post" action="/usuarios/{{ u.id }}/deletar"
-                              onsubmit="return confirm('Tem certeza que deseja remover {{ u.nome }}?');"
-                              style="margin:0;">
-                            <button type="submit"
-                                    style="background:#fee2e2;color:#dc2626;border:none;padding:6px 12px;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;">
-                                🗑️ Remover
-                            </button>
-                        </form>
-                    </div>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="6" style="padding:40px;text-align:center;color:#94a3b8;font-size:14px;">
-                    Nenhum usuário cadastrado ainda.
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
+  <!-- TABELA -->
+  <div class="panel">
+    <div class="panel-header">
+      <span class="panel-title">👥 Associados Cadastrados</span>
+      <a href="/usuarios/novo" class="btn btn-blue">＋ Novo Associado</a>
+    </div>
+
+    <div class="search-bar">
+      <input type="text" id="busca" placeholder="🔍 Buscar por nome, e-mail ou matrícula..." oninput="filtrar()">
+    </div>
+
+    {% if associados %}
+    <table id="tabela">
+      <thead>
+        <tr>
+          <th>Associado</th>
+          <th>Matrícula</th>
+          <th>Cargo</th>
+          <th>Perfil</th>
+          <th>Status</th>
+          <th>Cadastrado em</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for a in associados %}
+        <tr>
+          <td>
+            <div class="user-info">
+              <div class="avatar">{{ a.nome[:2].upper() }}</div>
+              <div>
+                <div class="user-name">{{ a.nome }}</div>
+                <div class="user-email">{{ a.email }}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="mono">{{ a.matricula or '—' }}</span></td>
+          <td>{{ a.cargo or '—' }}</td>
+          <td>
+            <span class="badge {{ 'badge-admin' if a.role == 'ADMIN' else 'badge-op' }}">
+              {{ a.role }}
+            </span>
+          </td>
+          <td>
+            <span class="badge {{ 'badge-ativo' if a.ativo else 'badge-inativo' }}">
+              {{ '✅ Ativo' if a.ativo else '⏸ Inativo' }}
+            </span>
+          </td>
+          <td style="color:#94a3b8; font-size:.78rem;">
+            {{ a.criado_em.strftime('%d/%m/%Y') if a.criado_em else '—' }}
+          </td>
+          <td>
+            <div class="actions">
+              <a href="/usuarios/{{ a.id }}/editar" class="btn btn-gray btn-sm">✏️ Editar</a>
+              <form method="post" action="/usuarios/{{ a.id }}/toggle">
+                <button type="submit" class="btn btn-sm {{ 'btn-red' if a.ativo else 'btn-green' }}"
+                        onclick="return confirm('{{ 'Desativar' if a.ativo else 'Ativar' }} este associado?')">
+                  {{ '⏸ Desativar' if a.ativo else '▶ Ativar' }}
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
     </table>
+    {% else %}
+    <div class="empty">Nenhum associado cadastrado. <a href="/usuarios/novo" style="color:#1a4fd6;">Cadastre o primeiro.</a></div>
+    {% endif %}
+  </div>
 </div>
 
-<!-- Voltar -->
-<div style="margin-top:20px;">
-    <a href="/" style="color:#64748b;text-decoration:none;font-size:13px;font-weight:500;">← Voltar ao Dashboard</a>
-</div>
-
+<script>
+  function filtrar() {
+    const termo = document.getElementById('busca').value.toLowerCase();
+    document.querySelectorAll('#tabela tbody tr').forEach(tr => {
+      tr.style.display = tr.textContent.toLowerCase().includes(termo) ? '' : 'none';
+    });
+  }
+</script>
 {% endblock conteudo %}

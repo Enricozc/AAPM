@@ -1,22 +1,18 @@
-cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
 {% extends "base.html" %}
 
-{% block title %}Dashboard | AAPM SENAI{% endblock %}
-{% block page %}Visão Geral do Sistema{% endblock %}
+{% block titulo %}Dashboard | AAPM SENAI{% endblock %}
 
 {% block conteudo %}
 
 <style>
   @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap');
 
-  .dash-wrap { font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; gap: 22px; }
+  .dash-wrap { font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; gap: 22px; padding-top: 20px; }
 
-  /* ALERTS */
   .alert { padding: 14px 20px; border-radius: 10px; font-size: .9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
   .alert-error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
   .alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
 
-  /* WELCOME */
   .welcome {
     background: #fff; border-radius: 14px; padding: 22px 28px;
     display: flex; align-items: center; justify-content: space-between;
@@ -34,8 +30,7 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
   .role-admin { background: #ef4444; }
   .role-user  { background: #10b981; }
 
-  /* STAT CARDS */
-  .stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 18px; }
+  .stats-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 18px; }
   .stat-card {
     background: #fff; border-radius: 14px; padding: 22px 24px;
     border: 1px solid #e2e8f0; border-top: 4px solid transparent;
@@ -48,13 +43,13 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
   .stat-card.blue   { border-top-color: #1a4fd6; animation-delay: .05s; }
   .stat-card.orange { border-top-color: #f97316; animation-delay: .10s; }
   .stat-card.green  { border-top-color: #16a34a; animation-delay: .15s; }
+  .stat-card.purple { border-top-color: #7c3aed; animation-delay: .20s; }
   .stat-label { font-size: .7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .8px; }
   .stat-value { font-family: 'DM Mono', monospace; font-size: 2.2rem; font-weight: 500; color: #1a1f36; margin: 8px 0 6px; }
   .stat-trend { font-size: .78rem; font-weight: 600; }
   .trend-up { color: #16a34a; }
   .trend-dn { color: #f97316; }
 
-  /* BOTTOM ROW */
   .bottom-row { display: grid; grid-template-columns: 1fr 320px; gap: 18px; }
   .card {
     background: #fff; border-radius: 14px; padding: 24px 26px;
@@ -64,7 +59,6 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
   .card-title { font-size: 1rem; font-weight: 700; color: #1a1f36; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
   .card-title em { font-style: normal; font-size: .78rem; color: #94a3b8; font-weight: 400; }
 
-  /* ACTIVITY */
   .act-item { display: flex; align-items: flex-start; gap: 12px; padding: 13px 0; border-bottom: 1px solid #f1f5f9; }
   .act-item:last-child { border-bottom: none; }
   .act-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
@@ -75,7 +69,6 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
   .act-by     { font-size: .78rem; color: #94a3b8; }
   .act-time   { font-size: .75rem; color: #cbd5e1; white-space: nowrap; margin-left: auto; }
 
-  /* QUICK ACTIONS */
   .action-btn {
     width: 100%; display: flex; align-items: center; gap: 12px;
     padding: 12px 16px; border-radius: 10px; margin-bottom: 10px;
@@ -96,9 +89,12 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
     to   { opacity:1; transform:translateY(0); }
   }
 
-  @media (max-width: 768px) {
-    .stats-row  { grid-template-columns: 1fr; }
+  @media (max-width: 900px) {
+    .stats-row  { grid-template-columns: repeat(2,1fr); }
     .bottom-row { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 500px) {
+    .stats-row { grid-template-columns: 1fr; }
   }
 </style>
 
@@ -109,7 +105,7 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
   {% endif %}
 
   {% if request.query_params.get('cadastro') == 'sucesso' %}
-  <div class="alert alert-success">✅ Novo usuário cadastrado com sucesso no sistema!</div>
+  <div class="alert alert-success">✅ Novo usuário cadastrado com sucesso!</div>
   {% endif %}
 
   <!-- WELCOME -->
@@ -126,22 +122,27 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
     </div>
   </div>
 
-  <!-- STATS -->
+  <!-- STATS COM DADOS REAIS -->
   <div class="stats-row">
-    <a href="/associados" class="stat-card blue">
+    <a href="/usuarios" class="stat-card blue">
       <div class="stat-label">Associados Ativos</div>
-      <div class="stat-value">1,248</div>
-      <div class="stat-trend trend-up">↑ 3.2% este mês</div>
+      <div class="stat-value">{{ total_associados }}</div>
+      <div class="stat-trend trend-up">↑ usuários cadastrados</div>
     </a>
     <a href="/produtos" class="stat-card orange">
-      <div class="stat-label">Produtos em Estoque</div>
-      <div class="stat-value">842</div>
-      <div class="stat-trend trend-dn">↓ 1.1% esta semana</div>
+      <div class="stat-label">Produtos Ativos</div>
+      <div class="stat-value">{{ total_produtos }}</div>
+      <div class="stat-trend trend-up">↑ produtos no sistema</div>
     </a>
-    <a href="/requisicoes" class="stat-card green">
-      <div class="stat-label">Requisições Hoje</div>
-      <div class="stat-value">37</div>
-      <div class="stat-trend trend-up">↑ 8 em relação a ontem</div>
+    <a href="/produtos" class="stat-card green">
+      <div class="stat-label">Itens em Estoque</div>
+      <div class="stat-value">{{ estoque_total }}</div>
+      <div class="stat-trend trend-up">↑ unidades disponíveis</div>
+    </a>
+    <a href="/categorias" class="stat-card purple">
+      <div class="stat-label">Categorias</div>
+      <div class="stat-value">{{ total_categorias }}</div>
+      <div class="stat-trend trend-up">↑ categorias ativas</div>
     </a>
   </div>
 
@@ -150,7 +151,6 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
 
     <div class="card">
       <div class="card-title">Últimas Movimentações <em>ao vivo</em></div>
-
       <div class="act-item">
         <div class="act-dot blue"></div>
         <div style="flex:1;">
@@ -188,7 +188,7 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
     <div class="card" style="animation-delay:.25s;">
       <div class="card-title">Atalhos Rápidos</div>
 
-      {% if usuario and usuario.role == 'ADMIN' %}
+      {% if usuario.role == 'ADMIN' %}
       <a href="/usuarios/" class="action-btn">
         <span class="ico">⚙️</span> Controlar Usuários
       </a>
@@ -202,23 +202,15 @@ cat > /mnt/user-data/outputs/dashboard.html << 'ENDOFFILE'
         <span class="ico">🗂️</span> Categorias
       </a>
 
-      {% if usuario and usuario.role == 'ADMIN' %}
-      <a href="/usuarios/novo" class="action-btn">
+      {% if usuario.role == 'ADMIN' %}
+      <a href="/auth/cadastro" class="action-btn">
         <span class="ico">➕</span> Novo Associado
       </a>
       {% endif %}
-
     </div>
+
   </div>
 
 </div>
 
 {% endblock conteudo %}
-ENDOFFILE
-Saída
-
-exit code 0
-
-Presented file
-Concluído
-Pronto! Substitui o seu dashboard.html mantendo toda a estrutura Jinja2 original. O que mudou:

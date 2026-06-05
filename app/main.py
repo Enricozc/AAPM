@@ -12,6 +12,8 @@ from app.controllers.categoria_controller import router as categoria_router
 from app.controllers.produto_controller import router as produto_router
 from app.controllers.usuario_controller import router as usuario_router
 from app.config.security import get_usuario_opcional
+from app.routes.dashboard_routes import router as dashboard_router
+from app.controllers.armario_controller import router as armario_router
 
 # Cria as tabelas automaticamente
 Base.metadata.create_all(bind=engine)
@@ -31,6 +33,8 @@ app.include_router(admin_router)
 app.include_router(categoria_router)
 app.include_router(produto_router)
 app.include_router(usuario_router)
+app.include_router(dashboard_router) 
+app.include_router(armario_router)  
 
 @app.get("/")
 def tela_home(request: Request, usuario=Depends(get_usuario_opcional)):

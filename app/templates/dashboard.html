@@ -203,8 +203,12 @@
       </a>
 
       {% if usuario.role == 'ADMIN' %}
-      <a href="/auth/cadastro" class="action-btn">
+      <a href="/usuarios/novo" class="action-btn">
         <span class="ico">➕</span> Novo Associado
+      </a>
+
+      <a href="/armarios/" class="action-btn">
+        <span class="ico">🗄️</span> Armários
       </a>
       {% endif %}
     </div>

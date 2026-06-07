@@ -1,198 +1,81 @@
 from datetime import datetime
 from pathlib import Path
-
 from fastapi import APIRouter, Depends, Request, Form, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
-
 from app.config.database import get_db
-from app.config.security import get_current_user, require_admin
+from app.config.security import require_admin
 from app.models.armario_model import Armario, ArmarioHistorico
 from app.models.user_model import Usuario
+from app.services.log_service import registrar_log
 
 router = APIRouter(prefix="/armarios", tags=["Armários"])
-
 BASE_DIR = Path(__file__).resolve().parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
-
-def _usuario_obj(payload: dict):
+def _obj(p):
     class U:
-        id    = payload.get("id")
-        nome  = payload.get("nome")
-        email = payload.get("sub")
-        role  = payload.get("role")
+        id=p.get("id"); nome=p.get("nome"); email=p.get("sub"); role=p.get("role")
     return U()
 
-
-# ─────────────────────────────────────────
-# LISTAGEM
-# ─────────────────────────────────────────
 @router.get("/")
-def listar_armarios(
-    request: Request,
-    payload=Depends(require_admin),
-    db: Session = Depends(get_db)
-):
-    usuario  = _usuario_obj(payload)
-    armarios = (
-        db.query(Armario)
-        .filter(Armario.ativo == True)
-        .order_by(Armario.numero)
-        .all()
-    )
-    usuarios = db.query(Usuario).filter(Usuario.ativo == True).all()
+def listar(request: Request, payload=Depends(require_admin), db: Session=Depends(get_db)):
+    u = _obj(payload)
+    armarios = db.query(Armario).filter(Armario.ativo==True).order_by(Armario.numero).all()
+    usuarios = db.query(Usuario).filter(Usuario.ativo==True).all()
+    total=len(armarios); ocupados=sum(1 for a in armarios if a.ocupado)
+    return templates.TemplateResponse(request=request, name="armarios/index.html",
+        context={"request":request,"usuario":u,"armarios":armarios,"usuarios":usuarios,
+                 "total":total,"ocupados":ocupados,"livres":total-ocupados})
 
-    total      = len(armarios)
-    ocupados   = sum(1 for a in armarios if a.ocupado)
-    livres     = total - ocupados
-
-    return templates.TemplateResponse(
-        request=request,
-        name="armarios/index.html",
-        context={
-            "request":  request,
-            "usuario":  usuario,
-            "armarios": armarios,
-            "usuarios": usuarios,
-            "total":    total,
-            "ocupados": ocupados,
-            "livres":   livres,
-        }
-    )
-
-
-# ─────────────────────────────────────────
-# CRIAR ARMÁRIO
-# ─────────────────────────────────────────
 @router.post("/novo")
-def criar_armario(
-    request: Request,
-    numero: str = Form(...),
-    localizacao: str = Form(""),
-    payload=Depends(require_admin),
-    db: Session = Depends(get_db)
-):
-    existente = db.query(Armario).filter(Armario.numero == numero).first()
-    if existente:
+def criar(numero: str=Form(...), localizacao: str=Form(""), payload=Depends(require_admin), db: Session=Depends(get_db)):
+    ul = _obj(payload)
+    if db.query(Armario).filter(Armario.numero==numero).first():
         return RedirectResponse(url="/armarios/?erro=numero_duplicado", status_code=status.HTTP_303_SEE_OTHER)
-
-    armario = Armario(numero=numero, localizacao=localizacao or None)
-    db.add(armario)
-    db.commit()
+    db.add(Armario(numero=numero, localizacao=localizacao or None)); db.commit()
+    registrar_log(db, f"Armário criado: {numero}", f"Por: {ul.nome}", "sucesso", ul.id)
     return RedirectResponse(url="/armarios/?sucesso=criado", status_code=status.HTTP_303_SEE_OTHER)
 
-
-# ─────────────────────────────────────────
-# ATRIBUIR ARMÁRIO A UM USUÁRIO
-# ─────────────────────────────────────────
-@router.post("/{armario_id}/atribuir")
-def atribuir_armario(
-    armario_id: int,
-    usuario_id: int = Form(...),
-    payload=Depends(require_admin),
-    db: Session = Depends(get_db)
-):
-    armario = db.query(Armario).filter(Armario.id == armario_id).first()
-    if not armario or armario.ocupado:
+@router.post("/{aid}/atribuir")
+def atribuir(aid: int, usuario_id: int=Form(...), payload=Depends(require_admin), db: Session=Depends(get_db)):
+    ul = _obj(payload)
+    a = db.query(Armario).filter(Armario.id==aid).first()
+    u = db.query(Usuario).filter(Usuario.id==usuario_id).first()
+    if not a or a.ocupado or not u:
         return RedirectResponse(url="/armarios/?erro=indisponivel", status_code=status.HTTP_303_SEE_OTHER)
-
-    usuario = db.query(Usuario).filter(Usuario.id == usuario_id).first()
-    if not usuario:
-        return RedirectResponse(url="/armarios/?erro=usuario_invalido", status_code=status.HTTP_303_SEE_OTHER)
-
-    armario.ocupado      = True
-    armario.usuario_id   = usuario.id
-    armario.atribuido_em = datetime.utcnow()
-
-    hist = ArmarioHistorico(
-        armario_id   = armario.id,
-        usuario_id   = usuario.id,
-        usuario_nome = usuario.nome,
-        acao         = "ATRIBUIDO"
-    )
-    db.add(hist)
+    a.ocupado=True; a.usuario_id=u.id; a.atribuido_em=datetime.utcnow()
+    db.add(ArmarioHistorico(armario_id=a.id,usuario_id=u.id,usuario_nome=u.nome,acao="ATRIBUIDO"))
     db.commit()
+    registrar_log(db, f"Armário {a.numero} atribuído a {u.nome}", f"Por: {ul.nome}", "sucesso", ul.id)
     return RedirectResponse(url="/armarios/?sucesso=atribuido", status_code=status.HTTP_303_SEE_OTHER)
 
-
-# ─────────────────────────────────────────
-# LIBERAR ARMÁRIO
-# ─────────────────────────────────────────
-@router.post("/{armario_id}/liberar")
-def liberar_armario(
-    armario_id: int,
-    payload=Depends(require_admin),
-    db: Session = Depends(get_db)
-):
-    armario = db.query(Armario).filter(Armario.id == armario_id).first()
-    if not armario or not armario.ocupado:
+@router.post("/{aid}/liberar")
+def liberar(aid: int, payload=Depends(require_admin), db: Session=Depends(get_db)):
+    ul = _obj(payload)
+    a = db.query(Armario).filter(Armario.id==aid).first()
+    if not a or not a.ocupado:
         return RedirectResponse(url="/armarios/?erro=nao_ocupado", status_code=status.HTTP_303_SEE_OTHER)
-
-    hist = ArmarioHistorico(
-        armario_id   = armario.id,
-        usuario_id   = armario.usuario_id,
-        usuario_nome = armario.usuario.nome if armario.usuario else "—",
-        acao         = "LIBERADO"
-    )
-    db.add(hist)
-
-    armario.ocupado      = False
-    armario.usuario_id   = None
-    armario.atribuido_em = None
-
-    db.commit()
+    nome_u = a.usuario.nome if a.usuario else "—"
+    db.add(ArmarioHistorico(armario_id=a.id,usuario_id=a.usuario_id,usuario_nome=nome_u,acao="LIBERADO"))
+    a.ocupado=False; a.usuario_id=None; a.atribuido_em=None; db.commit()
+    registrar_log(db, f"Armário {a.numero} liberado (era de {nome_u})", f"Por: {ul.nome}", "alerta", ul.id)
     return RedirectResponse(url="/armarios/?sucesso=liberado", status_code=status.HTTP_303_SEE_OTHER)
 
+@router.get("/{aid}/historico")
+def historico(aid: int, request: Request, payload=Depends(require_admin), db: Session=Depends(get_db)):
+    a = db.query(Armario).filter(Armario.id==aid).first()
+    if not a: return RedirectResponse(url="/armarios/")
+    hist = db.query(ArmarioHistorico).filter(ArmarioHistorico.armario_id==aid).order_by(ArmarioHistorico.feito_em.desc()).all()
+    return templates.TemplateResponse(request=request, name="armarios/historico.html",
+        context={"request":request,"usuario":_obj(payload),"armario":a,"historico":hist})
 
-# ─────────────────────────────────────────
-# HISTÓRICO DE UM ARMÁRIO
-# ─────────────────────────────────────────
-@router.get("/{armario_id}/historico")
-def historico_armario(
-    armario_id: int,
-    request: Request,
-    payload=Depends(require_admin),
-    db: Session = Depends(get_db)
-):
-    usuario = _usuario_obj(payload)
-    armario = db.query(Armario).filter(Armario.id == armario_id).first()
-    if not armario:
-        return RedirectResponse(url="/armarios/")
-
-    historico = (
-        db.query(ArmarioHistorico)
-        .filter(ArmarioHistorico.armario_id == armario_id)
-        .order_by(ArmarioHistorico.feito_em.desc())
-        .all()
-    )
-
-    return templates.TemplateResponse(
-        request=request,
-        name="armarios/historico.html",
-        context={
-            "request":   request,
-            "usuario":   usuario,
-            "armario":   armario,
-            "historico": historico,
-        }
-    )
-
-
-# ─────────────────────────────────────────
-# DESATIVAR (exclusão lógica)
-# ─────────────────────────────────────────
-@router.post("/{armario_id}/desativar")
-def desativar_armario(
-    armario_id: int,
-    payload=Depends(require_admin),
-    db: Session = Depends(get_db)
-):
-    armario = db.query(Armario).filter(Armario.id == armario_id).first()
-    if armario:
-        armario.ativo    = False
-        armario.ocupado  = False
-        armario.usuario_id = None
-        db.commit()
+@router.post("/{aid}/desativar")
+def desativar(aid: int, payload=Depends(require_admin), db: Session=Depends(get_db)):
+    ul = _obj(payload)
+    a = db.query(Armario).filter(Armario.id==aid).first()
+    if a:
+        a.ativo=False; a.ocupado=False; a.usuario_id=None; db.commit()
+        registrar_log(db, f"Armário {a.numero} desativado", f"Por: {ul.nome}", "alerta", ul.id)
     return RedirectResponse(url="/armarios/?sucesso=desativado", status_code=status.HTTP_303_SEE_OTHER)

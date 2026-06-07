@@ -4,12 +4,12 @@ from app.config.database import Base
 
 class Usuario(Base):
     __tablename__ = "usuarios"
-
-    id = Column(Integer, primary_key=True, autoincrement=True)
-    nome = Column(String(100), nullable=False)
-    email = Column(String(150), unique=True, nullable=False)
+    id              = Column(Integer, primary_key=True, autoincrement=True)
+    nome            = Column(String(100), nullable=False)
+    email           = Column(String(150), unique=True, nullable=False)
+    matricula       = Column(String(30), unique=True, nullable=True)
+    cargo           = Column(String(100), nullable=True)
     hashed_password = Column(String(255), nullable=False)
-    # TIPO DO USUÁRIO - perfil do usuário (operador, admin)
-    role = Column(String(20), default="operador")
-    ativo = Column(Boolean, default=True)
-    criado_em = Column(DateTime, server_default=func.now())
+    role            = Column(String(20), default="operador")
+    ativo           = Column(Boolean, default=True)
+    criado_em       = Column(DateTime, server_default=func.now())

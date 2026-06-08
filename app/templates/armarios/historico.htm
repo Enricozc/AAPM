@@ -1,0 +1,72 @@
+{% extends "base.html" %}
+{% block titulo %}Histórico — Armário {{ armario.numero }} | AAPM SENAI{% endblock %}
+
+{% block conteudo %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap');
+  .hist-wrap { font-family:'DM Sans',sans-serif; display:flex; flex-direction:column; gap:22px; padding-top:20px; }
+
+  .back-btn { display:inline-flex; align-items:center; gap:6px; color:#1a4fd6; font-size:.85rem; font-weight:600; text-decoration:none; }
+  .back-btn:hover { text-decoration:underline; }
+
+  .panel { background:#fff; border-radius:14px; border:1px solid #e2e8f0; box-shadow:0 2px 10px rgba(0,0,0,.05); overflow:hidden; }
+  .panel-header { padding:20px 24px; border-bottom:1px solid #f1f5f9; }
+  .panel-title { font-size:1rem; font-weight:700; color:#1a1f36; }
+  .panel-sub   { font-size:.82rem; color:#94a3b8; margin-top:4px; }
+
+  table { width:100%; border-collapse:collapse; font-size:.85rem; }
+  thead tr { background:#f8fafc; }
+  th { padding:12px 20px; text-align:left; font-size:.7rem; font-weight:700; color:#94a3b8; text-transform:uppercase; letter-spacing:.6px; border-bottom:1px solid #f1f5f9; }
+  td { padding:14px 20px; border-bottom:1px solid #f8fafc; color:#1a1f36; }
+  tr:last-child td { border-bottom:none; }
+  tr:hover td { background:#fafcff; }
+
+  .badge { display:inline-block; padding:3px 10px; border-radius:20px; font-size:.72rem; font-weight:700; }
+  .badge-atrib { background:#eff6ff; color:#1e40af; }
+  .badge-lib   { background:#f0fdf4; color:#166534; }
+
+  .empty { padding:40px; text-align:center; color:#94a3b8; font-size:.9rem; }
+</style>
+
+<div class="hist-wrap">
+  <a href="/armarios/" class="back-btn">← Voltar para Armários</a>
+
+  <div class="panel">
+    <div class="panel-header">
+      <div class="panel-title">📋 Histórico — Armário {{ armario.numero }}</div>
+      {% if armario.localizacao %}
+      <div class="panel-sub">📍 {{ armario.localizacao }}</div>
+      {% endif %}
+    </div>
+
+    {% if historico %}
+    <table>
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Usuário</th>
+          <th>Ação</th>
+          <th>Data / Hora</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for h in historico %}
+        <tr>
+          <td style="font-family:'DM Mono',monospace; color:#94a3b8;">{{ loop.index }}</td>
+          <td>{{ h.usuario_nome or '—' }}</td>
+          <td>
+            <span class="badge {{ 'badge-atrib' if h.acao == 'ATRIBUIDO' else 'badge-lib' }}">
+              {{ '🔒 Atribuído' if h.acao == 'ATRIBUIDO' else '🔓 Liberado' }}
+            </span>
+          </td>
+          <td style="color:#64748b;">{{ h.feito_em.strftime('%d/%m/%Y às %H:%M') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <div class="empty">Nenhum registro encontrado para este armário.</div>
+    {% endif %}
+  </div>
+</div>
+{% endblock conteudo %}

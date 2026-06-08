@@ -12,12 +12,17 @@ async def dashboard(
     request: Request,
     user=Depends(get_current_user)
 ):
+    usuario = {
+        "nome": user.get("email"),
+        "role": user.get("role")
+    }
 
     return templates.TemplateResponse(
-        "dashboard.html",
-        {
+        request=request,
+        name="dashboard.html",
+        context={
             "request": request,
-            "nome": user.get("email"),
-            "perfil": user.get("role")
+            "usuario": usuario,
+            "erro": None
         }
     )

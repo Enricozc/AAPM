@@ -13,9 +13,7 @@
     {% block css_extra %}{% endblock %}
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
+        body { font-family: 'Inter', sans-serif; }
     </style>
 </head>
 
@@ -27,10 +25,6 @@
         </div>
 
         <div class="flex items-center space-x-6 text-sm font-medium">
-            <a href="/" class="hover:text-gray-200 transition">
-                Início
-            </a>
-
             {% if usuario %}
                 <a href="/dashboard" class="hover:text-gray-200 transition">
                     Painel

@@ -1,91 +1,162 @@
-from fastapi import APIRouter, Request, Form, UploadFile, File
+from fastapi import APIRouter, Request, Form, UploadFile, File, Depends
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
-import os
-import shutil
+from sqlalchemy.orm import Session
+import os, shutil, uuid
+
+from app.config.database import get_db
+from app.config.security import get_current_user
+from app.models.produto_model import Produto
+from app.models.categoria_model import Categoria
 
 router = APIRouter()
 templates = Jinja2Templates(directory="app/templates")
 
-# Configura a pasta onde as fotos dos produtos vão ficar salvas
 UPLOAD_DIR = "static/uploads"
 os.makedirs(UPLOAD_DIR, exist_ok=True)
 
-# REQUISITO PARTE 4: Produtos reais demonstrativos relacionados por ID com as categorias
-DB_PRODUTOS = [
-    {"id": 1, "nome": "Camiseta Polo SENAI", "preco": 49.90, "categoria_id": 1, "imagem": "/static/uploads/polo.png"},
-    {"id": 2, "nome": "Apostila de Logística Básica", "preco": 19.90, "categoria_id": 2, "imagem": "/static/uploads/apostila.png"},
-    {"id": 3, "nome": "Garrafa Térmica AAPM Inox", "preco": 35.00, "categoria_id": 3, "imagem": "/static/uploads/garrafa.png"}
-]
 
-# REQUISITO: Listagem de produtos
 @router.get("/produtos")
-async def listar_produtos(request: Request, nome: str = "Eduardo", perfil: str = "ADMIN"):
-    from app.routes.category_routes import DB_CATEGORIAS
-    
-    # CORREÇÃO: Ajustado para apontar para a subpasta correta do seu projeto
-    return templates.TemplateResponse(
-        "produtos/index.html", 
-        {
-            "request": request, 
-            "nome": nome, 
-            "perfil": perfil, 
-            "produtos": DB_PRODUTOS,
-            "categorias": DB_CATEGORIAS # Passa as categorias para o formulário saber onde associar
-        }
-    )
+async def listar_produtos(
+    request: Request,
+    busca: str = "",
+    categoria_id: int = 0,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    query = db.query(Produto).filter(Produto.ativo == True)
+    if busca:
+        query = query.filter(Produto.nome.ilike(f"%{busca}%"))
+    if categoria_id:
+        query = query.filter(Produto.categoria_id == categoria_id)
 
-# REQUISITO: Cadastro de produtos + Upload de imagem
+    produtos   = query.order_by(Produto.nome).all()
+    categorias = db.query(Categoria).filter(Categoria.ativo == True).all()
+
+    return templates.TemplateResponse("produtos/index.html", {
+        "request":      request,
+        "produtos":     produtos,
+        "categorias":   categorias,
+        "usuario":      user,
+        "busca":        busca,
+        "categoria_id": categoria_id,
+    })
+
+
+@router.get("/produtos/novo")
+async def form_novo_produto(
+    request: Request,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    categorias = db.query(Categoria).filter(Categoria.ativo == True).all()
+    return templates.TemplateResponse("produtos/novo.html", {
+        "request":    request,
+        "categorias": categorias,
+        "usuario":    user,
+    })
+
+
 @router.post("/produtos/cadastrar")
 async def cadastrar_produto(
-    nome_prod: str = Form(...),
-    preco_prod: float = Form(...),
-    categoria_id: int = Form(...),
-    admin_nome: str = Form(...),
-    admin_perfil: str = Form(...),
-    imagem_file: UploadFile = File(...) # Captura o arquivo de imagem enviado pelo HTML
+    nome:         str        = Form(...),
+    preco:        float      = Form(...),
+    estoque:      int        = Form(...),
+    categoria_id: int        = Form(...),
+    imagem:       UploadFile = File(None),
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
-    # MELHORIA: Substitui espaços por underline para evitar links quebrados no HTML
-    nome_seguro_arquivo = imagem_file.filename.replace(" ", "_")
-    caminho_arquivo = f"{UPLOAD_DIR}/{nome_seguro_arquivo}"
-    
-    # Salva o arquivo fisicamente na pasta static/uploads
-    with open(caminho_arquivo, "wb") as buffer:
-        shutil.copyfileobj(imagem_file.file, buffer)
-        
-    novo_id = max([p["id"] for p in DB_PRODUTOS]) + 1 if DB_PRODUTOS else 1
-    
-    DB_PRODUTOS.append({
-        "id": novo_id,
-        "nome": nome_prod,
-        "preco": preco_prod,
-        "categoria_id": categoria_id,
-        "imagem": f"/static/uploads/{nome_seguro_arquivo}" # Caminho limpo da URL da imagem
-    })
-    
-    return RedirectResponse(url=f"/produtos?nome={admin_nome}&perfil={admin_perfil}", status_code=303)
+    imagem_path = None
+    if imagem and imagem.filename:
+        ext      = imagem.filename.rsplit(".", 1)[-1]
+        filename = f"{uuid.uuid4().hex}.{ext}"
+        caminho  = f"{UPLOAD_DIR}/{filename}"
+        with open(caminho, "wb") as f:
+            shutil.copyfileobj(imagem.file, f)
+        imagem_path = f"uploads/{filename}"
 
-# REQUISITO: Atualização de produtos
-@router.post("/produtos/atualizar/{prod_id}")
-async def atualizar_produto(
+    db.add(Produto(
+        nome=nome,
+        preco=preco,
+        estoque_atual=estoque,
+        categoria_id=categoria_id,
+        imagem_path=imagem_path,
+    ))
+    db.commit()
+    return RedirectResponse(url="/produtos?criado=ok", status_code=303)
+
+
+@router.get("/produtos/{prod_id}/editar")
+async def form_editar_produto(
     prod_id: int,
-    nome_prod: str = Form(...),
-    preco_prod: float = Form(...),
-    categoria_id: int = Form(...),
-    admin_nome: str = Form(...),
-    admin_perfil: str = Form(...)
+    request: Request,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
 ):
-    for prod in DB_PRODUTOS:
-        if prod["id"] == prod_id:
-            prod["nome"] = nome_prod
-            prod["preco"] = preco_prod
-            prod["categoria_id"] = categoria_id
-            break
-    return RedirectResponse(url=f"/produtos?nome={admin_nome}&perfil={admin_perfil}", status_code=303)
+    produto    = db.query(Produto).filter(Produto.id == prod_id).first()
+    categorias = db.query(Categoria).filter(Categoria.ativo == True).all()
+    return templates.TemplateResponse("produtos/editar.html", {
+        "request":    request,
+        "produto":    produto,
+        "categorias": categorias,
+        "usuario":    user,
+    })
 
-# REQUISITO: Exclusão de produtos
-@router.get("/produtos/excluir/{prod_id}")
-async def excluir_produto(prod_id: int, nome: str = "Eduardo", perfil: str = "ADMIN"):
-    global DB_PRODUTOS
-    DB_PRODUTOS = [p for p in DB_PRODUTOS if p["id"] != prod_id]
-    return RedirectResponse(url=f"/produtos?nome={nome}&perfil={perfil}", status_code=303)
+
+@router.post("/produtos/{prod_id}/atualizar")
+async def atualizar_produto(
+    prod_id:      int,
+    nome:         str        = Form(...),
+    preco:        float      = Form(...),
+    estoque:      int        = Form(...),
+    categoria_id: int        = Form(...),
+    imagem:       UploadFile = File(None),
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    produto = db.query(Produto).filter(Produto.id == prod_id).first()
+    if produto:
+        produto.nome          = nome
+        produto.preco         = preco
+        produto.estoque_atual = estoque
+        produto.categoria_id  = categoria_id
+
+        if imagem and imagem.filename:
+            ext      = imagem.filename.rsplit(".", 1)[-1]
+            filename = f"{uuid.uuid4().hex}.{ext}"
+            caminho  = f"{UPLOAD_DIR}/{filename}"
+            with open(caminho, "wb") as f:
+                shutil.copyfileobj(imagem.file, f)
+            produto.imagem_path = f"uploads/{filename}"
+
+        db.commit()
+    return RedirectResponse(url="/produtos", status_code=303)
+
+
+@router.post("/produtos/{prod_id}/desativar")
+async def desativar_produto(
+    prod_id: int,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    produto = db.query(Produto).filter(Produto.id == prod_id).first()
+    if produto:
+        produto.ativo = False
+        db.commit()
+    return RedirectResponse(url="/produtos?desativado=ok", status_code=303)
+
+
+@router.get("/produtos/{prod_id}")
+async def detalhe_produto(
+    prod_id: int,
+    request: Request,
+    user=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    produto = db.query(Produto).filter(Produto.id == prod_id).first()
+    return templates.TemplateResponse("produtos/detalhe.html", {
+        "request": request,
+        "produto": produto,
+        "usuario": user,
+    })

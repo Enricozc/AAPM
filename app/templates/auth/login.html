@@ -1,80 +1,277 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - AAPM SENAI</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <script src="https://cdn.tailwindcss.com"></script>
+<title>AAPM SENAI - Login</title>
 
-    <style>
-        body{
-            font-family: Arial, sans-serif;
-        }
-    </style>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+}
+
+body{
+    min-height:100vh;
+    overflow:hidden;
+}
+
+.bg-system{
+    background:
+    linear-gradient(
+        135deg,
+        #004aad 0%,
+        #0066ff 50%,
+        #ff7b00 100%
+    );
+}
+
+.circle1{
+    position:absolute;
+    width:500px;
+    height:500px;
+    border-radius:50%;
+    background:rgba(255,255,255,.08);
+    top:-180px;
+    left:-120px;
+}
+
+.circle2{
+    position:absolute;
+    width:600px;
+    height:600px;
+    border-radius:50%;
+    background:rgba(255,255,255,.05);
+    bottom:-300px;
+    right:-180px;
+}
+
+.login-card{
+    background:white;
+    border-radius:32px;
+    box-shadow:
+    0 20px 60px rgba(0,0,0,.15),
+    0 5px 20px rgba(0,0,0,.08);
+}
+
+.input-login{
+    width:100%;
+    height:58px;
+    border:2px solid #e7edf7;
+    border-radius:16px;
+    padding:0 18px;
+    transition:.3s;
+    background:#f8fbff;
+}
+
+.input-login:focus{
+    outline:none;
+    border-color:#0066ff;
+    box-shadow:0 0 0 4px rgba(0,102,255,.12);
+    background:white;
+}
+
+.btn-login{
+    height:58px;
+    width:100%;
+    border-radius:16px;
+    background:#ff7b00;
+    color:white;
+    font-weight:700;
+    transition:.3s;
+}
+
+.btn-login:hover{
+    background:#ff9100;
+    transform:translateY(-2px);
+}
+
+.nav-link{
+    transition:.3s;
+}
+
+.nav-link:hover{
+    color:white;
+}
+
+</style>
+
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
 
-    <nav class="w-full bg-[#0052cc] text-white px-6 md:px-12 py-4 flex justify-between items-center">
-        <div class="text-lg font-bold">
-            AAPM SENAI
+<body class="bg-system">
+
+<div class="circle1"></div>
+<div class="circle2"></div>
+
+<!-- NAVBAR -->
+<nav class="absolute top-0 left-0 w-full z-50 px-10 py-6 flex justify-between items-center">
+
+    <h1 class="text-white font-bold text-2xl">
+        AAPM SENAI
+    </h1>
+
+    <a href="/"
+       class="nav-link text-white/80 font-medium">
+        Início
+    </a>
+
+</nav>
+
+<div class="min-h-screen flex relative z-10">
+
+    <!-- ESQUERDA -->
+    <div class="hidden lg:flex w-1/2 flex-col justify-center px-20 text-white">
+
+        <span class="bg-white/15 w-fit px-5 py-2 rounded-full text-sm mb-6">
+            Sistema Oficial AAPM
+        </span>
+
+        <h1 class="text-6xl font-extrabold leading-tight mb-6">
+
+            Gestão Inteligente<br>
+            para a AAPM
+
+        </h1>
+
+        <p class="text-xl opacity-90 max-w-xl leading-relaxed">
+
+            Controle produtos, armários, usuários,
+            categorias e relatórios em uma única
+            plataforma moderna e segura.
+
+        </p>
+
+        <div class="flex gap-5 mt-12">
+
+            <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl">
+                <h3 class="font-bold">
+                    Produtos
+                </h3>
+                <p class="text-sm opacity-80">
+                    Controle de estoque
+                </p>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl">
+                <h3 class="font-bold">
+                    Armários
+                </h3>
+                <p class="text-sm opacity-80">
+                    Gestão simplificada
+                </p>
+            </div>
+
+            <div class="bg-white/10 backdrop-blur-md p-5 rounded-2xl">
+                <h3 class="font-bold">
+                    Usuários
+                </h3>
+                <p class="text-sm opacity-80">
+                    Controle de acesso
+                </p>
+            </div>
+
         </div>
 
-        <div>
-            <a href="/"
-               class="hover:text-gray-200">
-                Início
-            </a>
-        </div>
-    </nav>
+    </div>
 
-    <main class="flex-1 flex items-center justify-center">
+    <!-- LOGIN -->
+    <div class="w-full lg:w-1/2 flex justify-center items-center px-6">
 
-        <div class="bg-white w-full max-w-md p-8 rounded-lg shadow-lg border-t-4 border-[#0052cc]">
+        <div class="login-card w-full max-w-md p-10">
 
-            <h2 class="text-center text-3xl mb-8">
-                Área de Acesso
-            </h2>
+            <div class="text-center mb-8">
+
+                <div class="w-24 h-24 bg-gradient-to-r from-[#004aad] to-[#0066ff]
+                rounded-3xl mx-auto flex items-center justify-center mb-5 shadow-lg">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-11 h-11 text-white"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor">
+
+                    <path stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M12 11c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm0 2c-2.667 0-8 1.333-8 4v2h16v-2c0-2.667-5.333-4-8-4z"/>
+
+                    </svg>
+
+                </div>
+
+                <h2 class="text-4xl font-bold text-slate-800">
+                    Bem-vindo
+                </h2>
+
+                <p class="text-slate-500 mt-2">
+                    Faça login para acessar o sistema
+                </p>
+
+            </div>
 
             <form action="/auth/login" method="post">
 
-                <div class="mb-4">
-                    <label class="block font-semibold mb-2">
+                <div class="mb-5">
+
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
                         E-mail
                     </label>
 
                     <input
                         type="email"
                         name="email"
-                        placeholder="usuario@senai.com.br"
-                        class="w-full border rounded p-3"
+                        placeholder="admin@senai.com"
+                        class="input-login"
                         required>
+
                 </div>
 
                 <div class="mb-6">
-                    <label class="block font-semibold mb-2">
+
+                    <label class="block text-sm font-semibold text-slate-700 mb-2">
                         Senha
                     </label>
 
                     <input
                         type="password"
                         name="senha"
-                        placeholder="********"
-                        class="w-full border rounded p-3"
+                        placeholder="Digite sua senha"
+                        class="input-login"
                         required>
+
                 </div>
 
                 <button
                     type="submit"
-                    class="w-full bg-[#0052cc] hover:bg-blue-700 text-white py-3 rounded font-bold">
-                    Entrar
+                    class="btn-login">
+
+                    Entrar no Sistema
+
                 </button>
 
             </form>
 
+            <div class="mt-8 text-center">
+
+                <span class="text-slate-400 text-sm">
+                    © 2026 AAPM SENAI
+                </span>
+
+            </div>
+
         </div>
 
-    </main>
+    </div>
+
+</div>
 
 </body>
 </html>

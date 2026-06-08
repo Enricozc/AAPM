@@ -4,74 +4,314 @@
 
 {% block conteudo %}
 
-<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-    <h2>Gerenciamento de Produtos</h2>
+<style>
+:root{
+    --blue:#0052cc;
+    --orange:#ff6600;
+    --bg:#f6f8fc;
+}
+
+body{
+    margin:0;
+    font-family:Inter, sans-serif;
+    background:var(--bg);
+}
+
+/* HEADER */
+.top{
+    display:flex;
+    justify-content:space-between;
+    align-items:flex-end;
+    margin-bottom:24px;
+}
+
+.title{
+    font-size:28px;
+    font-weight:900;
+    letter-spacing:-1px;
+}
+
+.subtitle{
+    font-size:13px;
+    color:#94a3b8;
+    margin-top:4px;
+}
+
+.btn{
+    background:linear-gradient(135deg, var(--blue), #003a99);
+    color:white;
+    padding:12px 18px;
+    border-radius:14px;
+    text-decoration:none;
+    font-weight:800;
+    box-shadow:0 20px 50px rgba(0,82,204,.2);
+    transition:.3s;
+}
+
+.btn:hover{
+    transform:translateY(-4px);
+}
+
+/* FILTER */
+.filter{
+    display:flex;
+    gap:10px;
+    padding:14px;
+    background:white;
+    border-radius:18px;
+    border:1px solid #e5e7eb;
+    margin-bottom:26px;
+}
+
+.filter input,
+.filter select{
+    flex:1;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #e5e7eb;
+    background:#f9fafb;
+    font-weight:600;
+}
+
+.filter button{
+    background:#0f172a;
+    color:white;
+    border:none;
+    padding:12px 16px;
+    border-radius:12px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.filter a{
+    padding:12px 14px;
+    background:#f1f5f9;
+    border-radius:12px;
+    text-decoration:none;
+    color:#0f172a;
+    font-weight:800;
+}
+
+/* GRID */
+.grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:22px;
+}
+
+/* CARD */
+.card{
+    background:white;
+    border-radius:26px;
+    overflow:hidden;
+    border:1px solid #e5e7eb;
+    box-shadow:0 15px 40px rgba(0,0,0,.05);
+    transition:.35s;
+}
+
+.card:hover{
+    transform:translateY(-10px);
+    box-shadow:0 30px 80px rgba(0,0,0,.12);
+}
+
+/* IMG */
+.img{
+    width:100%;
+    height:220px;
+    object-fit:cover;
+}
+
+/* CONTENT */
+.content{
+    padding:18px;
+}
+
+.name{
+    font-size:18px;
+    font-weight:900;
+    color:#0f172a;
+    text-decoration:none;
+}
+
+.cat{
+    font-size:12px;
+    margin-top:6px;
+    color:#94a3b8;
+    font-weight:700;
+}
+
+.price{
+    margin-top:14px;
+    font-size:26px;
+    font-weight:900;
+    color:var(--blue);
+    letter-spacing:-1px;
+}
+
+.stock{
+    display:inline-block;
+    margin-top:10px;
+    font-size:12px;
+    font-weight:800;
+    padding:6px 10px;
+    border-radius:999px;
+    background:#f1f5f9;
+    color:#475569;
+}
+
+/* ACTIONS (IMPORTANTE: preservado backend) */
+.actions{
+    margin-top:14px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.edit{
+    font-size:13px;
+    font-weight:900;
+    color:var(--orange);
+    text-decoration:none;
+}
+
+.delete{
+    font-size:13px;
+    font-weight:900;
+    color:#ef4444;
+    border:none;
+    background:none;
+    cursor:pointer;
+}
+
+/* EMPTY */
+.empty{
+    text-align:center;
+    padding:40px;
+    color:#94a3b8;
+    font-weight:600;
+}
+
+/* RESPONSIVO */
+@media(max-width:1000px){
+    .grid{
+        grid-template-columns:1fr;
+    }
+    .top{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:12px;
+    }
+}
+</style>
+
+<!-- HEADER -->
+<div class="top">
+    <div>
+        <div class="title">Produtos</div>
+        <div class="subtitle">Gestão moderna de estoque e catálogo</div>
+    </div>
+
     {% if usuario.role == 'ADMIN' %}
-        <a href="/produtos/novo" style="background: #1c49b8; color: white; padding: 10px 20px; text-decoration: none; border-radius: 8px; font-weight: 600;">+ Novo Produto</a>
+        <a class="btn" href="/produtos/novo">+ Novo Produto</a>
     {% endif %}
 </div>
 
+<!-- ALERTS -->
 {% if request.query_params.get('criado') == 'ok' %}
-    <p style="color: #155724; background: #d4edda; padding: 10px; border-radius: 5px;">Produto cadastrado com sucesso!</p>
+    <div style="background:#e7f7ec;padding:12px;border-radius:14px;color:#166534;font-weight:800;margin-bottom:15px;">
+        Produto cadastrado com sucesso!
+    </div>
 {% endif %}
+
 {% if request.query_params.get('desativado') == 'ok' %}
-    <p style="color: #721c24; background: #f8d7da; padding: 10px; border-radius: 5px;">Produto desativado.</p>
+    <div style="background:#ffe4e6;padding:12px;border-radius:14px;color:#9f1239;font-weight:800;margin-bottom:15px;">
+        Produto desativado!
+    </div>
 {% endif %}
 
-<div style="background: #f8fafc; padding: 15px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #e2e8f0;">
-    <form method="get" action="/produtos" style="display: flex; gap: 10px;">
-        <input type="text" name="busca" placeholder="Buscar produto..." value="{{ busca }}" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px; flex-grow: 1;">
-        
-        <select name="categoria_id" style="padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
-            <option value="0">Todas as Categorias</option>
-            {% for c in categorias %}
-                <option value="{{ c.id }}" {{ 'selected' if categoria_id|int == c.id|int else '' }}>{{ c.nome }}</option>
-            {% endfor %}
-        </select>
-        
-        <button type="submit" style="padding: 8px 15px; background: #333; color: white; border: none; border-radius: 4px; cursor: pointer;">Filtrar</button>
-        {% if busca or categoria_id|int > 0 %}
-            <a href="/produtos" style="padding: 8px 15px; background: #eee; color: #333; text-decoration: none; border-radius: 4px;">Limpar</a>
-        {% endif %}
-    </form>
-</div>
+<!-- FILTER -->
+<form class="filter" method="get">
 
-<table style="width: 100%; border-collapse: collapse; background: white;">
-    <thead>
-        <tr style="background: #f1f5f9; text-align: left;">
-            <th style="padding: 12px;">Imagem</th>
-            <th style="padding: 12px;">Nome</th>
-            <th style="padding: 12px;">Categoria</th>
-            <th style="padding: 12px;">Preço</th>
-            <th style="padding: 12px;">Estoque</th>
-            <th style="padding: 12px;">Ações</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for p in produtos %}
-        <tr style="border-bottom: 1px solid #f0f0f0;">
-            <td style="padding: 10px;">
-                <img src="{{ p.imagem_url }}" width="50" height="50" style="object-fit: cover; border-radius: 4px;">
-            </td>
-            <td style="padding: 10px;"><a href="/produtos/{{ p.id }}" style="color: #1c49b8; text-decoration: none; font-weight: 600;">{{ p.nome }}</a></td>
-            <td style="padding: 10px;">{{ p.categoria.nome if p.categoria else "—" }}</td>
-            <td style="padding: 10px;">R$ {{ "%.2f"|format(p.preco) }}</td>
-            <td style="padding: 10px;">{{ p.estoque_atual }}</td>
-            <td style="padding: 10px;">
-                {% if usuario.role == 'ADMIN' %}
-                    <a href="/produtos/{{ p.id }}/editar" style="margin-right: 10px; color: #f59e0b;">Editar</a>
-                    <form action="/produtos/{{ p.id }}/desativar" method="post" style="display:inline" onsubmit="return confirm('Desativar {{ p.nome }}?')">
-                        <button type="submit" style="color: #ef4444; border: none; background: none; cursor: pointer;">Desativar</button>
-                    </form>
-                {% endif %}
-            </td>
-        </tr>
-        {% else %}
-        <tr>
-            <td colspan="6" style="padding: 20px; text-align: center; color: #888;">Nenhum produto encontrado.</td>
-        </tr>
+    <input type="text" name="busca" placeholder="Buscar produto..." value="{{ busca }}">
+
+    <select name="categoria_id">
+        <option value="0">Todas categorias</option>
+        {% for c in categorias %}
+            <option value="{{ c.id }}" {% if categoria_id|int == c.id|int %}selected{% endif %}>
+                {{ c.nome }}
+            </option>
         {% endfor %}
-    </tbody>
-</table>
+    </select>
+
+    <button type="submit">Filtrar</button>
+
+    {% if busca or categoria_id|int > 0 %}
+        <a href="/produtos">Limpar</a>
+    {% endif %}
+
+</form>
+
+<!-- GRID -->
+<div class="grid">
+
+{% for p in produtos %}
+
+    <div class="card">
+
+        <img class="img" src="{{ p.imagem_url }}">
+
+        <div class="content">
+
+            <a class="name" href="/produtos/{{ p.id }}">
+                {{ p.nome }}
+            </a>
+
+            <div class="cat">
+                {{ p.categoria.nome if p.categoria else "Sem categoria" }}
+            </div>
+
+            <div class="price">
+                R$ {{ "%.2f"|format(p.preco) }}
+            </div>
+
+            <div class="stock">
+                Estoque: {{ p.estoque_atual }}
+            </div>
+
+            {% if usuario.role == 'ADMIN' %}
+            <div class="actions">
+
+                <a class="edit"
+                   href="/produtos/{{ p.id }}/editar">
+                    Editar
+                </a>
+
+                <form action="/produtos/{{ p.id }}/desativar"
+                      method="post"
+                      onsubmit="return confirm('Desativar {{ p.nome }}?')"
+                      style="display:inline;">
+
+                    <button class="delete" type="submit">
+                        Desativar
+                    </button>
+
+                </form>
+
+            </div>
+            {% endif %}
+
+        </div>
+
+    </div>
+
+{% else %}
+
+    <div class="empty">
+        Nenhum produto encontrado.
+    </div>
+
+{% endfor %}
+
+</div>
 
 {% endblock conteudo %}

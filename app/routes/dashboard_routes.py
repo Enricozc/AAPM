@@ -4,8 +4,10 @@ from fastapi.templating import Jinja2Templates
 from app.config.security import get_current_user
 
 router = APIRouter()
-templates = Jinja2Templates(directory="app/templates")
 
+templates = Jinja2Templates(
+    directory="app/templates"
+)
 
 @router.get("/dashboard")
 async def dashboard(
@@ -13,8 +15,10 @@ async def dashboard(
     user=Depends(get_current_user)
 ):
     usuario = {
-        "nome": user.get("email"),
-        "role": user.get("role")
+        "nome": user.get("nome"),
+        "email": user.get("sub"),
+        "role": user.get("role"),
+        "id": user.get("id")
     }
 
     return templates.TemplateResponse(

@@ -6,71 +6,116 @@
     <title>{% block titulo %}AAPM SENAI{% endblock %}</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+          rel="stylesheet">
+
     <link rel="stylesheet" href="/static/css/style.css">
 
     {% block css_extra %}{% endblock %}
 
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
+        body{
+            font-family:'Inter',sans-serif;
         }
     </style>
 </head>
 
 <body class="bg-gray-50 text-gray-900 min-h-screen flex flex-col">
 
-    <nav class="w-full bg-[#0052cc] text-white px-6 md:px-12 py-4 flex justify-between items-center shadow-sm">
-        <div class="text-lg font-bold tracking-wide">
-            AAPM SENAI
+    <!-- NAVBAR -->
+    <nav class="w-full bg-[#0052cc] text-white px-6 md:px-12 py-4 flex justify-between items-center shadow-md">
+
+        <div class="flex items-center gap-3">
+            <i class="fas fa-school text-xl"></i>
+            <span class="text-lg font-bold tracking-wide">
+                AAPM SENAI
+            </span>
         </div>
 
-        <div class="flex items-center space-x-6 text-sm font-medium">
-            <a href="/" class="hover:text-gray-200 transition">
-                Início
-            </a>
+        <div class="flex items-center gap-6 text-sm font-medium">
 
             {% if usuario %}
-                <a href="/dashboard" class="hover:text-gray-200 transition">
+
+                <!-- LOGADO -->
+
+                <a href="/dashboard"
+                   class="hover:text-blue-200 transition">
                     Painel
                 </a>
 
                 {% if usuario.role == 'ADMIN' %}
-                    <a href="/categorias" class="text-orange-400 hover:text-orange-300 font-semibold transition">
+
+                    <a href="/categorias"
+                       class="hover:text-orange-300 transition">
                         Categorias
                     </a>
+
+                    <a href="/usuarios"
+                       class="hover:text-orange-300 transition">
+                        Usuários
+                    </a>
+
                 {% endif %}
 
-                <a href="/produtos" class="hover:text-gray-200 transition">
+                <a href="/produtos"
+                   class="hover:text-blue-200 transition">
                     Produtos
                 </a>
 
-                <span class="bg-white/10 border border-white/20 px-3 py-1 rounded-md text-xs font-semibold">
+                <a href="/armarios"
+                   class="hover:text-blue-200 transition">
+                    Armários
+                </a>
+
+                <span class="bg-white/10 border border-white/20 px-3 py-1 rounded-lg text-xs font-semibold">
                     {{ usuario.nome }}
                 </span>
 
-                <a href="/auth/logout" class="text-red-300 hover:text-red-400 font-bold transition">
+                <a href="/auth/logout"
+                   class="bg-red-500 hover:bg-red-600 px-4 py-2 rounded-lg font-semibold transition">
                     Sair
                 </a>
+
             {% else %}
+
+                <!-- NÃO LOGADO -->
+
+                <a href="/"
+                   class="hover:text-blue-200 transition">
+                    Início
+                </a>
+
                 <a href="/auth/login"
-                   class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-1.5 rounded font-semibold shadow-md transition">
+                   class="bg-orange-500 hover:bg-orange-600 px-5 py-2 rounded-lg font-semibold shadow-md transition">
                     Login
                 </a>
+
             {% endif %}
+
         </div>
+
     </nav>
 
-    <main class="flex-grow px-4 pt-2 pb-4">
+    <!-- CONTEÚDO -->
+    <main class="flex-grow px-4 py-4">
         <div class="w-full max-w-7xl mx-auto">
-            {% block conteudo %}{% endblock %}
-            {% block internal_content %}{% endblock %}
+
+            {% block conteudo %}
+            {% endblock %}
+
+            {% block internal_content %}
+            {% endblock %}
+
         </div>
     </main>
 
-    <footer class="bg-[#2d2d2d] text-gray-400 text-center py-4 text-xs tracking-wide border-t border-gray-800">
-        <p>&copy; 2026 AAPM SENAI - Equipe Front-End SSR</p>
+    <!-- FOOTER -->
+    <footer class="bg-[#2d2d2d] text-gray-400 text-center py-4 text-xs border-t border-gray-800">
+        <p>&copy; 2026 AAPM SENAI - Sistema de Gestão</p>
     </footer>
 
     {% block js_extra %}{% endblock %}

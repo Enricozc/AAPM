@@ -8,7 +8,8 @@
 :root{
     --blue:#0052cc;
     --orange:#ff6600;
-    --bg:#f6f8fc;
+    --bg:#f5f7fb;
+    --text:#0f172a;
 }
 
 body{
@@ -17,74 +18,93 @@ body{
     background:var(--bg);
 }
 
-/* HEADER */
+/* ===== CONTAINER MAIS FLUIDO ===== */
+.wrapper{
+    max-width:1200px;
+    margin:0 auto;
+}
+
+/* ===== HEADER MINIMALISTA ===== */
 .top{
     display:flex;
     justify-content:space-between;
     align-items:flex-end;
-    margin-bottom:24px;
+    margin-bottom:26px;
 }
 
 .title{
-    font-size:28px;
+    font-size:34px;
     font-weight:900;
-    letter-spacing:-1px;
+    letter-spacing:-1.2px;
+    color:var(--text);
 }
 
 .subtitle{
     font-size:13px;
     color:#94a3b8;
-    margin-top:4px;
+    margin-top:6px;
+    font-weight:500;
 }
 
+/* BOTÃO FLUTUANTE CLEAN */
 .btn{
-    background:linear-gradient(135deg, var(--blue), #003a99);
+    background:rgba(0,82,204,.95);
     color:white;
     padding:12px 18px;
     border-radius:14px;
     text-decoration:none;
     font-weight:800;
-    box-shadow:0 20px 50px rgba(0,82,204,.2);
-    transition:.3s;
+    box-shadow:0 10px 30px rgba(0,82,204,.25);
+    transition:.25s;
 }
 
 .btn:hover{
-    transform:translateY(-4px);
+    transform:translateY(-3px);
 }
 
-/* FILTER */
+/* ===== FILTRO STYLE CLAUDE ===== */
 .filter{
     display:flex;
     gap:10px;
-    padding:14px;
-    background:white;
+    padding:12px;
+    background:rgba(255,255,255,.7);
+    backdrop-filter:blur(18px);
     border-radius:18px;
-    border:1px solid #e5e7eb;
-    margin-bottom:26px;
+    border:1px solid rgba(226,232,240,.6);
+    margin-bottom:28px;
 }
 
 .filter input,
 .filter select{
     flex:1;
-    padding:12px;
+    padding:11px 12px;
     border-radius:12px;
     border:1px solid #e5e7eb;
-    background:#f9fafb;
+    background:white;
     font-weight:600;
+    outline:none;
+    transition:.2s;
 }
 
+.filter input:focus,
+.filter select:focus{
+    border-color:var(--blue);
+    box-shadow:0 0 0 3px rgba(0,82,204,.12);
+}
+
+/* BOTÕES SILENCIOSOS */
 .filter button{
     background:#0f172a;
     color:white;
     border:none;
-    padding:12px 16px;
+    padding:11px 14px;
     border-radius:12px;
-    font-weight:900;
+    font-weight:800;
     cursor:pointer;
 }
 
 .filter a{
-    padding:12px 14px;
+    padding:11px 14px;
     background:#f1f5f9;
     border-radius:12px;
     text-decoration:none;
@@ -92,44 +112,58 @@ body{
     font-weight:800;
 }
 
-/* GRID */
+/* ===== GRID MAIS "RESPIRADO" ===== */
 .grid{
     display:grid;
     grid-template-columns:repeat(3,1fr);
     gap:22px;
 }
 
-/* CARD */
+/* ===== CARD STYLE CLAUDE (soft + elegant) ===== */
 .card{
     background:white;
-    border-radius:26px;
+    border-radius:22px;
     overflow:hidden;
-    border:1px solid #e5e7eb;
-    box-shadow:0 15px 40px rgba(0,0,0,.05);
-    transition:.35s;
+    border:1px solid rgba(226,232,240,.8);
+    box-shadow:0 10px 30px rgba(0,0,0,.04);
+    transition:.25s ease;
 }
 
 .card:hover{
-    transform:translateY(-10px);
-    box-shadow:0 30px 80px rgba(0,0,0,.12);
+    transform:translateY(-6px);
+    box-shadow:0 25px 60px rgba(0,0,0,.10);
 }
 
-/* IMG */
+/* CONTAINER DA IMAGEM AJUSTADO */
+.img-container {
+    width: 100%;
+    height: 200px;
+    background-color: #fafafa; /* Fundo neutro suave caso a imagem tenha transparência */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgba(226,232,240,.6);
+    overflow: hidden;
+}
+
+/* IMAGEM CORRIGIDA SEM CORTES DRÁSTICOS */
 .img{
-    width:100%;
-    height:220px;
-    object-fit:cover;
+    width: 100%;
+    height: 100%;
+    object-fit: contain; /* Garante que o produto apareça inteiro */
+    padding: 10px; /* Evita que o produto cole nas bordas do card */
+    box-sizing: border-box;
 }
 
-/* CONTENT */
+/* CONTEÚDO LIMPO */
 .content{
-    padding:18px;
+    padding:16px 18px;
 }
 
 .name{
-    font-size:18px;
-    font-weight:900;
-    color:#0f172a;
+    font-size:17px;
+    font-weight:800;
+    color:var(--text);
     text-decoration:none;
 }
 
@@ -137,29 +171,31 @@ body{
     font-size:12px;
     margin-top:6px;
     color:#94a3b8;
-    font-weight:700;
+    font-weight:600;
 }
 
+/* PREÇO MAIS “SILENCIOSO” */
 .price{
-    margin-top:14px;
-    font-size:26px;
+    margin-top:12px;
+    font-size:24px;
     font-weight:900;
     color:var(--blue);
-    letter-spacing:-1px;
+    letter-spacing:-0.5px;
 }
 
+/* STOCK DISCRETO */
 .stock{
     display:inline-block;
     margin-top:10px;
     font-size:12px;
-    font-weight:800;
+    font-weight:700;
     padding:6px 10px;
     border-radius:999px;
     background:#f1f5f9;
     color:#475569;
 }
 
-/* ACTIONS (IMPORTANTE: preservado backend) */
+/* ACTIONS MINIMALISTAS */
 .actions{
     margin-top:14px;
     display:flex;
@@ -169,26 +205,36 @@ body{
 
 .edit{
     font-size:13px;
-    font-weight:900;
+    font-weight:800;
     color:var(--orange);
     text-decoration:none;
+    transition:.2s;
+}
+
+.edit:hover{
+    opacity:.7;
 }
 
 .delete{
     font-size:13px;
-    font-weight:900;
+    font-weight:800;
     color:#ef4444;
     border:none;
     background:none;
     cursor:pointer;
+    transition:.2s;
 }
 
-/* EMPTY */
+.delete:hover{
+    opacity:.7;
+}
+
+/* EMPTY STATE */
 .empty{
     text-align:center;
-    padding:40px;
+    padding:60px;
     color:#94a3b8;
-    font-weight:600;
+    font-weight:500;
 }
 
 /* RESPONSIVO */
@@ -199,16 +245,17 @@ body{
     .top{
         flex-direction:column;
         align-items:flex-start;
-        gap:12px;
+        gap:10px;
     }
 }
 </style>
 
-<!-- HEADER -->
+<div class="wrapper">
+
 <div class="top">
     <div>
         <div class="title">Produtos</div>
-        <div class="subtitle">Gestão moderna de estoque e catálogo</div>
+        <div class="subtitle">Gestão leve, fluida e moderna de catálogo</div>
     </div>
 
     {% if usuario.role == 'ADMIN' %}
@@ -216,22 +263,7 @@ body{
     {% endif %}
 </div>
 
-<!-- ALERTS -->
-{% if request.query_params.get('criado') == 'ok' %}
-    <div style="background:#e7f7ec;padding:12px;border-radius:14px;color:#166534;font-weight:800;margin-bottom:15px;">
-        Produto cadastrado com sucesso!
-    </div>
-{% endif %}
-
-{% if request.query_params.get('desativado') == 'ok' %}
-    <div style="background:#ffe4e6;padding:12px;border-radius:14px;color:#9f1239;font-weight:800;margin-bottom:15px;">
-        Produto desativado!
-    </div>
-{% endif %}
-
-<!-- FILTER -->
 <form class="filter" method="get">
-
     <input type="text" name="busca" placeholder="Buscar produto..." value="{{ busca }}">
 
     <select name="categoria_id">
@@ -248,20 +280,20 @@ body{
     {% if busca or categoria_id|int > 0 %}
         <a href="/produtos">Limpar</a>
     {% endif %}
-
 </form>
 
-<!-- GRID -->
 <div class="grid">
 
 {% for p in produtos %}
-
     <div class="card">
-
-        <img class="img" src="{{ p.imagem_url }}">
+        
+        <div class="img-container">
+            <img class="img" 
+                 src="{{ p.imagem_url if p.imagem_url else 'https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem' }}" 
+                 onerror="this.onerror=null; this.src='https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem';">
+        </div>
 
         <div class="content">
-
             <a class="name" href="/produtos/{{ p.id }}">
                 {{ p.nome }}
             </a>
@@ -280,38 +312,29 @@ body{
 
             {% if usuario.role == 'ADMIN' %}
             <div class="actions">
-
-                <a class="edit"
-                   href="/produtos/{{ p.id }}/editar">
+                <a class="edit" href="/produtos/{{ p.id }}/editar">
                     Editar
                 </a>
 
                 <form action="/produtos/{{ p.id }}/desativar"
                       method="post"
-                      onsubmit="return confirm('Desativar {{ p.nome }}?')"
-                      style="display:inline;">
-
+                      style="display:inline;"
+                      onsubmit="return confirm('Desativar {{ p.nome }}?')">
                     <button class="delete" type="submit">
                         Desativar
                     </button>
-
                 </form>
-
             </div>
             {% endif %}
-
         </div>
-
     </div>
-
 {% else %}
-
     <div class="empty">
-        Nenhum produto encontrado.
+        Nenhum produto encontrado
     </div>
-
 {% endfor %}
 
 </div>
+</div>
 
-{% endblock conteudo %}
+{% endblock %}

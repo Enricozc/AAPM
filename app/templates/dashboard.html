@@ -5,98 +5,231 @@
 {% block conteudo %}
 
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=DM+Mono:wght@500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
-  .dash-wrap { font-family: 'DM Sans', sans-serif; display: flex; flex-direction: column; gap: 22px; padding-top: 18px; }
+:root{
+  --blue:#0052cc;
+  --orange:#ff6a00;
+  --bg:#f5f7fb;
+  --text:#0f172a;
+}
 
-  .alert { padding: 14px 20px; border-radius: 10px; font-size: .9rem; font-weight: 600; display: flex; align-items: center; gap: 10px; }
-  .alert-error   { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
-  .alert-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+/* FUNDO */
+body{
+  margin:0;
+  font-family:Inter, sans-serif;
+  background:
+    radial-gradient(circle at 10% 10%, rgba(0,82,204,.10), transparent 45%),
+    radial-gradient(circle at 90% 20%, rgba(255,106,0,.08), transparent 45%),
+    radial-gradient(circle at 50% 90%, rgba(0,82,204,.05), transparent 50%),
+    var(--bg);
+}
 
-  /* WELCOME */
-  .welcome {
-    background: #fff; border-radius: 14px; padding: 22px 28px;
-    display: flex; align-items: center; justify-content: space-between;
-    border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,.05);
-    animation: fadeUp .35s ease both;
-  }
-  .welcome-sub  { font-size: .82rem; color: #94a3b8; font-weight: 500; }
-  .welcome-name { font-size: 1.5rem; font-weight: 700; color: #1a4fd6; margin-top: 3px; }
-  .access-label { font-size: .7rem; color: #94a3b8; font-weight: 700; text-transform: uppercase; letter-spacing: .6px; }
-  .role-badge {
-    display: inline-flex; align-items: center; gap: 6px;
-    padding: 6px 16px; border-radius: 20px; font-size: .78rem; font-weight: 700;
-    color: #fff; margin-top: 6px;
-  }
-  .role-admin { background: #ef4444; }
-  .role-user  { background: #10b981; }
+/* WRAP */
+.dash-wrap{
+  padding-top:20px;
+  display:flex;
+  flex-direction:column;
+  gap:22px;
+}
 
-  /* STAT CARDS — 4 colunas */
-  .stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
-  .stat-card {
-    background: #fff; border-radius: 14px; padding: 22px 24px;
-    border: 1px solid #e2e8f0; border-top: 4px solid transparent;
-    box-shadow: 0 2px 10px rgba(0,0,0,.05);
-    cursor: pointer; transition: transform .18s, box-shadow .18s;
-    text-decoration: none; color: inherit; display: block;
-    animation: fadeUp .35s ease both;
-  }
-  .stat-card:hover { transform: translateY(-4px); box-shadow: 0 10px 28px rgba(0,0,0,.1); }
-  .stat-card.blue   { border-top-color: #1a4fd6; animation-delay: .05s; }
-  .stat-card.orange { border-top-color: #f97316; animation-delay: .10s; }
-  .stat-card.green  { border-top-color: #16a34a; animation-delay: .15s; }
-  .stat-card.purple { border-top-color: #7c3aed; animation-delay: .20s; }
-  .stat-label { font-size: .7rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: .8px; }
-  .stat-value { font-family: 'DM Mono', monospace; font-size: 2.2rem; font-weight: 500; color: #1a1f36; margin: 8px 0 6px; }
-  .stat-trend { font-size: .78rem; font-weight: 600; color: #16a34a; }
+/* ALERT */
+.alert{
+  padding:14px 18px;
+  border-radius:14px;
+  font-weight:700;
+  font-size:13px;
+  backdrop-filter:blur(10px);
+}
 
-  /* BOTTOM */
-  .bottom-row { display: grid; grid-template-columns: 1fr 300px; gap: 18px; }
-  .card {
-    background: #fff; border-radius: 14px; padding: 24px 26px;
-    border: 1px solid #e2e8f0; box-shadow: 0 2px 10px rgba(0,0,0,.05);
-    animation: fadeUp .35s .2s ease both;
-  }
-  .card-title { font-size: 1rem; font-weight: 700; color: #1a1f36; margin-bottom: 18px; display: flex; align-items: center; gap: 8px; }
-  .card-title em { font-style: normal; font-size: .78rem; color: #94a3b8; font-weight: 400; }
+/* WELCOME */
+.welcome{
+  background:rgba(255,255,255,.85);
+  backdrop-filter:blur(16px);
+  border:1px solid rgba(226,232,240,.8);
+  border-radius:18px;
+  padding:26px;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  box-shadow:0 20px 60px rgba(0,0,0,.05);
+}
 
-  .act-item { display: flex; align-items: flex-start; gap: 12px; padding: 13px 0; border-bottom: 1px solid #f1f5f9; }
-  .act-item:last-child { border-bottom: none; }
-  .act-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
-  .act-dot.blue   { background: #1a4fd6; }
-  .act-dot.orange { background: #f97316; }
-  .act-dot.green  { background: #16a34a; }
-  .act-strong { font-size: .88rem; font-weight: 600; color: #1a1f36; display: block; }
-  .act-by     { font-size: .78rem; color: #94a3b8; }
-  .act-time   { font-size: .75rem; color: #cbd5e1; white-space: nowrap; margin-left: auto; }
+.welcome-name{
+  font-size:22px;
+  font-weight:900;
+  color:var(--blue);
+}
 
-  .action-btn {
-    width: 100%; display: flex; align-items: center; gap: 12px;
-    padding: 12px 16px; border-radius: 10px; margin-bottom: 10px;
-    border: 1.5px solid #e2e8f0; background: transparent;
-    font-family: 'DM Sans', sans-serif; font-size: .88rem; font-weight: 600;
-    color: #1a1f36; cursor: pointer; text-decoration: none;
-    transition: background .15s, border-color .15s, color .15s, transform .13s, box-shadow .13s;
-  }
-  .action-btn:last-child { margin-bottom: 0; }
-  .action-btn:hover {
-    background: #1a4fd6; border-color: #1a4fd6; color: #fff;
-    transform: translateX(4px); box-shadow: 0 4px 16px rgba(26,79,214,.22);
-  }
-  .action-btn .ico { font-size: 1.1rem; flex-shrink: 0; }
+.role-badge{
+  padding:6px 14px;
+  border-radius:999px;
+  font-weight:800;
+  font-size:12px;
+}
 
-  @keyframes fadeUp {
-    from { opacity:0; transform:translateY(16px); }
-    to   { opacity:1; transform:translateY(0); }
-  }
+.role-admin{ background:#fee2e2; color:#b91c1c; }
+.role-user{ background:#dcfce7; color:#166534; }
 
-  @media (max-width: 900px) {
-    .stats-row  { grid-template-columns: repeat(2,1fr); }
-    .bottom-row { grid-template-columns: 1fr; }
-  }
-  @media (max-width: 500px) {
-    .stats-row { grid-template-columns: 1fr; }
-  }
+/* STATS */
+.stats-row{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:18px;
+}
+
+/* CARD */
+.stat-card{
+  background:rgba(15,23,42,0.92); /* escuro premium */
+  border-radius:18px;
+  padding:20px;
+  border:1px solid rgba(255,255,255,0.08);
+  box-shadow:0 10px 30px rgba(0,0,0,.15);
+  position:relative;
+  overflow:hidden;
+  transition:.25s;
+}
+
+/* glow leve */
+.stat-card::before{
+  content:"";
+  position:absolute;
+  inset:-80%;
+  background:radial-gradient(circle at 30% 30%,
+    rgba(0,82,204,.20),
+    transparent 60%);
+  transform:rotate(15deg);
+}
+
+.stat-card.orange::before{
+  background:radial-gradient(circle at 30% 30%,
+    rgba(255,106,0,.18),
+    transparent 60%);
+}
+
+.stat-card *{
+  position:relative;
+  z-index:2;
+}
+
+.stat-card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 25px 60px rgba(0,0,0,.25);
+}
+
+/* TEXTO */
+.stat-label{
+  font-size:11px;
+  font-weight:800;
+  color:#94a3b8;
+  text-transform:uppercase;
+  letter-spacing:.8px;
+}
+
+/* 🔥 NÚMEROS AGORA BRANCOS (FIX PRINCIPAL) */
+.stat-value{
+  font-size:32px;
+  font-weight:900;
+  margin-top:10px;
+  color:#ffffff;   /* <<< AQUI O AJUSTE */
+}
+
+/* pequenas variações só se quiser destaque */
+.stat-card.blue .stat-value{
+  color:#ffffff;
+}
+
+.stat-card.orange .stat-value{
+  color:#ffffff;
+}
+
+.stat-trend{
+  font-size:12px;
+  margin-top:6px;
+  color:#a7f3d0;
+  font-weight:700;
+}
+
+/* BOTTOM */
+.bottom-row{
+  display:grid;
+  grid-template-columns:1.6fr .9fr;
+  gap:18px;
+}
+
+.card{
+  background:rgba(255,255,255,.85);
+  backdrop-filter:blur(14px);
+  border:1px solid #eef2f7;
+  border-radius:18px;
+  padding:22px;
+  box-shadow:0 20px 60px rgba(0,0,0,.05);
+}
+
+/* ACTIVITY */
+.act-item{
+  display:flex;
+  gap:12px;
+  padding:12px 0;
+  border-bottom:1px solid #f1f5f9;
+}
+
+.act-dot{
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  margin-top:6px;
+}
+
+.blue{ background:var(--blue); }
+.orange{ background:var(--orange); }
+.green{ background:#16a34a; }
+
+.act-strong{
+  font-weight:800;
+  font-size:13px;
+  color:var(--text);
+}
+
+.act-by{
+  font-size:12px;
+  color:#94a3b8;
+}
+
+.act-time{
+  margin-left:auto;
+  font-size:11px;
+  color:#cbd5e1;
+}
+
+/* ACTION BUTTONS */
+.action-btn{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:12px;
+  border-radius:12px;
+  text-decoration:none;
+  font-weight:800;
+  color:var(--text);
+  border:1px solid #eef2f7;
+  margin-bottom:10px;
+  transition:.2s;
+}
+
+.action-btn:hover{
+  transform:translateX(6px);
+  background:rgba(0,82,204,.06);
+}
+
+/* RESPONSIVO */
+@media(max-width:900px){
+  .stats-row{ grid-template-columns:1fr 1fr; }
+  .bottom-row{ grid-template-columns:1fr; }
+}
+@media(max-width:500px){
+  .stats-row{ grid-template-columns:1fr; }
+}
 </style>
 
 <div class="dash-wrap">
@@ -106,116 +239,98 @@
   {% endif %}
 
   {% if request.query_params.get('cadastro') == 'sucesso' %}
-  <div class="alert alert-success">✅ Novo usuário cadastrado com sucesso no sistema!</div>
+  <div class="alert alert-success">✅ Usuário cadastrado com sucesso!</div>
   {% endif %}
 
   <!-- WELCOME -->
   <div class="welcome">
     <div>
-      <div class="welcome-sub">Bem-vindo de volta,</div>
+      <div style="font-size:13px;color:#64748b;">Bem-vindo de volta</div>
       <div class="welcome-name">{{ usuario.nome }}</div>
     </div>
-    <div style="text-align:right;">
-      <div class="access-label">Nível de Acesso</div>
-      <span class="role-badge {% if usuario.role == 'ADMIN' %}role-admin{% else %}role-user{% endif %}">
-        🛡️ {{ usuario.role }}
-      </span>
+
+    <div class="role-badge {% if usuario.role == 'ADMIN' %}role-admin{% else %}role-user{% endif %}">
+      {{ usuario.role }}
     </div>
   </div>
 
-  <!-- STATS — 4 cards com dados reais -->
+  <!-- STATS -->
   <div class="stats-row">
-    <a href="/usuarios" class="stat-card blue">
-      <div class="stat-label">Associados Ativos</div>
+
+    <div class="stat-card blue">
+      <div class="stat-label">Usuários</div>
       <div class="stat-value">{{ stats.usuarios }}</div>
-      <div class="stat-trend">↑ usuários cadastrados</div>
-    </a>
-    <a href="/produtos" class="stat-card orange">
-      <div class="stat-label">Produtos Ativos</div>
+      <div class="stat-trend">ativos</div>
+    </div>
+
+    <div class="stat-card orange">
+      <div class="stat-label">Produtos</div>
       <div class="stat-value">{{ stats.produtos }}</div>
-      <div class="stat-trend">↑ produtos no sistema</div>
-    </a>
-    <a href="/produtos" class="stat-card green">
-      <div class="stat-label">Itens em Estoque</div>
+      <div class="stat-trend">catálogo</div>
+    </div>
+
+    <div class="stat-card blue">
+      <div class="stat-label">Estoque</div>
       <div class="stat-value">{{ stats.estoque }}</div>
-      <div class="stat-trend">↑ unidades disponíveis</div>
-    </a>
-    <a href="/categorias" class="stat-card purple">
+      <div class="stat-trend">unidades</div>
+    </div>
+
+    <div class="stat-card orange">
       <div class="stat-label">Categorias</div>
       <div class="stat-value">{{ stats.categorias }}</div>
-      <div class="stat-trend">↑ categorias ativas</div>
-    </a>
+      <div class="stat-trend">organização</div>
+    </div>
+
   </div>
 
   <!-- BOTTOM -->
   <div class="bottom-row">
 
     <div class="card">
-      <div class="card-title">Últimas Movimentações <em>ao vivo</em></div>
+      <h3 style="margin:0 0 12px 0;">Atividades</h3>
+
       <div class="act-item">
         <div class="act-dot blue"></div>
-        <div style="flex:1;">
-          <span class="act-strong">Novo associado cadastrado</span>
-          <span class="act-by">Por: Sistema Automático</span>
+        <div>
+          <div class="act-strong">Novo usuário cadastrado</div>
+          <div class="act-by">Sistema</div>
         </div>
-        <span class="act-time">Há 5 min</span>
+        <div class="act-time">5m</div>
       </div>
+
       <div class="act-item">
         <div class="act-dot orange"></div>
-        <div style="flex:1;">
-          <span class="act-strong">Produto atualizado: Cimento CP II</span>
-          <span class="act-by">Por: Admin</span>
+        <div>
+          <div class="act-strong">Produto atualizado</div>
+          <div class="act-by">Admin</div>
         </div>
-        <span class="act-time">Há 18 min</span>
+        <div class="act-time">18m</div>
       </div>
+
       <div class="act-item">
         <div class="act-dot green"></div>
-        <div style="flex:1;">
-          <span class="act-strong">Requisição #2047 aprovada</span>
-          <span class="act-by">Por: João Mendes</span>
+        <div>
+          <div class="act-strong">Requisição aprovada</div>
+          <div class="act-by">João</div>
         </div>
-        <span class="act-time">Há 32 min</span>
+        <div class="act-time">32m</div>
       </div>
-      <div class="act-item">
-        <div class="act-dot blue"></div>
-        <div style="flex:1;">
-          <span class="act-strong">Relatório mensal gerado</span>
-          <span class="act-by">Por: Sistema Automático</span>
-        </div>
-        <span class="act-time">Há 1h</span>
-      </div>
+
     </div>
 
-    <div class="card" style="animation-delay:.25s;">
-      <div class="card-title">Atalhos Rápidos</div>
+    <div class="card">
 
-      {% if usuario.role == 'ADMIN' %}
-      <a href="/usuarios/" class="action-btn">
-        <span class="ico">⚙️</span> Controlar Usuários
-      </a>
-      {% endif %}
+      <h3 style="margin:0 0 12px 0;">Ações rápidas</h3>
 
-      <a href="/produtos" class="action-btn">
-        <span class="ico">📦</span> Consultar Estoque
-      </a>
-
-      <a href="/categorias" class="action-btn">
-        <span class="ico">🗂️</span> Categorias
-      </a>
-
-      {% if usuario.role == 'ADMIN' %}
-      <a href="/usuarios/novo" class="action-btn">
-        <span class="ico">➕</span> Novo Associado
-      </a>
-      {% endif %}
-
-      <a href="/armarios" class="action-btn">
-        <span class="ico">🗄️</span> Armários
-      </a>
+      <a class="action-btn" href="/produtos">  Produtos</a>
+      <a class="action-btn" href="/categorias">🗂 Categorias</a>
+      <a class="action-btn" href="/usuarios">👤 Usuários</a>
+      <a class="action-btn" href="/armarios">📦 Armários</a>
 
     </div>
+
   </div>
 
 </div>
 
-{% endblock conteudo %}
+{% endblock %}

@@ -1,81 +1,188 @@
-{% extends "base.html" %}
+<style>
+.wrap{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
 
-{% block title %}
-Categorias | AAPM SENAI
-{% endblock %}
+/* HEADER */
+.header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
 
-{% block page %}
-Gerenciamento de Categorias
-{% endblock %}
+.header h3{
+    font-size:20px;
+    font-weight:900;
+    color:#0f172a;
+}
 
-{% block internal_content %}
-<div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 2fr; gap: 25px; align-items: start; font-family: sans-serif;">
-    
-    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02); border-top: 4px solid #1c49b8;">
-        <h3 style="color: #1c49b8; margin: 0 0 20px 0; font-size: 16px; font-weight: 700;">Nova Categoria</h3>
-        
-        <form action="/categorias/cadastrar" method="POST" style="display: flex; flex-direction: column; gap: 15px;">
-            <input type="hidden" name="admin_nome" value="{{ nome }}">
-            <input type="hidden" name="admin_perfil" value="{{ perfil }}">
-            
-            <div>
-                <label style="display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 6px;">Nome da Categoria</label>
-                <input type="text" name="nome_cat" placeholder="Ex: Uniformes, Papelaria" required 
-                       style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; font-size: 14px;">
-            </div>
+/* CARD ITEM (NOVA FORMA) */
+.item{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
 
-            <div>
-                <label style="display: block; font-size: 12px; font-weight: 600; color: #666; margin-bottom: 6px;">Descrição</label>
-                <textarea name="descricao_cat" placeholder="Breve resumo sobre os produtos desta categoria..." rows="4" required
-                          style="width: 100%; box-sizing: border-box; padding: 10px; border: 1px solid #e2e8f0; border-radius: 6px; background: #f8fafc; font-size: 14px; resize: none;"></textarea>
-            </div>
+    padding:16px 18px;
+    background:white;
+    border:1px solid #eef2f7;
+    border-radius:18px;
 
-            <button type="submit" style="background: #1c49b8; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: 600; cursor: pointer; font-size: 14px; margin-top: 5px;">
-                Salvar Categoria
-            </button>
-        </form>
+    transition:.2s;
+}
+
+.item:hover{
+    transform:translateY(-3px);
+    box-shadow:0 12px 30px rgba(0,0,0,.06);
+}
+
+/* LEFT */
+.left{
+    display:flex;
+    flex-direction:column;
+    gap:4px;
+}
+
+.id{
+    font-size:12px;
+    color:#94a3b8;
+    font-weight:800;
+}
+
+.name{
+    font-size:15px;
+    font-weight:900;
+    color:#0f172a;
+}
+
+/* STATUS */
+.badge{
+    font-size:11px;
+    font-weight:900;
+    padding:6px 10px;
+    border-radius:999px;
+}
+
+.active{
+    background:#dcfce7;
+    color:#166534;
+}
+
+.inactive{
+    background:#fee2e2;
+    color:#991b1b;
+}
+
+/* ACTIONS */
+.actions{
+    display:flex;
+    gap:8px;
+    align-items:center;
+}
+
+.edit{
+    background:rgba(255,102,0,.12);
+    color:#ff6600;
+    padding:7px 10px;
+    border-radius:10px;
+    font-size:12px;
+    font-weight:900;
+    text-decoration:none;
+}
+
+.toggle{
+    border:none;
+    padding:7px 10px;
+    border-radius:10px;
+    font-size:12px;
+    font-weight:900;
+    cursor:pointer;
+}
+
+.on{
+    background:#10b981;
+    color:white;
+}
+
+.off{
+    background:#ef4444;
+    color:white;
+}
+
+/* EMPTY */
+.empty{
+    text-align:center;
+    padding:40px;
+    color:#94a3b8;
+    font-weight:600;
+}
+</style>
+
+<div class="wrap">
+
+    <div class="header">
+        <h3>Categorias</h3>
+
+        <a href="/categorias/nova"
+           style="background:#0052cc;color:white;padding:10px 14px;border-radius:12px;font-weight:900;text-decoration:none;">
+           + Nova
+        </a>
     </div>
 
-    <div style="background: white; padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.02);">
-        <h3 style="color: #333; margin: 0 0 20px 0; font-size: 16px; font-weight: 700;">Categorias da AAPM</h3>
-        
-        <div style="overflow-x: auto;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 14px;">
-                <thead>
-                    <tr style="border-bottom: 2px solid #edf2f7; color: #718096; font-size: 12px; text-transform: uppercase;">
-                        <th style="padding: 12px 8px; width: 60px;">ID</th>
-                        <th style="padding: 12px 8px;">Categoria</th>
-                        <th style="padding: 12px 8px;">Descrição</th>
-                        <th style="padding: 12px 8px; text-align: center; width: 140px;">Ações</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for cat in categorias %}
-                    <tr style="border-bottom: 1px solid #edf2f7;">
-                        <td style="padding: 14px 8px; font-weight: bold; color: #718096;">#{{ cat.id }}</td>
-                        <td style="padding: 14px 8px;"><strong style="color: #2d3748;">{{ cat.nome }}</strong></td>
-                        <td style="padding: 14px 8px; color: #4a5568;">{{ cat.descricao }}</td>
-                        <td style="padding: 14px 8px; text-align: center;">
-                            <div style="display: flex; gap: 8px; justify-content: center;">
-                                <a href="/categorias/excluir/{{ cat.id }}?nome={{ nome }}&perfil={{ perfil }}" 
-                                   onclick="return confirm('Tem certeza que deseja excluir esta categoria?')"
-                                   style="background: #fff5f5; color: #e53e3e; text-decoration: none; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; border: 1px solid #fed7d7;">
-                                    Excluir
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                    {% else %}
-                    <tr>
-                        <td colspan="4" style="padding: 20px; text-align: center; color: #a0aec0; font-style: italic;">
-                            Nenhuma categoria cadastrada.
-                        </td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+    {% for cat in categorias %}
+
+    <div class="item" style="opacity:{{ '1' if cat.ativo else '0.6' }}">
+
+        <!-- LEFT INFO -->
+        <div class="left">
+            <div class="id">#{{ cat.id }}</div>
+            <div class="name">{{ cat.nome }}</div>
         </div>
+
+        <!-- STATUS -->
+        <div>
+            {% if cat.ativo %}
+                <span class="badge active">Ativo</span>
+            {% else %}
+                <span class="badge inactive">Inativo</span>
+            {% endif %}
+        </div>
+
+        <!-- ACTIONS -->
+        <div class="actions">
+
+            <a class="edit"
+               href="/categorias/{{ cat.id }}/editar">
+               Editar
+            </a>
+
+            <form action="/categorias/{{ cat.id }}/toggle-ativo"
+                  method="POST">
+
+                {% if cat.ativo %}
+                    <button class="toggle off" type="submit">
+                        Desativar
+                    </button>
+                {% else %}
+                    <button class="toggle on" type="submit">
+                        Ativar
+                    </button>
+                {% endif %}
+
+            </form>
+
+        </div>
+
     </div>
+
+    {% else %}
+
+        <div class="empty">
+            Nenhuma categoria cadastrada
+        </div>
+
+    {% endfor %}
 
 </div>
-{% endblock %}

@@ -6,72 +6,201 @@ Início - AAPM SENAI
 
 {% block conteudo %}
 
-<div class="w-full flex flex-col justify-content min-height py-20 px-4">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-    <div class="text-center mb-20 animate-fade-in">
-        <h1 class="text-6xl font-black tracking-tight text-[#0052cc] md:text-7xl">
-            AAPM SENAI
-        </h1>
-    
-        <p class="text-gray-500 text-xl md:text-2xl mt-6 mb-12 max-w-2xl mx-auto leading-relaxed">
-            Promovendo a integração e assistência na comunidade escolar.
+:root{
+  --blue:#0052cc;
+  --blue-dark:#003b99;
+  --orange:#ff7a18;
+  --bg:#f4f7fb;
+  --text:#0f172a;
+  --muted:#64748b;
+}
+
+/* BACKGROUND CLEAN CLOUD */
+body{
+  font-family:Inter, sans-serif;
+  margin:0;
+  background:
+    radial-gradient(circle at 15% 20%, rgba(0,82,204,.10), transparent 45%),
+    radial-gradient(circle at 85% 30%, rgba(255,122,24,.10), transparent 45%),
+    var(--bg);
+  color:var(--text);
+}
+
+/* WRAP */
+.min-height{
+  min-height:90vh;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  padding:60px 20px;
+}
+
+/* TITLE */
+h1{
+  font-size:64px;
+  font-weight:900;
+  letter-spacing:-2px;
+  margin:0;
+  color:var(--blue);
+}
+
+p{
+  color:var(--muted);
+  font-size:20px;
+  max-width:520px;
+  margin:20px auto 40px;
+  line-height:1.6;
+}
+
+/* BUTTON */
+a.button{
+  display:inline-block;
+  background:linear-gradient(135deg,var(--blue),var(--blue-dark));
+  color:white;
+  font-weight:800;
+  font-size:16px;
+  padding:14px 34px;
+  border-radius:14px;
+  text-decoration:none;
+  box-shadow:0 12px 30px rgba(0,82,204,.25);
+  transition:.25s;
+}
+
+a.button:hover{
+  transform:translateY(-4px);
+  box-shadow:0 20px 50px rgba(0,82,204,.35);
+}
+
+/* CARD SECTION */
+section{
+  width:100%;
+  max-width:1000px;
+  margin-top:60px;
+  background:white;
+  border-radius:24px;
+  padding:40px;
+  box-shadow:0 20px 60px rgba(0,0,0,.08);
+  border:1px solid #eef2f7;
+}
+
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:20px;
+}
+
+/* METRIC */
+.metric{
+  text-align:center;
+  padding:22px;
+  border-radius:18px;
+  background:#ffffff;
+  border:1px solid #eef2f7;
+  transition:.25s;
+}
+
+.metric:hover{
+  transform:translateY(-6px);
+  box-shadow:0 18px 40px rgba(0,0,0,.08);
+  border-color:rgba(0,82,204,.25);
+}
+
+/* ICON */
+.icon{
+  width:60px;
+  height:60px;
+  margin:0 auto 16px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:16px;
+  font-size:22px;
+}
+
+.blue{
+  color:var(--blue);
+  background:rgba(0,82,204,.10);
+}
+
+.orange{
+  color:var(--orange);
+  background:rgba(255,122,24,.12);
+}
+
+/* VALUE */
+.value{
+  font-size:42px;
+  font-weight:900;
+  margin:0;
+}
+
+.label{
+  font-size:11px;
+  letter-spacing:1px;
+  text-transform:uppercase;
+  color:var(--muted);
+  margin-top:8px;
+  font-weight:700;
+}
+
+/* RESPONSIVO */
+@media(max-width:900px){
+  .grid{ grid-template-columns:repeat(2,1fr); }
+  h1{ font-size:48px; }
+}
+
+@media(max-width:500px){
+  .grid{ grid-template-columns:1fr; }
+  h1{ font-size:38px; }
+}
+</style>
+
+<div class="min-height">
+
+    <div class="text-center">
+        <h1>AAPM SENAI</h1>
+
+        <p>
+            Promovendo integração, organização e transparência na comunidade escolar.
         </p>
-    
-        <a href="/auth/login"
-           class="inline-block bg-[#0052cc] hover:bg-blue-700 text-white font-bold text-lg px-10 py-4 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 transform hover:-translate-y-1">
+
+        <a href="/auth/login" class="button">
             Acessar Área Restrita
         </a>
     </div>
-    
-    <section class="w-full max-w-6xl mx-auto bg-white p-12 rounded-3xl shadow-xl shadow-gray-100/70 border border-gray-100">
-        <div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12 md:divide-x-2 md:divide-gray-100">
-    
-            <div class="flex flex-col items-center p-4 transform hover:scale-105 transition duration-200">
-                <div class="text-[#0052cc] text-3xl bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
-                    <i class="fa-solid fa-users"></i>
-                </div>
-                <span class="text-4xl md:text-5xl font-black tracking-tight text-[#0052cc]">567</span>
-                <span class="text-xs md:text-sm font-extrabold text-gray-400 uppercase mt-2 tracking-wider text-center">
-                    Membros ativos
-                </span>
+
+    <section>
+        <div class="grid">
+
+            <div class="metric">
+                <div class="icon blue"><i class="fa-solid fa-users"></i></div>
+                <div class="value" style="color:var(--blue);">567</div>
+                <div class="label">Membros ativos</div>
             </div>
-    
-            <div class="flex flex-col items-center p-4 transform hover:scale-105 transition duration-200">
-                <div class="text-orange-500 text-3xl bg-orange-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
-                    <i class="fa-solid fa-chart-line"></i>
-                </div>
-                <span class="text-4xl md:text-5xl font-black tracking-tight text-orange-500">
-                    R$ 45k
-                </span>
-                <span class="text-xs md:text-sm font-extrabold text-gray-400 uppercase mt-2 tracking-wider text-center">
-                    Arrecadado em 2026
-                </span>
+
+            <div class="metric">
+                <div class="icon orange"><i class="fa-solid fa-chart-line"></i></div>
+                <div class="value" style="color:var(--orange);">R$ 45k</div>
+                <div class="label">Arrecadado em 2026</div>
             </div>
-    
-            <div class="flex flex-col items-center p-4 transform hover:scale-105 transition duration-200">
-                <div class="text-[#0052cc] text-3xl bg-blue-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
-                    <i class="fa-solid fa-lock"></i>
-                </div>
-                <span class="text-4xl md:text-5xl font-black tracking-tight text-[#0052cc]">
-                    80
-                </span>
-                <span class="text-xs md:text-sm font-extrabold text-gray-400 uppercase mt-2 tracking-wider text-center">
-                    Armários Livres
-                </span>
+
+            <div class="metric">
+                <div class="icon blue"><i class="fa-solid fa-lock"></i></div>
+                <div class="value" style="color:var(--blue);">80</div>
+                <div class="label">Armários livres</div>
             </div>
-    
-            <div class="flex flex-col items-center p-4 transform hover:scale-105 transition duration-200">
-                <div class="text-orange-500 text-3xl bg-orange-50 w-16 h-16 rounded-2xl flex items-center justify-center mb-5 shadow-sm">
-                    <i class="fa-regular fa-star"></i>
-                </div>
-                <span class="text-4xl md:text-5xl font-black tracking-tight text-orange-500">
-                    98%
-                </span>
-                <span class="text-xs md:text-sm font-extrabold text-gray-400 uppercase mt-2 tracking-wider text-center">
-                    Satisfação
-                </span>
+
+            <div class="metric">
+                <div class="icon orange"><i class="fa-regular fa-star"></i></div>
+                <div class="value" style="color:var(--orange);">98%</div>
+                <div class="label">Satisfação</div>
             </div>
-    
+
         </div>
     </section>
 

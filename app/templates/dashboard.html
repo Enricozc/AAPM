@@ -2,335 +2,200 @@
 
 {% block titulo %}Dashboard | AAPM SENAI{% endblock %}
 
-{% block conteudo %}
-
+{% block css_extra %}
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-:root{
-  --blue:#0052cc;
-  --orange:#ff6a00;
-  --bg:#f5f7fb;
-  --text:#0f172a;
-}
-
-/* FUNDO */
-body{
-  margin:0;
-  font-family:Inter, sans-serif;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(0,82,204,.10), transparent 45%),
-    radial-gradient(circle at 90% 20%, rgba(255,106,0,.08), transparent 45%),
-    radial-gradient(circle at 50% 90%, rgba(0,82,204,.05), transparent 50%),
-    var(--bg);
-}
-
-/* WRAP */
-.dash-wrap{
-  padding-top:20px;
-  display:flex;
-  flex-direction:column;
-  gap:22px;
-}
-
-/* ALERT */
-.alert{
-  padding:14px 18px;
-  border-radius:14px;
-  font-weight:700;
-  font-size:13px;
-  backdrop-filter:blur(10px);
-}
-
-/* WELCOME */
-.welcome{
-  background:rgba(255,255,255,.85);
-  backdrop-filter:blur(16px);
-  border:1px solid rgba(226,232,240,.8);
-  border-radius:18px;
-  padding:26px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  box-shadow:0 20px 60px rgba(0,0,0,.05);
-}
-
-.welcome-name{
-  font-size:22px;
-  font-weight:900;
-  color:var(--blue);
-}
-
-.role-badge{
-  padding:6px 14px;
-  border-radius:999px;
-  font-weight:800;
-  font-size:12px;
-}
-
-.role-admin{ background:#fee2e2; color:#b91c1c; }
-.role-user{ background:#dcfce7; color:#166534; }
-
-/* STATS */
-.stats-row{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:18px;
-}
-
-/* CARD */
-.stat-card{
-  background:rgba(15,23,42,0.92); /* escuro premium */
-  border-radius:18px;
-  padding:20px;
-  border:1px solid rgba(255,255,255,0.08);
-  box-shadow:0 10px 30px rgba(0,0,0,.15);
-  position:relative;
-  overflow:hidden;
-  transition:.25s;
-}
-
-/* glow leve */
-.stat-card::before{
-  content:"";
-  position:absolute;
-  inset:-80%;
-  background:radial-gradient(circle at 30% 30%,
-    rgba(0,82,204,.20),
-    transparent 60%);
-  transform:rotate(15deg);
-}
-
-.stat-card.orange::before{
-  background:radial-gradient(circle at 30% 30%,
-    rgba(255,106,0,.18),
-    transparent 60%);
-}
-
-.stat-card *{
-  position:relative;
-  z-index:2;
-}
-
-.stat-card:hover{
-  transform:translateY(-6px);
-  box-shadow:0 25px 60px rgba(0,0,0,.25);
-}
-
-/* TEXTO */
-.stat-label{
-  font-size:11px;
-  font-weight:800;
-  color:#94a3b8;
-  text-transform:uppercase;
-  letter-spacing:.8px;
-}
-
-/* 🔥 NÚMEROS AGORA BRANCOS (FIX PRINCIPAL) */
-.stat-value{
-  font-size:32px;
-  font-weight:900;
-  margin-top:10px;
-  color:#ffffff;   /* <<< AQUI O AJUSTE */
-}
-
-/* pequenas variações só se quiser destaque */
-.stat-card.blue .stat-value{
-  color:#ffffff;
-}
-
-.stat-card.orange .stat-value{
-  color:#ffffff;
-}
-
-.stat-trend{
-  font-size:12px;
-  margin-top:6px;
-  color:#a7f3d0;
-  font-weight:700;
-}
-
-/* BOTTOM */
-.bottom-row{
-  display:grid;
-  grid-template-columns:1.6fr .9fr;
-  gap:18px;
-}
-
-.card{
-  background:rgba(255,255,255,.85);
-  backdrop-filter:blur(14px);
-  border:1px solid #eef2f7;
-  border-radius:18px;
-  padding:22px;
-  box-shadow:0 20px 60px rgba(0,0,0,.05);
-}
-
-/* ACTIVITY */
-.act-item{
-  display:flex;
-  gap:12px;
-  padding:12px 0;
-  border-bottom:1px solid #f1f5f9;
-}
-
-.act-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  margin-top:6px;
-}
-
-.blue{ background:var(--blue); }
-.orange{ background:var(--orange); }
-.green{ background:#16a34a; }
-
-.act-strong{
-  font-weight:800;
-  font-size:13px;
-  color:var(--text);
-}
-
-.act-by{
-  font-size:12px;
-  color:#94a3b8;
-}
-
-.act-time{
-  margin-left:auto;
-  font-size:11px;
-  color:#cbd5e1;
-}
-
-/* ACTION BUTTONS */
-.action-btn{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px;
-  border-radius:12px;
-  text-decoration:none;
-  font-weight:800;
-  color:var(--text);
-  border:1px solid #eef2f7;
-  margin-bottom:10px;
-  transition:.2s;
-}
-
-.action-btn:hover{
-  transform:translateX(6px);
-  background:rgba(0,82,204,.06);
-}
-
-/* RESPONSIVO */
-@media(max-width:900px){
-  .stats-row{ grid-template-columns:1fr 1fr; }
-  .bottom-row{ grid-template-columns:1fr; }
-}
-@media(max-width:500px){
-  .stats-row{ grid-template-columns:1fr; }
-}
+  body { background: #f1f5f9 !important; }
 </style>
+{% endblock %}
 
-<div class="dash-wrap">
-
-  {% if erro %}
-  <div class="alert alert-error">⚠️ {{ erro }}</div>
-  {% endif %}
+{% block conteudo %}
+<div class="pt-6 flex flex-col gap-5 pb-8">
 
   {% if request.query_params.get('cadastro') == 'sucesso' %}
-  <div class="alert alert-success">✅ Usuário cadastrado com sucesso!</div>
+  <div class="bg-green-100 text-green-700 font-bold text-sm px-4 py-3 rounded-xl">✅ Usuário cadastrado com sucesso!</div>
   {% endif %}
 
   <!-- WELCOME -->
-  <div class="welcome">
+  <div class="bg-white rounded-2xl px-7 py-5 flex justify-between items-center shadow-sm border border-gray-100">
     <div>
-      <div style="font-size:13px;color:#64748b;">Bem-vindo de volta</div>
-      <div class="welcome-name">{{ usuario.nome }}</div>
+      <p class="text-sm text-gray-400 mb-0.5">Bem-vindo de volta,</p>
+      <p class="text-2xl font-extrabold text-[#0052cc]">{{ usuario.nome }}</p>
     </div>
-
-    <div class="role-badge {% if usuario.role == 'ADMIN' %}role-admin{% else %}role-user{% endif %}">
-      {{ usuario.role }}
+    <div class="text-right">
+      <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-2">Nível de Acesso</p>
+      {% if usuario.role == 'ADMIN' %}
+        <span class="bg-red-600 text-white text-xs font-extrabold px-4 py-1.5 rounded-full shadow-sm">🛡 ADMIN</span>
+      {% else %}
+        <span class="bg-blue-100 text-blue-700 text-xs font-extrabold px-4 py-1.5 rounded-full">{{ usuario.role }}</span>
+      {% endif %}
     </div>
   </div>
 
   <!-- STATS -->
-  <div class="stats-row">
-
-    <div class="stat-card blue">
-      <div class="stat-label">Usuários</div>
-      <div class="stat-value">{{ stats.usuarios }}</div>
-      <div class="stat-trend">ativos</div>
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 border-t-4 border-t-[#0052cc]">
+      <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Vendas Hoje</p>
+      <p class="text-4xl font-extrabold text-gray-900 mt-2 mb-1">{{ vendas_hoje }}</p>
+      <p class="text-xs font-semibold text-[#0052cc]">R$ {{ "%.2f"|format(receita_hoje) }}</p>
     </div>
-
-    <div class="stat-card orange">
-      <div class="stat-label">Produtos</div>
-      <div class="stat-value">{{ stats.produtos }}</div>
-      <div class="stat-trend">catálogo</div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 border-t-4 border-t-[#16a34a]">
+      <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Receita do Mês</p>
+      <p class="text-3xl font-extrabold text-gray-900 mt-2 mb-1">R$ {{ "%.2f"|format(receita_mes) }}</p>
+      <p class="text-xs font-semibold text-green-600">{{ total_mes }} vendas realizadas</p>
     </div>
-
-    <div class="stat-card blue">
-      <div class="stat-label">Estoque</div>
-      <div class="stat-value">{{ stats.estoque }}</div>
-      <div class="stat-trend">unidades</div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 border-t-4 border-t-[#f37b24]">
+      <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Itens em Estoque</p>
+      <p class="text-4xl font-extrabold text-gray-900 mt-2 mb-1">{{ stats.estoque }}</p>
+      <p class="text-xs font-semibold text-orange-500">{{ stats.produtos }} produtos ativos</p>
     </div>
-
-    <div class="stat-card orange">
-      <div class="stat-label">Categorias</div>
-      <div class="stat-value">{{ stats.categorias }}</div>
-      <div class="stat-trend">organização</div>
+    <div class="bg-white rounded-2xl p-5 shadow-sm border border-gray-100 border-t-4 border-t-[#7c3aed]">
+      <p class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Pendentes</p>
+      <p class="text-4xl font-extrabold text-gray-900 mt-2 mb-1">{{ pendentes }}</p>
+      <p class="text-xs font-semibold text-yellow-500">⚠ vendas aguardando</p>
     </div>
+  </div>
 
+  <!-- GRÁFICO -->
+  <div class="bg-white rounded-2xl px-6 py-5 shadow-sm border border-gray-100">
+    <div class="flex items-center justify-between mb-4">
+      <p class="text-base font-bold text-gray-800">Últimos 7 Dias</p>
+      <span class="text-xs text-gray-400">receita e quantidade de vendas</span>
+    </div>
+    <canvas id="grafico-semana" height="80"></canvas>
   </div>
 
   <!-- BOTTOM -->
-  <div class="bottom-row">
+  <div class="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-4">
 
-    <div class="card">
-      <h3 style="margin:0 0 12px 0;">Atividades</h3>
-
-      <div class="act-item">
-        <div class="act-dot blue"></div>
-        <div>
-          <div class="act-strong">Novo usuário cadastrado</div>
-          <div class="act-by">Sistema</div>
-        </div>
-        <div class="act-time">5m</div>
+    <!-- ÚLTIMAS VENDAS -->
+    <div class="bg-white rounded-2xl px-6 py-5 shadow-sm border border-gray-100">
+      <div class="flex items-center justify-between mb-4">
+        <span class="text-base font-bold text-gray-800">Últimas Vendas</span>
+        <a href="/vendas" class="text-xs text-[#0052cc] font-semibold hover:underline">Ver todas →</a>
       </div>
-
-      <div class="act-item">
-        <div class="act-dot orange"></div>
+      {% for venda in ultimas_vendas %}
+      <div class="flex items-center justify-between py-3 border-b border-gray-50 last:border-0">
         <div>
-          <div class="act-strong">Produto atualizado</div>
-          <div class="act-by">Admin</div>
+          <p class="text-sm font-bold text-gray-800">{{ venda.responsavel }}</p>
+          <p class="text-xs text-gray-400 mt-0.5">{{ venda.data_venda.strftime('%d/%m/%Y %H:%M') }}</p>
         </div>
-        <div class="act-time">18m</div>
-      </div>
-
-      <div class="act-item">
-        <div class="act-dot green"></div>
-        <div>
-          <div class="act-strong">Requisição aprovada</div>
-          <div class="act-by">João</div>
+        <div class="flex items-center gap-3">
+          {% if venda.forma_pagamento == 'pix' %}
+            <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">PIX</span>
+          {% elif venda.forma_pagamento == 'cartao' %}
+            <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full">Cartão</span>
+          {% else %}
+            <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">Dinheiro</span>
+          {% endif %}
+          <span class="text-sm font-extrabold text-gray-800 min-w-[80px] text-right">R$ {{ "%.2f"|format(venda.valor_total) }}</span>
         </div>
-        <div class="act-time">32m</div>
       </div>
-
+      {% else %}
+      <p class="text-sm text-gray-400 text-center py-8">Nenhuma venda registrada ainda.</p>
+      {% endfor %}
     </div>
 
-    <div class="card">
-
-      <h3 style="margin:0 0 12px 0;">Ações rápidas</h3>
-
-      <a class="action-btn" href="/produtos">  Produtos</a>
-      <a class="action-btn" href="/categorias">🗂 Categorias</a>
-      <a class="action-btn" href="/usuarios">👤 Usuários</a>
-      <a class="action-btn" href="/armarios">📦 Armários</a>
-
+    <!-- ATALHOS -->
+    <div class="bg-white rounded-2xl px-6 py-5 shadow-sm border border-gray-100">
+      <p class="text-base font-bold text-gray-800 mb-4">Atalhos Rápidos</p>
+      <a href="/vendas" class="flex items-center gap-3 px-4 py-3 bg-[#0052cc] text-white rounded-xl text-sm font-bold mb-2 hover:bg-blue-700 transition-all shadow-sm">
+        <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
+        Nova Venda
+      </a>
+      <a href="/fechamento" class="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 mb-2 hover:border-blue-300 hover:bg-blue-50 hover:text-[#0052cc] transition-all">
+        <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        Fechamento do Dia
+      </a>
+      <a href="/produtos" class="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 mb-2 hover:border-blue-300 hover:bg-blue-50 hover:text-[#0052cc] transition-all">
+        <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>
+        Consultar Estoque
+      </a>
+      <a href="/usuarios" class="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 mb-2 hover:border-blue-300 hover:bg-blue-50 hover:text-[#0052cc] transition-all">
+        <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+        Usuários
+      </a>
+      <a href="/armarios" class="flex items-center gap-3 px-4 py-3 border border-gray-200 rounded-xl text-sm font-semibold text-gray-700 hover:border-blue-300 hover:bg-blue-50 hover:text-[#0052cc] transition-all">
+        <svg class="shrink-0" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="4" x2="12" y2="20"/><circle cx="7" cy="12" r="1" fill="currentColor"/><circle cx="17" cy="12" r="1" fill="currentColor"/></svg>
+        Armários
+      </a>
     </div>
 
   </div>
-
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+const labels  = {{ grafico_labels | tojson }};
+const receita = {{ grafico_receita | tojson }};
+const qtd     = {{ grafico_qtd | tojson }};
+
+new Chart(document.getElementById('grafico-semana'), {
+  data: {
+    labels,
+    datasets: [
+      {
+        type: 'bar',
+        label: 'Receita (R$)',
+        data: receita,
+        backgroundColor: 'rgba(0, 82, 204, 0.12)',
+        borderColor: '#0052cc',
+        borderWidth: 2,
+        borderRadius: 8,
+        yAxisID: 'y',
+      },
+      {
+        type: 'line',
+        label: 'Vendas',
+        data: qtd,
+        borderColor: '#16a34a',
+        backgroundColor: 'rgba(22, 163, 74, 0.08)',
+        borderWidth: 2.5,
+        pointBackgroundColor: '#16a34a',
+        pointRadius: 5,
+        pointHoverRadius: 7,
+        tension: 0.4,
+        fill: true,
+        yAxisID: 'y1',
+      }
+    ]
+  },
+  options: {
+    responsive: true,
+    interaction: { mode: 'index', intersect: false },
+    plugins: {
+      legend: {
+        position: 'top',
+        labels: { font: { size: 12, family: 'Inter' }, usePointStyle: true, padding: 20 }
+      },
+      tooltip: {
+        backgroundColor: '#1e293b',
+        padding: 10,
+        callbacks: {
+          label: ctx => ctx.datasetIndex === 0
+            ? `  Receita: R$ ${ctx.parsed.y.toFixed(2)}`
+            : `  Vendas: ${ctx.parsed.y}`
+        }
+      }
+    },
+    scales: {
+      y: {
+        position: 'left',
+        beginAtZero: true,
+        grid: { color: '#f1f5f9' },
+        ticks: { callback: v => 'R$ ' + v.toFixed(0), font: { size: 11, family: 'Inter' } }
+      },
+      y1: {
+        position: 'right',
+        beginAtZero: true,
+        grid: { drawOnChartArea: false },
+        ticks: { stepSize: 1, font: { size: 11, family: 'Inter' } }
+      },
+      x: {
+        grid: { display: false },
+        ticks: { font: { size: 12, family: 'Inter' } }
+      }
+    }
+  }
+});
+</script>
 {% endblock %}

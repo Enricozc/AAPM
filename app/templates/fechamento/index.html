@@ -1,0 +1,180 @@
+{% extends "base.html" %}
+
+{% block titulo %}Fechamento do Dia | AAPM SENAI{% endblock %}
+
+{% block conteudo %}
+<div class="pt-6 flex flex-col gap-5 pb-6">
+
+  {% if request.query_params.get('sucesso') == '1' %}
+  <div class="bg-green-100 text-green-700 font-bold text-sm px-4 py-3 rounded-xl">✅ Fechamento do dia registrado com sucesso!</div>
+  {% endif %}
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-extrabold text-gray-800">Fechamento do Dia</h1>
+      <p class="text-sm text-gray-400 mt-0.5">{{ hoje }}</p>
+    </div>
+    {% if not ja_fechou_hoje %}
+    <button onclick="abrirModal()"
+      class="bg-[#0052cc] hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm">
+      Fechar o Dia
+    </button>
+    {% else %}
+    <span class="bg-green-100 text-green-700 text-sm font-bold px-5 py-2.5 rounded-xl">✅ Dia já fechado</span>
+    {% endif %}
+  </div>
+
+  <!-- RESUMO DO DIA -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white border border-gray-200 border-t-4 border-t-[#0052cc] rounded-2xl p-5 shadow-sm">
+      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Vendas Hoje</p>
+      <p class="text-4xl font-extrabold text-gray-800 mt-2 mb-1">{{ total_vendas }}</p>
+      <p class="text-xs font-semibold text-gray-400">transações</p>
+    </div>
+    <div class="bg-white border border-gray-200 border-t-4 border-t-[#16a34a] rounded-2xl p-5 shadow-sm">
+      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Receita Total</p>
+      <p class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">R$ {{ "%.2f"|format(receita_total) }}</p>
+      <p class="text-xs font-semibold text-green-600">↑ no dia</p>
+    </div>
+    <div class="bg-white border border-gray-200 border-t-4 border-t-[#16a34a] rounded-2xl p-5 shadow-sm">
+      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">PIX</p>
+      <p class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">R$ {{ "%.2f"|format(receita_pix) }}</p>
+      <p class="text-xs font-semibold text-gray-400">recebido</p>
+    </div>
+    <div class="bg-white border border-gray-200 border-t-4 border-t-[#f37b24] rounded-2xl p-5 shadow-sm">
+      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Cartão + Dinheiro</p>
+      <p class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">R$ {{ "%.2f"|format(receita_cartao + receita_dinheiro) }}</p>
+      <p class="text-xs font-semibold text-gray-400">recebido</p>
+    </div>
+  </div>
+
+  <!-- TABELA DE VENDAS DO DIA -->
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100">
+      <span class="text-base font-bold text-gray-800">Vendas do Dia</span>
+    </div>
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm">
+        <thead>
+          <tr class="bg-gray-50 text-gray-400 text-xs uppercase tracking-widest">
+            <th class="text-left px-6 py-3 font-semibold">#</th>
+            <th class="text-left px-6 py-3 font-semibold">Responsável</th>
+            <th class="text-left px-6 py-3 font-semibold">Produtos</th>
+            <th class="text-left px-6 py-3 font-semibold">Pagamento</th>
+            <th class="text-left px-6 py-3 font-semibold">Total</th>
+            <th class="text-left px-6 py-3 font-semibold">Status</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for venda in vendas_hoje %}
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-6 py-4 text-gray-400 font-mono">#{{ "%03d"|format(venda.id) }}</td>
+            <td class="px-6 py-4 text-gray-600">{{ venda.responsavel }}</td>
+            <td class="px-6 py-4 text-gray-800">
+              {% for item in venda.itens %}
+                <span class="block text-sm">{{ item.produto.nome if item.produto else "—" }} × {{ item.quantidade }}</span>
+              {% else %}
+                <span class="text-gray-400">—</span>
+              {% endfor %}
+            </td>
+            <td class="px-6 py-4">
+              {% if venda.forma_pagamento == 'pix' %}
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">PIX</span>
+              {% elif venda.forma_pagamento == 'cartao' %}
+                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full">Cartão</span>
+              {% else %}
+                <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">Dinheiro</span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4 font-bold text-gray-800">R$ {{ "%.2f"|format(venda.valor_total) }}</td>
+            <td class="px-6 py-4">
+              {% if venda.status == 'concluida' %}
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Concluída</span>
+              {% else %}
+                <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2.5 py-1 rounded-full">Pendente</span>
+              {% endif %}
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="6" class="px-6 py-10 text-center text-gray-400 text-sm">Nenhuma venda hoje.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL CONFIRMAR FECHAMENTO -->
+<div id="modal-fechamento" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
+    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+      <h2 class="text-lg font-extrabold text-gray-800">Confirmar Fechamento</h2>
+      <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+    </div>
+    <form action="/fechamento/confirmar" method="post">
+      <div class="px-6 py-5 flex flex-col gap-4">
+        <div class="bg-gray-50 rounded-xl p-4 flex flex-col gap-2 text-sm">
+          <div class="flex justify-between">
+            <span class="text-gray-500">Total de vendas</span>
+            <span class="font-bold text-gray-800">{{ total_vendas }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Receita total</span>
+            <span class="font-bold text-[#0052cc]">R$ {{ "%.2f"|format(receita_total) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">PIX</span>
+            <span class="font-semibold text-gray-700">R$ {{ "%.2f"|format(receita_pix) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Cartão</span>
+            <span class="font-semibold text-gray-700">R$ {{ "%.2f"|format(receita_cartao) }}</span>
+          </div>
+          <div class="flex justify-between">
+            <span class="text-gray-500">Dinheiro</span>
+            <span class="font-semibold text-gray-700">R$ {{ "%.2f"|format(receita_dinheiro) }}</span>
+          </div>
+        </div>
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">
+            Observação <span class="font-normal normal-case">(opcional)</span>
+          </label>
+          <textarea name="observacao" rows="2" placeholder="Ex: caixa conferido, sangria realizada..."
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 resize-none"></textarea>
+        </div>
+      </div>
+      <div class="px-6 py-4 border-t border-gray-100 flex gap-3 justify-end">
+        <button type="button" onclick="fecharModal()"
+          class="text-sm font-semibold text-gray-500 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+          Cancelar
+        </button>
+        <button type="submit"
+          class="bg-[#0052cc] hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-sm">
+          Confirmar Fechamento
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+function abrirModal() {
+  const m = document.getElementById('modal-fechamento');
+  m.classList.remove('hidden');
+  m.classList.add('flex');
+}
+function fecharModal() {
+  const m = document.getElementById('modal-fechamento');
+  m.classList.add('hidden');
+  m.classList.remove('flex');
+}
+document.getElementById('modal-fechamento').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+</script>
+
+{% endblock %}

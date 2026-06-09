@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-br" class="h-full">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,13 +8,16 @@
 
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="/static/css/style.css">
 
     {% block css_extra %}{% endblock %}
 
     <style>
-        body { font-family: 'Inter', sans-serif; }
+        body {
+            font-family: 'Inter', sans-serif;
+        }
     </style>
 </head>
 
@@ -26,32 +30,44 @@
 
         <div class="flex items-center space-x-6 text-sm font-medium">
             {% if usuario %}
-                <a href="/dashboard" class="hover:text-gray-200 transition">
-                    Painel
-                </a>
+            <a href="/dashboard" class="hover:text-gray-200 transition">
+                Painel
+            </a>
 
-                {% if usuario.role == 'ADMIN' %}
-                    <a href="/categorias" class="text-orange-400 hover:text-orange-300 font-semibold transition">
-                        Categorias
-                    </a>
-                {% endif %}
+            {% if usuario.role == 'ADMIN' %}
+            <a href="/categorias" class="hover:text-gray-200 transition">
+                Categorias
+            </a>
+            {% endif %}
 
-                <a href="/produtos" class="hover:text-gray-200 transition">
-                    Produtos
-                </a>
+            <a href="/produtos" class="hover:text-gray-200 transition">
+                Produtos
+            </a>
 
-                <span class="bg-white/10 border border-white/20 px-3 py-1 rounded-md text-xs font-semibold">
-                    {{ usuario.nome }}
-                </span>
+            <a href="/vendas" class="hover:text-gray-200 transition">
+                Vendas
+            </a>
 
-                <a href="/auth/logout" class="text-red-300 hover:text-red-400 font-bold transition">
-                    Sair
-                </a>
+            <a href="/fechamento" class="hover:text-gray-200 transition">
+                Fechamento
+            </a>
+
+            <a href="/armarios" class="hover:text-gray-200 transition">
+                Armários
+            </a>
+
+            <span class="bg-white/10 border border-white/20 px-3 py-1 rounded-md text-xs font-semibold">
+                {{ usuario.nome }}
+            </span>
+
+            <a href="/auth/logout" class="text-red-300 hover:text-red-400 font-bold transition">
+                Sair
+            </a>
             {% else %}
-                <a href="/auth/login"
-                   class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-1.5 rounded font-semibold shadow-md transition">
-                    Login
-                </a>
+            <a href="/auth/login"
+                class="bg-orange-500 hover:bg-orange-600 text-white px-5 py-1.5 rounded font-semibold shadow-md transition">
+                Login
+            </a>
             {% endif %}
         </div>
     </nav>
@@ -64,10 +80,11 @@
     </main>
 
     <footer class="bg-[#2d2d2d] text-gray-400 text-center py-4 text-xs tracking-wide border-t border-gray-800">
-        <p>&copy; 2026 AAPM SENAI - Equipe Front-End SSR</p>
+        <p>&copy; 2026 AAPM SENAI • Sistema de Gestão Escolar. Todos os direitos reservados.</p>
     </footer>
 
     {% block js_extra %}{% endblock %}
 
 </body>
+
 </html>

@@ -78,4 +78,95 @@ async def criar_produto(request: Request, nome: str = Form(...), preco: float = 
     db.commit()
     return RedirectResponse(url="/produtos?criado=ok", status_code=302)
 
-# (As demais rotas de editar e desativar que você escreveu estão perfeitas, pode manter!)
+# ============================================================
+# EDITAR PRODUTO
+# ============================================================
+
+@router.get("/{produto_id}/editar")
+def form_editar_produto(
+    produto_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    produto = db.query(Produto).filter(
+        Produto.id == produto_id
+    ).first()
+
+    if not produto:
+        return RedirectResponse("/produtos", status_code=303)
+
+    categorias = db.query(Categoria).filter(
+        Categoria.ativo == True
+    ).all()
+
+    return templates.TemplateResponse(
+        request,
+        "produtos/form.html",
+        {
+            "request": request,
+            "usuario": admin,
+            "editando": produto,
+            "categorias": categorias
+        }
+    )
+
+
+@router.post("/{produto_id}/editar")
+async def editar_produto(
+    produto_id: int,
+    request: Request,
+    nome: str = Form(...),
+    preco: float = Form(...),
+    estoque_atual: int = Form(...),
+    categoria_id: int = Form(0),
+    imagem: UploadFile = File(None),
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    produto = db.query(Produto).filter(
+        Produto.id == produto_id
+    ).first()
+
+    if not produto:
+        return RedirectResponse("/produtos", status_code=303)
+
+    produto.nome = nome
+    produto.preco = preco
+    produto.estoque_atual = estoque_atual
+    produto.categoria_id = categoria_id or None
+
+    if imagem and imagem.filename:
+        _remover_imagem(produto.imagem_path)
+        produto.imagem_path = await _salvar_imagem(imagem)
+
+    db.commit()
+
+    return RedirectResponse(
+        "/produtos?editado=ok",
+        status_code=303
+    )
+
+
+# ============================================================
+# DESATIVAR PRODUTO
+# ============================================================
+
+@router.post("/{produto_id}/desativar")
+def desativar_produto(
+    produto_id: int,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    produto = db.query(Produto).filter(
+        Produto.id == produto_id
+    ).first()
+
+    if produto:
+        produto.ativo = False
+        db.commit()
+
+    return RedirectResponse(
+        "/produtos",
+        status_code=303
+    )

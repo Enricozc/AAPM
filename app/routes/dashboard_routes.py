@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from datetime import date
+from datetime import date, datetime, timedelta
 
 from app.config.security import get_current_user
 from app.config.database import get_db
@@ -21,66 +21,47 @@ async def dashboard(
     user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    total_usuarios = db.query(
-        func.count(Usuario.id)
-    ).filter(
-        Usuario.ativo == True
-    ).scalar() or 0
+    hoje = datetime.utcnow().date()  # mesmo fuso das vendas salvas
 
-    total_produtos = db.query(
-        func.count(Produto.id)
-    ).filter(
-        Produto.ativo == True
-    ).scalar() or 0
+    total_usuarios   = db.query(func.count(Usuario.id)).filter(Usuario.ativo == True).scalar() or 0
+    total_produtos   = db.query(func.count(Produto.id)).filter(Produto.ativo == True).scalar() or 0
+    total_estoque    = db.query(func.sum(Produto.estoque_atual)).scalar() or 0
+    total_categorias = db.query(func.count(Categoria.id)).filter(Categoria.ativo == True).scalar() or 0
 
-    total_estoque = db.query(
-        func.sum(Produto.estoque_atual)
-    ).scalar() or 0
+    vendas = db.query(Venda).all()
+    vendas_hoje      = [v for v in vendas if v.data_venda.date() == hoje]
+    vendas_mes       = [v for v in vendas if v.data_venda.month == hoje.month and v.data_venda.year == hoje.year]
+    vendas_pendentes = [v for v in vendas if v.status == "pendente"]
 
-    total_categorias = db.query(
-        func.count(Categoria.id)
-    ).filter(
-        Categoria.ativo == True
-    ).scalar() or 0
+    receita_hoje = sum(v.valor_total for v in vendas_hoje)
+    receita_mes  = sum(v.valor_total for v in vendas_mes)
 
-    # Vendas do dia
-    vendas_hoje = db.query(
-        func.sum(Venda.valor_total)
-    ).filter(
-        func.date(Venda.data_venda) == date.today()
-    ).scalar() or 0
+    ultimas_vendas = sorted(vendas, key=lambda v: v.data_venda, reverse=True)[:5]
 
-    # Dados do gráfico
-    grafico_categorias = (
-        db.query(
-            Categoria.nome,
-            func.count(Produto.id)
-        )
-        .join(Produto)
-        .group_by(Categoria.nome)
-        .all()
-    )
+    dias_semana    = [(hoje - timedelta(days=i)) for i in range(6, -1, -1)]
+    grafico_labels  = [d.strftime("%d/%m") for d in dias_semana]
+    grafico_receita = []
+    grafico_qtd     = []
+    for dia in dias_semana:
+        vendas_dia = [v for v in vendas if v.data_venda.date() == dia]
+        grafico_receita.append(round(sum(v.valor_total for v in vendas_dia), 2))
+        grafico_qtd.append(len(vendas_dia))
 
     return templates.TemplateResponse(
         request=request,
         name="dashboard.html",
         context={
-            "usuario": {
-                "nome": user.get("nome"),
-                "role": user.get("role")
-            },
-
-            "stats": {
-                "usuarios": total_usuarios,
-                "produtos": total_produtos,
-                "estoque": total_estoque,
-                "categorias": total_categorias,
-            },
-
-            "vendas_hoje": vendas_hoje,
-
-            "grafico_labels": [x[0] for x in grafico_categorias],
-
-            "grafico_valores": [x[1] for x in grafico_categorias]
+            "request":         request,
+            "usuario":         {"nome": user.get("nome"), "role": user.get("role")},
+            "stats":           {"usuarios": total_usuarios, "produtos": total_produtos, "estoque": total_estoque, "categorias": total_categorias},
+            "vendas_hoje":     len(vendas_hoje),
+            "receita_hoje":    receita_hoje,
+            "receita_mes":     receita_mes,
+            "total_mes":       len(vendas_mes),
+            "pendentes":       len(vendas_pendentes),
+            "ultimas_vendas":  ultimas_vendas,
+            "grafico_labels":  grafico_labels,
+            "grafico_receita": grafico_receita,
+            "grafico_qtd":     grafico_qtd,
         }
     )

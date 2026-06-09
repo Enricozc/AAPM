@@ -5,336 +5,360 @@
 {% block conteudo %}
 
 <style>
-:root{
-    --blue:#0052cc;
-    --orange:#ff6600;
-    --bg:#f5f7fb;
-    --text:#0f172a;
-}
-
-body{
-    margin:0;
-    font-family:Inter, sans-serif;
-    background:var(--bg);
-}
-
-/* ===== CONTAINER MAIS FLUIDO ===== */
-.wrapper{
-    max-width:1200px;
-    margin:0 auto;
-}
-
-/* ===== HEADER MINIMALISTA ===== */
-.top{
-    display:flex;
-    justify-content:space-between;
-    align-items:flex-end;
-    margin-bottom:26px;
-}
-
-.title{
-    font-size:34px;
-    font-weight:900;
-    letter-spacing:-1.2px;
-    color:var(--text);
-}
-
-.subtitle{
-    font-size:13px;
-    color:#94a3b8;
-    margin-top:6px;
-    font-weight:500;
-}
-
-/* BOTÃO FLUTUANTE CLEAN */
-.btn{
-    background:rgba(0,82,204,.95);
-    color:white;
-    padding:12px 18px;
-    border-radius:14px;
-    text-decoration:none;
-    font-weight:800;
-    box-shadow:0 10px 30px rgba(0,82,204,.25);
-    transition:.25s;
-}
-
-.btn:hover{
-    transform:translateY(-3px);
-}
-
-/* ===== FILTRO STYLE CLAUDE ===== */
-.filter{
-    display:flex;
-    gap:10px;
-    padding:12px;
-    background:rgba(255,255,255,.7);
-    backdrop-filter:blur(18px);
-    border-radius:18px;
-    border:1px solid rgba(226,232,240,.6);
-    margin-bottom:28px;
-}
-
-.filter input,
-.filter select{
-    flex:1;
-    padding:11px 12px;
-    border-radius:12px;
-    border:1px solid #e5e7eb;
-    background:white;
-    font-weight:600;
-    outline:none;
-    transition:.2s;
-}
-
-.filter input:focus,
-.filter select:focus{
-    border-color:var(--blue);
-    box-shadow:0 0 0 3px rgba(0,82,204,.12);
-}
-
-/* BOTÕES SILENCIOSOS */
-.filter button{
-    background:#0f172a;
-    color:white;
-    border:none;
-    padding:11px 14px;
-    border-radius:12px;
-    font-weight:800;
-    cursor:pointer;
-}
-
-.filter a{
-    padding:11px 14px;
-    background:#f1f5f9;
-    border-radius:12px;
-    text-decoration:none;
-    color:#0f172a;
-    font-weight:800;
-}
-
-/* ===== GRID MAIS "RESPIRADO" ===== */
-.grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:22px;
-}
-
-/* ===== CARD STYLE CLAUDE (soft + elegant) ===== */
-.card{
-    background:white;
-    border-radius:22px;
-    overflow:hidden;
-    border:1px solid rgba(226,232,240,.8);
-    box-shadow:0 10px 30px rgba(0,0,0,.04);
-    transition:.25s ease;
-}
-
-.card:hover{
-    transform:translateY(-6px);
-    box-shadow:0 25px 60px rgba(0,0,0,.10);
-}
-
-/* CONTAINER DA IMAGEM AJUSTADO */
-.img-container {
-    width: 100%;
-    height: 200px;
-    background-color: #fafafa; /* Fundo neutro suave caso a imagem tenha transparência */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-bottom: 1px solid rgba(226,232,240,.6);
-    overflow: hidden;
-}
-
-/* IMAGEM CORRIGIDA SEM CORTES DRÁSTICOS */
-.img{
-    width: 100%;
-    height: 100%;
-    object-fit: contain; /* Garante que o produto apareça inteiro */
-    padding: 10px; /* Evita que o produto cole nas bordas do card */
-    box-sizing: border-box;
-}
-
-/* CONTEÚDO LIMPO */
-.content{
-    padding:16px 18px;
-}
-
-.name{
-    font-size:17px;
-    font-weight:800;
-    color:var(--text);
-    text-decoration:none;
-}
-
-.cat{
-    font-size:12px;
-    margin-top:6px;
-    color:#94a3b8;
-    font-weight:600;
-}
-
-/* PREÇO MAIS “SILENCIOSO” */
-.price{
-    margin-top:12px;
-    font-size:24px;
-    font-weight:900;
-    color:var(--blue);
-    letter-spacing:-0.5px;
-}
-
-/* STOCK DISCRETO */
-.stock{
-    display:inline-block;
-    margin-top:10px;
-    font-size:12px;
-    font-weight:700;
-    padding:6px 10px;
-    border-radius:999px;
-    background:#f1f5f9;
-    color:#475569;
-}
-
-/* ACTIONS MINIMALISTAS */
-.actions{
-    margin-top:14px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-}
-
-.edit{
-    font-size:13px;
-    font-weight:800;
-    color:var(--orange);
-    text-decoration:none;
-    transition:.2s;
-}
-
-.edit:hover{
-    opacity:.7;
-}
-
-.delete{
-    font-size:13px;
-    font-weight:800;
-    color:#ef4444;
-    border:none;
-    background:none;
-    cursor:pointer;
-    transition:.2s;
-}
-
-.delete:hover{
-    opacity:.7;
-}
-
-/* EMPTY STATE */
-.empty{
-    text-align:center;
-    padding:60px;
-    color:#94a3b8;
-    font-weight:500;
-}
-
-/* RESPONSIVO */
-@media(max-width:1000px){
-    .grid{
-        grid-template-columns:1fr;
+    :root {
+        --blue: #0052cc;
+        --orange: #ff6600;
+        --bg: #f5f7fb;
+        --text: #0f172a;
     }
-    .top{
-        flex-direction:column;
-        align-items:flex-start;
-        gap:10px;
+
+    body {
+        margin: 0;
+        font-family: Inter, sans-serif;
+        background: var(--bg);
     }
-}
+
+    /* ===== CONTAINER MAIS FLUIDO ===== */
+    .wrapper {
+        max-width: 1200px;
+        margin: 0 auto;
+    }
+
+    /* ===== HEADER MINIMALISTA ===== */
+    .top {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        margin-bottom: 26px;
+    }
+
+    .title {
+        font-size: 34px;
+        font-weight: 900;
+        letter-spacing: -1.2px;
+        color: var(--text);
+    }
+
+    .subtitle {
+        font-size: 13px;
+        color: #94a3b8;
+        margin-top: 6px;
+        font-weight: 500;
+    }
+
+    /* BOTÃO FLUTUANTE CLEAN */
+    .btn {
+        background: rgba(0, 82, 204, .95);
+        color: white;
+        padding: 12px 18px;
+        border-radius: 14px;
+        text-decoration: none;
+        font-weight: 800;
+        box-shadow: 0 10px 30px rgba(0, 82, 204, .25);
+        transition: .25s;
+    }
+
+    .btn:hover {
+        transform: translateY(-3px);
+    }
+
+    /* ===== FILTRO STYLE CLAUDE ===== */
+    .filter {
+        display: flex;
+        gap: 10px;
+        padding: 12px;
+        background: rgba(255, 255, 255, .7);
+        backdrop-filter: blur(18px);
+        border-radius: 18px;
+        border: 1px solid rgba(226, 232, 240, .6);
+        margin-bottom: 28px;
+    }
+
+    .filter input,
+    .filter select {
+        flex: 1;
+        padding: 11px 12px;
+        border-radius: 12px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        font-weight: 600;
+        outline: none;
+        transition: .2s;
+    }
+
+    .filter input:focus,
+    .filter select:focus {
+        border-color: var(--blue);
+        box-shadow: 0 0 0 3px rgba(0, 82, 204, .12);
+    }
+
+    /* BOTÕES SILENCIOSOS */
+    .filter button {
+        background: #0f172a;
+        color: white;
+        border: none;
+        padding: 11px 14px;
+        border-radius: 12px;
+        font-weight: 800;
+        cursor: pointer;
+    }
+
+    .filter a {
+        padding: 11px 14px;
+        background: #f1f5f9;
+        border-radius: 12px;
+        text-decoration: none;
+        color: #0f172a;
+        font-weight: 800;
+    }
+
+    /* ===== GRID MAIS "RESPIRADO" ===== */
+    .grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 22px;
+    }
+
+    /* ===== CARD STYLE CLAUDE (soft + elegant) ===== */
+    .card {
+        background: white;
+        border-radius: 22px;
+        overflow: hidden;
+        border: 1px solid rgba(226, 232, 240, .8);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, .04);
+        transition: .25s ease;
+    }
+
+    .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 25px 60px rgba(0, 0, 0, .10);
+    }
+
+    /* CONTAINER DA IMAGEM AJUSTADO */
+    .img-container {
+        width: 100%;
+        height: 200px;
+        background-color: #fafafa;
+        /* Fundo neutro suave caso a imagem tenha transparência */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-bottom: 1px solid rgba(226, 232, 240, .6);
+        overflow: hidden;
+    }
+
+    /* IMAGEM CORRIGIDA SEM CORTES DRÁSTICOS */
+    .img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        /* Garante que o produto apareça inteiro */
+        padding: 10px;
+        /* Evita que o produto cole nas bordas do card */
+        box-sizing: border-box;
+    }
+
+    /* CONTEÚDO LIMPO */
+    .content {
+        padding: 16px 18px;
+    }
+
+    .name {
+        font-size: 17px;
+        font-weight: 800;
+        color: var(--text);
+        text-decoration: none;
+    }
+
+    .cat {
+        font-size: 12px;
+        margin-top: 6px;
+        color: #94a3b8;
+        font-weight: 600;
+    }
+
+    /* PREÇO MAIS “SILENCIOSO” */
+    .price {
+        margin-top: 12px;
+        font-size: 24px;
+        font-weight: 900;
+        color: var(--blue);
+        letter-spacing: -0.5px;
+    }
+
+    /* STOCK DISCRETO */
+    .stock {
+        display: inline-block;
+        margin-top: 10px;
+        font-size: 12px;
+        font-weight: 700;
+        padding: 6px 10px;
+        border-radius: 999px;
+        background: #f1f5f9;
+        color: #475569;
+    }
+
+    .actions {
+        margin-top: 18px;
+        display: flex;
+        gap: 10px;
+    }
+
+    .edit {
+        flex: 1;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+
+        padding: 10px;
+        border-radius: 12px;
+
+        background: #0052cc;
+        color: #fff;
+
+        text-decoration: none;
+        font-size: 13px;
+        font-weight: 700;
+
+        transition: .25s;
+    }
+
+    .edit:hover {
+        background: #0044aa;
+    }
+
+    .delete {
+        width: 100%;
+
+        padding: 10px;
+
+        border: none;
+        border-radius: 12px;
+
+        background: #ef4444;
+        color: #fff;
+
+        font-size: 13px;
+        font-weight: 700;
+
+        cursor: pointer;
+
+        transition: .25s;
+    }
+
+    .delete:hover {
+        background: #dc2626;
+    }
+
+    /* EMPTY STATE */
+    .empty {
+        text-align: center;
+        padding: 60px;
+        color: #94a3b8;
+        font-weight: 500;
+    }
+
+    /* RESPONSIVO */
+    @media(max-width:1000px) {
+        .grid {
+            grid-template-columns: 1fr;
+        }
+
+        .top {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+    }
 </style>
 
 <div class="wrapper">
 
-<div class="top">
-    <div>
-        <div class="title">Produtos</div>
-        <div class="subtitle">Gestão leve, fluida e moderna de catálogo</div>
+    <div class="top">
+        <div>
+            <div class="title">Produtos</div>
+            <div class="subtitle">Gestão leve, fluida e moderna de catálogo</div>
+        </div>
+
+        {% if usuario.role == 'ADMIN' %}
+        <a class="btn" href="/produtos/novo">+ Novo Produto</a>
+        {% endif %}
     </div>
 
-    {% if usuario.role == 'ADMIN' %}
-        <a class="btn" href="/produtos/novo">+ Novo Produto</a>
-    {% endif %}
-</div>
+    <form class="filter" method="get">
+        <input type="text" name="busca" placeholder="Buscar produto..." value="{{ busca }}">
 
-<form class="filter" method="get">
-    <input type="text" name="busca" placeholder="Buscar produto..." value="{{ busca }}">
-
-    <select name="categoria_id">
-        <option value="0">Todas categorias</option>
-        {% for c in categorias %}
-            <option value="{{ c.id }}" {% if categoria_id|int == c.id|int %}selected{% endif %}>
+        <select name="categoria_id">
+            <option value="0">Todas categorias</option>
+            {% for c in categorias %}
+            <option value="{{ c.id }}" {% if categoria_id|int==c.id|int %}selected{% endif %}>
                 {{ c.nome }}
             </option>
-        {% endfor %}
-    </select>
+            {% endfor %}
+        </select>
 
-    <button type="submit">Filtrar</button>
+        <button type="submit">Filtrar</button>
 
-    {% if busca or categoria_id|int > 0 %}
+        {% if busca or categoria_id|int > 0 %}
         <a href="/produtos">Limpar</a>
-    {% endif %}
-</form>
+        {% endif %}
+    </form>
 
-<div class="grid">
+    <div class="grid">
 
-{% for p in produtos %}
-    <div class="card">
-        
-        <div class="img-container">
-            <img class="img" 
-                 src="{{ p.imagem_url if p.imagem_url else 'https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem' }}" 
-                 onerror="this.onerror=null; this.src='https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem';">
-        </div>
+        {% for p in produtos %}
+        <div class="card">
 
-        <div class="content">
-            <a class="name" href="/produtos/{{ p.id }}">
-                {{ p.nome }}
-            </a>
-
-            <div class="cat">
-                {{ p.categoria.nome if p.categoria else "Sem categoria" }}
+            <div class="img-container">
+                <img class="img"
+                    src="{{ p.imagem_url if p.imagem_url else 'https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem' }}"
+                    onerror="this.onerror=null; this.src='https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem';">
             </div>
 
-            <div class="price">
-                R$ {{ "%.2f"|format(p.preco) }}
-            </div>
-
-            <div class="stock">
-                Estoque: {{ p.estoque_atual }}
-            </div>
-
-            {% if usuario.role == 'ADMIN' %}
-            <div class="actions">
-                <a class="edit" href="/produtos/{{ p.id }}/editar">
-                    Editar
+            <div class="content">
+                <a class="name" href="/produtos/{{ p.id }}">
+                    {{ p.nome }}
                 </a>
 
-                <form action="/produtos/{{ p.id }}/desativar"
-                      method="post"
-                      style="display:inline;"
-                      onsubmit="return confirm('Desativar {{ p.nome }}?')">
-                    <button class="delete" type="submit">
-                        Desativar
-                    </button>
-                </form>
-            </div>
-            {% endif %}
-        </div>
-    </div>
-{% else %}
-    <div class="empty">
-        Nenhum produto encontrado
-    </div>
-{% endfor %}
+                <div class="cat">
+                    {{ p.categoria.nome if p.categoria else "Sem categoria" }}
+                </div>
 
-</div>
+                <div class="price">
+                    R$ {{ "%.2f"|format(p.preco) }}
+                </div>
+
+                <div class="stock">
+                    Estoque: {{ p.estoque_atual }}
+                </div>
+
+                {% if usuario.role == 'ADMIN' %}
+                <div class="actions">
+
+                    <a class="edit" href="/produtos/{{ p.id }}/editar">
+                        Editar
+                    </a>
+
+                    <form action="/produtos/{{ p.id }}/desativar" method="post" style="flex:1;"
+                        onsubmit="return confirm('Desativar {{ p.nome }}?')">
+
+                        <button class="delete" type="submit">
+                            Desativar
+                        </button>
+
+                    </form>
+
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        {% else %}
+        <div class="empty">
+            Nenhum produto encontrado
+        </div>
+        {% endfor %}
+
+    </div>
 </div>
 
 {% endblock %}

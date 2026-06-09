@@ -1,498 +1,146 @@
 {% extends "base.html" %}
 
-{% block titulo %}
-Início - AAPM SENAI
-{% endblock %}
+{% block titulo %}Início - AAPM SENAI{% endblock %}
 
 {% block conteudo %}
-
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
-
 :root{
-  --blue:#0052cc;
-  --blue-dark:#003b99;
-  --orange:#ff7a18;
-  --bg:#f4f7fb;
-  --text:#0f172a;
-  --muted:#64748b;
-  --whatsapp:#25d366; /* Nova cor para o botão do Zap */
-  --whatsapp-dark:#128c7e;
+  --blue:#0052cc; --blue-dark:#003b99; --orange:#ff7a18;
+  --bg:#f4f7fb; --text:#0f172a; --muted:#64748b;
+  --whatsapp:#25d366; --whatsapp-dark:#128c7e;
 }
-
-/* BACKGROUND CLEAN CLOUD */
-body{
-  font-family:Inter, sans-serif;
-  margin:0;
-  background:
-    radial-gradient(circle at 15% 20%, rgba(0,82,204,.10), transparent 45%),
-    radial-gradient(circle at 85% 30%, rgba(255,122,24,.10), transparent 45%),
-    var(--bg);
-  background-attachment: fixed;
-  background-size: cover;
-  color:var(--text);
-}
-
-/* WRAP */
-.min-height{
-  min-height:90vh;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  padding:60px 20px;
-}
-
-/* TITLE */
-h1{
-  font-size:64px;
-  font-weight:900;
-  letter-spacing:-2px;
-  margin:0;
-  color:var(--blue);
-  text-align: center;
-}
-
-p.subtitle{
-  color:var(--muted);
-  font-size:20px;
-  max-width:520px;
-  margin:20px auto 40px;
-  line-height:1.6;
-  text-align: center;
-}
-
-/* BUTTON */
-.text-center {
-  text-align: center;
-}
-
-a.button{
-  display:inline-block;
-  background:linear-gradient(135deg,var(--blue),var(--blue-dark));
-  color:white;
-  font-weight:800;
-  font-size:16px;
-  padding:14px 34px;
-  border-radius:14px;
-  text-decoration:none;
-  box-shadow:0 12px 30px rgba(0,82,204,.25);
-  transition:.25s;
-}
-
-a.button:hover{
-  transform:translateY(-4px);
-  box-shadow:0 20px 50px rgba(0,82,204,.35);
-}
-
-/* CARD SECTION */
-section{
-  width:100%;
-  max-width:1000px;
-  margin-top:60px;
-  background:white;
-  border-radius:24px;
-  padding:40px;
-  box-shadow:0 20px 60px rgba(0,0,0,.08);
-  border:1px solid #eef2f7;
-  box-sizing: border-box;
-}
-
-/* GRID */
-.grid{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:20px;
-}
-
-/* METRIC */
-.metric{
-  text-align:center;
-  padding:22px;
-  border-radius:18px;
-  background:#ffffff;
-  border:1px solid #eef2f7;
-  transition:.25s;
-}
-
-.metric:hover{
-  transform:translateY(-6px);
-  box-shadow:0 18px 40px rgba(0,0,0,.08);
-  border-color:rgba(0,82,204,.25);
-}
-
-/* ICON */
-.icon{
-  width:60px;
-  height:60px;
-  margin:0 auto 16px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  border-radius:16px;
-  font-size:22px;
-}
-
-.blue{
-  color:var(--blue);
-  background:rgba(0,82,204,.10);
-}
-
-.orange{
-  color:var(--orange);
-  background:rgba(255,122,24,.12);
-}
-
-/* VALUE */
-.value{
-  font-size:42px;
-  font-weight:900;
-  margin:0;
-}
-
-.label{
-  font-size:11px;
-  letter-spacing:1px;
-  text-transform:uppercase;
-  color:var(--muted);
-  margin-top:8px;
-  font-weight:700;
-}
-
-/* INSTITUTIONAL SECTION & PRODUCTS */
-.about-section, .products-section {
-  width: 100%;
-  max-width: 1000px;
-  margin-top: 40px;
-  background: white;
-  border-radius: 24px;
-  padding: 50px 40px;
-  box-shadow: 0 20px 60px rgba(0,0,0,.06);
-  border: 1px solid #eef2f7;
-  box-sizing: border-box;
-}
-
-.section-header {
-  text-align: center;
-  max-width: 760px;
-  margin: 0 auto 40px;
-}
-
-h2 {
-  font-size: 32px;
-  font-weight: 900;
-  color: var(--blue);
-  margin-top: 0;
-  margin-bottom: 20px;
-  letter-spacing: -0.5px;
-}
-
-.section-header p {
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.7;
-  margin: 0;
-}
-
-/* LISTA DE OBJETIVOS */
-.objectives-list {
-  list-style: none;
-  padding: 0;
-  margin: 30px 0 0 0;
-  display: flex;
-  flex-direction: column;
-  gap: 18px;
-}
-
-.objectives-list li {
-  display: flex;
-  align-items: flex-start;
-  gap: 16px;
-  font-size: 16px;
-  line-height: 1.6;
-  color: var(--text);
-  padding: 16px;
-  border-radius: 14px;
-  background: #f8fafc;
-  border: 1px solid #f1f5f9;
-  transition: .2s ease;
-}
-
-.objectives-list li:hover {
-  background: #ffffff;
-  border-color: rgba(0,82,204,.15);
-  box-shadow: 0 10px 25px rgba(0,82,204,.04);
-  transform: translateX(4px);
-}
-
-.objectives-list li::before {
-  content: "\f00c";
-  font-family: "Font Awesome 6 Free";
-  font-weight: 900;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  min-width: 32px;
-  border-radius: 8px;
-  background: rgba(255,122,24,.10);
-  color: var(--orange);
-  font-size: 14px;
-}
-
-.objectives-list li strong {
-  color: var(--blue);
-  font-weight: 700;
-}
-
-/* VITRINE DE PRODUTOS */
-.products-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-.product-card {
-  background: #ffffff;
-  border: 1px solid #eef2f7;
-  border-radius: 18px;
-  overflow: hidden;
-  transition: .3s ease;
-  display: flex;
-  flex-direction: column;
-}
-
-.product-card:hover {
-  transform: translateY(-8px);
-  box-shadow: 0 20px 40px rgba(0,82,204,.08);
-  border-color: rgba(0,82,204,.2);
-}
-
-.product-image {
-  width: 100%;
-  height: 200px;
-  background: #f8fafc;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: var(--muted);
-  font-size: 48px;
-  border-bottom: 1px solid #eef2f7;
-  position: relative;
-}
-
-.product-badge {
-  position: absolute;
-  top: 14px;
-  left: 14px;
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  padding: 6px 12px;
-  border-radius: 20px;
-  letter-spacing: 0.5px;
-}
-
-.badge-blue { background: rgba(0,82,204,.1); color: var(--blue); }
-.badge-orange { background: rgba(255,122,24,.1); color: var(--orange); }
-
-.product-info {
-  padding: 20px;
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-}
-
-.product-info h3 {
-  font-size: 18px;
-  font-weight: 800;
-  margin: 0 0 8px 0;
-  color: var(--text);
-}
-
-.product-info p {
-  font-size: 14px;
-  color: var(--muted);
-  line-height: 1.5;
-  margin: 0 0 16px 0;
-  flex-grow: 1;
-}
-
-.product-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: auto;
-  padding-top: 14px;
-  border-top: 1px dashed #eef2f7;
-}
-
-.product-price {
-  font-size: 20px;
-  font-weight: 900;
-  color: var(--text);
-}
-
-/* BOTÃO WHATSAPP ESTILIZADO */
-.btn-whatsapp {
-  font-size: 12px;
-  font-weight: 700;
-  padding: 10px 16px;
-  background: rgba(37, 211, 102, 0.1);
-  color: var(--whatsapp-dark);
-  border-radius: 10px;
-  text-decoration: none;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  transition: .25s ease;
-}
-
-.product-card:hover .btn-whatsapp {
-  background: var(--whatsapp);
-  color: white;
-  box-shadow: 0 8px 20px rgba(37, 211, 102, 0.25);
-}
-
-/* RESPONSIVO */
-@media(max-width:900px){
-  .grid { grid-template-columns: repeat(2,1fr); }
-  .products-grid { grid-template-columns: repeat(2, 1fr); }
-  h1{ font-size:48px; }
-}
-
-@media(max-width:600px){
-  .grid { grid-template-columns: 1fr; }
-  .products-grid { grid-template-columns: 1fr; }
-  h1{ font-size:38px; }
-  .about-section, .products-section { padding: 30px 20px; }
-}
+body{ font-family:Inter,sans-serif; margin:0;
+  background: radial-gradient(circle at 15% 20%,rgba(0,82,204,.10),transparent 45%),
+              radial-gradient(circle at 85% 30%,rgba(255,122,24,.10),transparent 45%),
+              var(--bg);
+  background-attachment:fixed; color:var(--text); }
+.min-height{ min-height:90vh; display:flex; flex-direction:column; justify-content:center; align-items:center; padding:60px 20px; }
+h1{ font-size:64px; font-weight:900; letter-spacing:-2px; margin:0; color:var(--blue); text-align:center; }
+p.subtitle{ color:var(--muted); font-size:20px; max-width:520px; margin:20px auto 40px; line-height:1.6; text-align:center; }
+.text-center{ text-align:center; }
+a.button{ display:inline-block; background:linear-gradient(135deg,var(--blue),var(--blue-dark)); color:white; font-weight:800; font-size:16px; padding:14px 34px; border-radius:14px; text-decoration:none; box-shadow:0 12px 30px rgba(0,82,204,.25); transition:.25s; }
+a.button:hover{ transform:translateY(-4px); box-shadow:0 20px 50px rgba(0,82,204,.35); }
+section{ width:100%; max-width:1000px; margin-top:60px; background:white; border-radius:24px; padding:40px; box-shadow:0 20px 60px rgba(0,0,0,.08); border:1px solid #eef2f7; box-sizing:border-box; }
+.grid{ display:grid; grid-template-columns:repeat(4,1fr); gap:20px; }
+.metric{ text-align:center; padding:22px; border-radius:18px; background:#fff; border:1px solid #eef2f7; transition:.25s; }
+.metric:hover{ transform:translateY(-6px); box-shadow:0 18px 40px rgba(0,0,0,.08); border-color:rgba(0,82,204,.25); }
+.icon{ width:60px; height:60px; margin:0 auto 16px; display:flex; align-items:center; justify-content:center; border-radius:16px; font-size:22px; }
+.blue{ color:var(--blue); background:rgba(0,82,204,.10); }
+.orange{ color:var(--orange); background:rgba(255,122,24,.12); }
+.value{ font-size:42px; font-weight:900; margin:0; }
+.label{ font-size:11px; letter-spacing:1px; text-transform:uppercase; color:var(--muted); margin-top:8px; font-weight:700; }
+.about-section,.products-section{ width:100%; max-width:1000px; margin-top:40px; background:white; border-radius:24px; padding:50px 40px; box-shadow:0 20px 60px rgba(0,0,0,.06); border:1px solid #eef2f7; box-sizing:border-box; }
+.section-header{ text-align:center; max-width:760px; margin:0 auto 40px; }
+h2{ font-size:32px; font-weight:900; color:var(--blue); margin-top:0; margin-bottom:20px; letter-spacing:-.5px; }
+.section-header p{ color:var(--muted); font-size:16px; line-height:1.7; margin:0; }
+.objectives-list{ list-style:none; padding:0; margin:30px 0 0; display:flex; flex-direction:column; gap:18px; }
+.objectives-list li{ display:flex; align-items:flex-start; gap:16px; font-size:16px; line-height:1.6; color:var(--text); padding:16px; border-radius:14px; background:#f8fafc; border:1px solid #f1f5f9; transition:.2s; }
+.objectives-list li:hover{ background:#fff; border-color:rgba(0,82,204,.15); box-shadow:0 10px 25px rgba(0,82,204,.04); transform:translateX(4px); }
+.objectives-list li::before{ content:"\f00c"; font-family:"Font Awesome 6 Free"; font-weight:900; display:flex; align-items:center; justify-content:center; width:32px; height:32px; min-width:32px; border-radius:8px; background:rgba(255,122,24,.10); color:var(--orange); font-size:14px; }
+.objectives-list li strong{ color:var(--blue); font-weight:700; }
+.products-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+.product-card{ background:#fff; border:1px solid #eef2f7; border-radius:18px; overflow:hidden; transition:.3s; display:flex; flex-direction:column; }
+.product-card:hover{ transform:translateY(-8px); box-shadow:0 20px 40px rgba(0,82,204,.08); border-color:rgba(0,82,204,.2); }
+.product-image{ width:100%; height:200px; background:#f8fafc; display:flex; align-items:center; justify-content:center; color:var(--muted); font-size:48px; border-bottom:1px solid #eef2f7; position:relative; overflow:hidden; }
+.product-image img{ width:100%; height:100%; object-fit:cover; }
+.product-badge{ position:absolute; top:14px; left:14px; font-size:11px; font-weight:800; text-transform:uppercase; padding:6px 12px; border-radius:20px; letter-spacing:.5px; }
+.badge-blue{ background:rgba(0,82,204,.1); color:var(--blue); }
+.badge-orange{ background:rgba(255,122,24,.1); color:var(--orange); }
+.product-info{ padding:20px; display:flex; flex-direction:column; flex-grow:1; }
+.product-info h3{ font-size:18px; font-weight:800; margin:0 0 8px; color:var(--text); }
+.product-info p{ font-size:14px; color:var(--muted); line-height:1.5; margin:0 0 16px; flex-grow:1; }
+.product-footer{ display:flex; align-items:center; justify-content:space-between; margin-top:auto; padding-top:14px; border-top:1px dashed #eef2f7; }
+.product-price{ font-size:20px; font-weight:900; color:var(--text); }
+.btn-whatsapp{ font-size:12px; font-weight:700; padding:10px 16px; background:rgba(37,211,102,.1); color:var(--whatsapp-dark); border-radius:10px; text-decoration:none; display:flex; align-items:center; gap:6px; transition:.25s; }
+.product-card:hover .btn-whatsapp{ background:var(--whatsapp); color:white; box-shadow:0 8px 20px rgba(37,211,102,.25); }
+@media(max-width:900px){ .grid{ grid-template-columns:repeat(2,1fr); } .products-grid{ grid-template-columns:repeat(2,1fr); } h1{ font-size:48px; } }
+@media(max-width:600px){ .grid,.products-grid{ grid-template-columns:1fr; } h1{ font-size:38px; } .about-section,.products-section{ padding:30px 20px; } }
 </style>
 
 <div class="min-height">
 
-    <div class="text-center">
-        <h1>AAPM SENAI</h1>
+  <div class="text-center">
+    <h1>AAPM SENAI</h1>
+    <p class="subtitle">Unindo tecnologia, organização e transparência para fortalecer a comunidade escolar.</p>
+    <a href="/auth/login" class="button">🛡️ Acessar Sistema AAPM</a>
+  </div>
 
-        <p class="subtitle">
-            Unindo tecnologia, organização e transparência para fortalecer a comunidade escolar.
-        </p>
+  <section>
+    <div class="grid">
+      <div class="metric">
+        <div class="icon blue"><i class="fa-solid fa-users"></i></div>
+        <div class="value" style="color:var(--blue);">567</div>
+        <div class="label">Membros ativos</div>
+      </div>
+      <div class="metric">
+        <div class="icon orange"><i class="fa-solid fa-chart-line"></i></div>
+        <div class="value" style="color:var(--orange);">R$ 45k</div>
+        <div class="label">Arrecadado em 2026</div>
+      </div>
+      <div class="metric">
+        <div class="icon blue"><i class="fa-solid fa-lock"></i></div>
+        <div class="value" style="color:var(--blue);">80</div>
+        <div class="label">Armários livres</div>
+      </div>
+      <div class="metric">
+        <div class="icon orange"><i class="fa-regular fa-star"></i></div>
+        <div class="value" style="color:var(--orange);">98%</div>
+        <div class="label">Satisfação</div>
+      </div>
+    </div>
+  </section>
 
-        <a href="/auth/login" class="button">
-            🛡️ Acessar Sistema AAPM
-        </a>
+  <section class="products-section">
+    <div class="section-header">
+      <h2>Nossos Produtos</h2>
+      <p>Adquira os itens oficiais da AAPM. Todo o valor arrecadado é revertido diretamente em melhorias e eventos para a nossa escola.</p>
     </div>
 
-    <section>
-        <div class="grid">
-            <div class="metric">
-                <div class="icon blue"><i class="fa-solid fa-users"></i></div>
-                <div class="value" style="color:var(--blue);">567</div>
-                <div class="label">Membros ativos</div>
-            </div>
-
-            <div class="metric">
-                <div class="icon orange"><i class="fa-solid fa-chart-line"></i></div>
-                <div class="value" style="color:var(--orange);">R$ 45k</div>
-                <div class="label">Arrecadado em 2026</div>
-            </div>
-
-            <div class="metric">
-                <div class="icon blue"><i class="fa-solid fa-lock"></i></div>
-                <div class="value" style="color:var(--blue);">80</div>
-                <div class="label">Armários livres</div>
-            </div>
-
-            <div class="metric">
-                <div class="icon orange"><i class="fa-regular fa-star"></i></div>
-                <div class="value" style="color:var(--orange);">98%</div>
-                <div class="label">Satisfação</div>
-            </div>
+    <div class="products-grid">
+      {% for p in produtos %}
+      <div class="product-card">
+        <div class="product-image">
+          {% if p.imagem_path %}
+            <img src="/static/{{ p.imagem_path }}" alt="{{ p.nome }}">
+          {% else %}
+            <i class="fa-solid fa-box"></i>
+          {% endif %}
+          <span class="product-badge {{ 'badge-blue' if loop.index is odd else 'badge-orange' }}">
+            {{ p.categoria.nome if p.categoria else "Produto" }}
+          </span>
         </div>
-    </section>
-
-    <section class="products-section">
-        <div class="section-header">
-            <h2>Nossos Produtos</h2>
-            <p>Adquira os itens oficiais da AAPM. Todo o valor arrecadado é revertido diretamente em melhorias e eventos para a nossa escola.</p>
+        <div class="product-info">
+          <h3>{{ p.nome }}</h3>
+          <p>{{ p.estoque_atual }} unidade(s) disponível(is)</p>
+          <div class="product-footer">
+            <span class="product-price">R$ {{ "%.2f"|format(p.preco) }}</span>
+            <a href="https://api.whatsapp.com/send?phone=5500000000000&text=Olá! Gostaria de saber mais sobre {{ p.nome }}."
+              target="_blank" class="btn-whatsapp">
+              <i class="fa-brands fa-whatsapp"></i> Quero este
+            </a>
+          </div>
         </div>
+      </div>
+      {% else %}
+      <p style="color:var(--muted);text-align:center;grid-column:1/-1;">Nenhum produto disponível no momento.</p>
+      {% endfor %}
+    </div>
+  </section>
 
-        <div class="products-grid">
-            
-            <div class="product-card">
-                <div class="product-image">
-                    <i class="fa-solid fa-shirt"></i>
-                    <span class="product-badge badge-blue">Vestuário</span>
-                </div>
-                <div class="product-info">
-                    <h3>Moletom Oficial SENAI</h3>
-                    <p>Moletom canguru com capuz, flanelado por dentro e estampa em alta definição. Perfeito para o dia a dia.</p>
-                    <div class="product-footer">
-                        <span class="product-price">R$ 120,00</span>
-                        <a href="https://api.whatsapp.com/send?phone=5500000000000&text=Olá! Gostaria de saber mais sobre o Moletom Oficial do SENAI." target="_blank" class="btn-whatsapp">
-                            <i class="fa-brands fa-whatsapp"></i> Quero este
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">
-                    <i class="fa-solid fa-mug-saucer"></i>
-                    <span class="product-badge badge-orange">Acessórios</span>
-                </div>
-                <div class="product-info">
-                    <h3>Caneca Térmica AAPM</h3>
-                    <p>Caneca de inox com parede dupla, tampa hermética e gravação a laser. Mantém sua bebida na temperatura ideal.</p>
-                    <div class="product-footer">
-                        <span class="product-price">R$ 45,00</span>
-                        <a href="https://api.whatsapp.com/send?phone=5500000000000&text=Olá! Gostaria de saber mais sobre a Caneca Térmica da AAPM." target="_blank" class="btn-whatsapp">
-                            <i class="fa-brands fa-whatsapp"></i> Quero este
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="product-card">
-                <div class="product-image">
-                    <i class="fa-solid fa-key"></i>
-                    <span class="product-badge badge-orange">Acessórios</span>
-                </div>
-                <div class="product-info">
-                    <h3>Cordão & Chaveiro</h3>
-                    <p>Cordão premium para crachá com engate rápido e chaveiro exclusivo emborrachado da AAPM.</p>
-                    <div class="product-footer">
-                        <span class="product-price">R$ 15,00</span>
-                        <a href="https://api.whatsapp.com/send?phone=5500000000000&text=Olá! Gostaria de adquirir o combo de Cordão e Chaveiro." target="_blank" class="btn-whatsapp">
-                            <i class="fa-brands fa-whatsapp"></i> Quero este
-                        </a>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </section>
-
-    <section class="about-section">
-        <div class="section-header">
-            <h2>Quem Somos</h2>
-            <p>
-                A <strong>AAPM – Associação de Alunos, Ex-alunos, Pais e Mestres</strong> da Escola SENAI <em>"Hermenegildo Campos de Almeida"</em> é uma entidade sem fins lucrativos.
-            </p>
-            <br>
-            <p>
-                Para realizar estes objetivos, a AAPM se propõe a mobilizar inúmeros recursos, disponibilizados por seus membros, para auxiliar a Escola, promovendo condições que permitam principalmente:
-            </p>
-        </div>
-
-        <ul class="objectives-list">
-            <li><span><strong>Melhoria do ensino:</strong> Investimento contínuo em infraestrutura acadêmica e pedagógica.</span></li>
-            <li><span><strong>Assistência aos alunos:</strong> Suporte prático focado nas necessidades diárias dos estudantes.</span></li>
-            <li><span><strong>Atividades culturais e de lazer:</strong> Programação integrada para promover o bem-estar e a cultura.</span></li>
-        </ul>
-    </section>
+  <section class="about-section">
+    <div class="section-header">
+      <h2>Quem Somos</h2>
+      <p>A <strong>AAPM – Associação de Alunos, Ex-alunos, Pais e Mestres</strong> da Escola SENAI <em>"Hermenegildo Campos de Almeida"</em> é uma entidade sem fins lucrativos.</p>
+      <br>
+      <p>Para realizar estes objetivos, a AAPM se propõe a mobilizar inúmeros recursos, disponibilizados por seus membros, para auxiliar a Escola, promovendo condições que permitam principalmente:</p>
+    </div>
+    <ul class="objectives-list">
+      <li><span><strong>Melhoria do ensino:</strong> Investimento contínuo em infraestrutura acadêmica e pedagógica.</span></li>
+      <li><span><strong>Assistência aos alunos:</strong> Suporte prático focado nas necessidades diárias dos estudantes.</span></li>
+      <li><span><strong>Atividades culturais e de lazer:</strong> Programação integrada para promover o bem-estar e a cultura.</span></li>
+    </ul>
+  </section>
 
 </div>
-
 {% endblock %}

@@ -135,7 +135,8 @@
       <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
     </div>
 
-    <form action="/vendas" method="post">
+    <!-- CORREÇÃO: action="/vendas/" com barra final -->
+    <form action="/vendas/" method="post">
       <div class="px-6 py-5 flex flex-col gap-4">
 
         <div>
@@ -241,7 +242,6 @@ document.getElementById('modal-venda').addEventListener('click', function(e) {
 
 function adicionarItem() {
   const lista = document.getElementById('lista-itens');
-  const idx   = lista.querySelectorAll('.item-linha').length;
 
   const div = document.createElement('div');
   div.className = 'item-linha grid grid-cols-[1fr_80px_80px_32px] gap-2 items-end';
@@ -251,7 +251,7 @@ function adicionarItem() {
       <select name="produto_ids" required onchange="preencherPreco(this)"
         class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-400">
         <option value="">Selecione...</option>
-        ${produtos.map(p => `<option value="${p.id}" data-preco="${p.preco}" data-estoque="${p.estoque_atual}">${p.nome} (${p.estoque_atual})</option>`).join('')}
+        ${produtos.map(p => `<option value="${p.id}" data-preco="${p.preco}" data-estoque="${p.estoque_atual}">${p.nome} (estoque: ${p.estoque_atual})</option>`).join('')}
       </select>
     </div>
     <div>
@@ -275,6 +275,13 @@ function preencherPreco(sel) {
   const preco = opt.dataset.preco || 0;
   const linha = sel.closest('.item-linha');
   linha.querySelector('input[name="precos"]').value = parseFloat(preco).toFixed(2);
+
+  // Limita quantidade ao estoque disponível
+  const estoque = parseInt(opt.dataset.estoque) || 0;
+  const qtdInput = linha.querySelector('input[name="quantidades"]');
+  qtdInput.max = estoque;
+  if (parseInt(qtdInput.value) > estoque) qtdInput.value = estoque;
+
   calcularTotal();
 }
 

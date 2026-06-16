@@ -1,52 +1,64 @@
-from fastapi import APIRouter, Request, Form
+from fastapi import APIRouter, Depends, Request, Form, status
 from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
+from sqlalchemy.orm import Session
 
-router = APIRouter()
+from app.config.database import get_db
+from app.models.user_model import Usuario
+from app.config.security import hash_password, verify_password, create_access_token, get_usuario_opcional
 
-templates = Jinja2Templates(
-    directory="app/templates"
-)
+router = APIRouter(prefix="/auth", tags=["Autenticação"])
+templates = Jinja2Templates(directory="app/templates")
 
-# TELA DE LOGIN
-@router.get("/")
+
 @router.get("/login")
-async def login_page(
-    request: Request,
-    erro: str = None
-):
-    return templates.TemplateResponse(
-        "login.html",                             # 1º argumento: O arquivo HTML
-        {"request": request, "erro": erro},       # 2º argumento: O contexto (dicionário)
-        request=request                           # 3º argumento: O request explícito exigido pela nova versão!
-    )
-# PROCESSAR LOGIN
+def tela_login(request: Request):
+    return templates.TemplateResponse(request, "auth/login.html", {"request": request})
+
+
 @router.post("/login")
-async def fazer_login(
+def login(
+    request: Request,
     email: str = Form(...),
-    senha: str = Form(...)
+    senha: str = Form(...),
+    db: Session = Depends(get_db)
 ):
-    if email == "admin@email.com" and senha == "123456":
-        return RedirectResponse(
-            url="/dashboard?nome=Eduardo&perfil=ADMIN",
-            status_code=303
+    usuario = db.query(Usuario).filter(Usuario.email == email).first()
+
+    if not usuario or not verify_password(senha, usuario.hashed_password):
+        return templates.TemplateResponse(
+            request, "auth/login.html",
+            {"request": request, "erro": "E-mail ou senha incorretos."},
+            status_code=401
         )
 
-    elif email == "user@email.com" and senha == "123456":
-        return RedirectResponse(
-            url="/dashboard?nome=Carlos+Souza&perfil=FUNCIONARIO",
-            status_code=303
+    if not usuario.ativo:
+        return templates.TemplateResponse(
+            request, "auth/login.html",
+            {"request": request, "erro": "Usuário inativo. Contate o administrador."},
+            status_code=403
         )
 
-    return RedirectResponse(
-        url="/login?erro=E-mail+ou+senha+incorretos.",
-        status_code=303
+    token = create_access_token({
+        "sub":  usuario.email,
+        "nome": usuario.nome,
+        "role": usuario.role,
+        "id":   usuario.id,
+    })
+
+    response = RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
+    response.set_cookie(
+        key="access_token",
+        value=token,
+        httponly=True,
+        max_age=3600,
+        samesite="lax"
     )
+    return response
 
-# LOGOUT
+
 @router.get("/logout")
-async def logout():
-    return RedirectResponse(
-        url="/login",
-        status_code=303
-    )
+def logout():
+    response = RedirectResponse(url="/auth/login", status_code=status.HTTP_303_SEE_OTHER)
+    response.delete_cookie("access_token")
+    return response

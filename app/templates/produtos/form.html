@@ -26,6 +26,7 @@
         </div>
         {% endif %}
 
+        <!-- ✅ action corrigido: /produtos/{id}/editar ou /produtos/novo -->
         <form
             action="{{ '/produtos/' + editando.id|string + '/editar' if editando else '/produtos/novo' }}"
             method="post"
@@ -72,6 +73,7 @@
                         Estoque
                     </label>
 
+                    <!-- ✅ name="estoque_atual" bate com o controller -->
                     <input
                         type="number"
                         name="estoque_atual"
@@ -115,7 +117,7 @@
                 </label>
 
                 <img
-                    src="{{ url_for('static', path=editando.imagem_path) }}"
+                    src="/static/{{ editando.imagem_path }}"
                     class="w-40 rounded-xl border shadow-sm"
                 >
             </div>

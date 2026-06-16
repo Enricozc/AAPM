@@ -12,12 +12,13 @@ from app.models.venda_model import Venda
 from app.models.venda_item_model import VendaItem
 from app.models.produto_model import Produto
 
-router = APIRouter(prefix="/vendas", tags=["Vendas"])
+router = APIRouter(prefix="/vendas", tags=["Vendas"], redirect_slashes=False)
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 
+@router.get("")
 @router.get("/")
 def listar_vendas(
     request: Request,
@@ -53,6 +54,7 @@ def listar_vendas(
     )
 
 
+@router.post("")
 @router.post("/")
 def criar_venda(
     request: Request,

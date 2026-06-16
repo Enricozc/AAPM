@@ -14,26 +14,23 @@ from app.config.security import get_current_user, require_admin
 router = APIRouter(prefix="/produtos", tags=["Produtos"])
 templates = Jinja2Templates(directory="app/templates")
 
-# Pasta onde as imagens serão salvas
 UPLOAD_DIR = "app/static/uploads"
-os.makedirs(UPLOAD_DIR, exist_ok=True) 
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 
 # ============================================================
-# FUNÇÕES AUXILIARES DE IMAGEM (Corrigidas)
+# FUNÇÕES AUXILIARES DE IMAGEM
 # ============================================================
 
 async def _salvar_imagem(imagem: UploadFile | None):
     if not imagem or not imagem.filename or imagem.filename == "":
         return None
 
-    # Verifica extensão
     extensoes_permitidas = {".jpg", ".jpeg", ".png", ".webp"}
     _, ext = os.path.splitext(imagem.filename.lower())
 
     if ext not in extensoes_permitidas:
         return None
 
-    # Gera nome único
     nome_arquivo = f"{uuid.uuid4()}{ext}"
     caminho_completo = os.path.join(UPLOAD_DIR, nome_arquivo)
 
@@ -52,30 +49,128 @@ def _remover_imagem(imagem_path: str | None) -> None:
         os.remove(caminho)
 
 # ============================================================
-# ROTAS (Mantive sua lógica, que está correta)
+# ROTAS
 # ============================================================
 
 @router.get("/")
-def listar_produtos(request: Request, busca: str = "", categoria_id: int = 0, db: Session = Depends(get_db), usuario = Depends(get_current_user)):
+def listar_produtos(
+    request: Request,
+    busca: str = "",
+    categoria_id: int = 0,
+    db: Session = Depends(get_db),
+    usuario=Depends(get_current_user)
+):
     query = db.query(Produto).filter(Produto.ativo == True)
-    if busca: query = query.filter(Produto.nome.ilike(f"%{busca}%"))
-    if categoria_id: query = query.filter(Produto.categoria_id == categoria_id)
-    
+    if busca:
+        query = query.filter(Produto.nome.ilike(f"%{busca}%"))
+    if categoria_id:
+        query = query.filter(Produto.categoria_id == categoria_id)
+
     produtos = query.order_by(Produto.nome).all()
     categorias = db.query(Categoria).filter(Categoria.ativo == True).all()
-    return templates.TemplateResponse(request, "produtos/index.html", {"request": request, "usuario": usuario, "produtos": produtos, "categorias": categorias, "busca": busca, "categoria_id": categoria_id})
+
+    return templates.TemplateResponse(request, "produtos/index.html", {
+        "request": request,
+        "usuario": usuario,
+        "produtos": produtos,
+        "categorias": categorias,
+        "busca": busca,
+        "categoria_id": categoria_id,
+    })
+
 
 @router.get("/novo")
-def form_novo_produto(request: Request, db: Session = Depends(get_db), admin = Depends(require_admin)):
+def form_novo_produto(
+    request: Request,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
     categorias = db.query(Categoria).filter(Categoria.ativo == True).all()
-    return templates.TemplateResponse(request, "produtos/form.html", {"request": request, "usuario": admin, "editando": None, "categorias": categorias})
+    return templates.TemplateResponse(request, "produtos/form.html", {
+        "request": request,
+        "usuario": admin,
+        "editando": None,
+        "categorias": categorias,
+    })
+
 
 @router.post("/novo")
-async def criar_produto(request: Request, nome: str = Form(...), preco: float = Form(...), estoque_atual: int = Form(...), categoria_id: int = Form(0), imagem: UploadFile = File(None), db: Session = Depends(get_db), admin = Depends(require_admin)):
+async def criar_produto(
+    request: Request,
+    nome: str = Form(...),
+    preco: float = Form(...),
+    estoque_atual: int = Form(...),
+    categoria_id: int = Form(0),
+    imagem: UploadFile = File(None),
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
     imagem_path = await _salvar_imagem(imagem)
-    produto = Produto(nome=nome, preco=preco, estoque_atual=estoque_atual, categoria_id=categoria_id or None, imagem_path=imagem_path)
+    produto = Produto(
+        nome=nome,
+        preco=preco,
+        estoque_atual=estoque_atual,
+        categoria_id=categoria_id or None,
+        imagem_path=imagem_path,
+    )
     db.add(produto)
     db.commit()
     return RedirectResponse(url="/produtos?criado=ok", status_code=302)
 
-# (As demais rotas de editar e desativar que você escreveu estão perfeitas, pode manter!)
+
+@router.get("/{prod_id}/editar")
+def form_editar_produto(
+    prod_id: int,
+    request: Request,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    produto = db.query(Produto).filter(Produto.id == prod_id).first()
+    categorias = db.query(Categoria).filter(Categoria.ativo == True).all()
+    return templates.TemplateResponse(request, "produtos/form.html", {
+        "request": request,
+        "usuario": admin,
+        "editando": produto,
+        "categorias": categorias,
+    })
+
+
+@router.post("/{prod_id}/editar")
+async def atualizar_produto(
+    prod_id: int,
+    request: Request,
+    nome: str = Form(...),
+    preco: float = Form(...),
+    estoque_atual: int = Form(...),
+    categoria_id: int = Form(0),
+    imagem: UploadFile = File(None),
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    produto = db.query(Produto).filter(Produto.id == prod_id).first()
+    if produto:
+        produto.nome = nome
+        produto.preco = preco
+        produto.estoque_atual = estoque_atual
+        produto.categoria_id = categoria_id or None
+
+        nova_imagem = await _salvar_imagem(imagem)
+        if nova_imagem:
+            _remover_imagem(produto.imagem_path)
+            produto.imagem_path = nova_imagem
+
+        db.commit()
+    return RedirectResponse(url="/produtos?atualizado=ok", status_code=302)
+
+
+@router.post("/{prod_id}/desativar")
+def desativar_produto(
+    prod_id: int,
+    db: Session = Depends(get_db),
+    admin=Depends(require_admin)
+):
+    produto = db.query(Produto).filter(Produto.id == prod_id).first()
+    if produto:
+        produto.ativo = False
+        db.commit()
+    return RedirectResponse(url="/produtos?desativado=ok", status_code=302)

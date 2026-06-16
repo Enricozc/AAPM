@@ -32,8 +32,7 @@ def tela_fechamento(
     receita_cartao   = sum(v.valor_total for v in vendas_hoje if v.forma_pagamento == "cartao")
     receita_dinheiro = sum(v.valor_total for v in vendas_hoje if v.forma_pagamento == "dinheiro")
 
-    fechamentos = db.query(Fechamento).order_by(Fechamento.data_fechamento.desc()).limit(10).all()
-
+    fechamentos    = db.query(Fechamento).order_by(Fechamento.data_fechamento.desc()).limit(10).all()
     ja_fechou_hoje = any(f.data_fechamento.date() == hoje for f in fechamentos)
 
     return templates.TemplateResponse(
@@ -66,6 +65,9 @@ def confirmar_fechamento(
     vendas = db.query(Venda).all()
     vendas_hoje = [v for v in vendas if v.data_venda.date() == hoje]
 
+    # ✅ CORRIGIDO: usuario é dict JWT, usa .get() em vez de .nome
+    nome_usuario = usuario.get("nome", "desconhecido") if isinstance(usuario, dict) else str(usuario)
+
     fechamento = Fechamento(
         data_fechamento  = datetime.utcnow(),
         total_vendas     = len(vendas_hoje),
@@ -74,7 +76,7 @@ def confirmar_fechamento(
         receita_cartao   = sum(v.valor_total for v in vendas_hoje if v.forma_pagamento == "cartao"),
         receita_dinheiro = sum(v.valor_total for v in vendas_hoje if v.forma_pagamento == "dinheiro"),
         observacao       = observacao,
-        usuario          = usuario.nome if hasattr(usuario, "nome") else str(usuario),
+        usuario          = nome_usuario,
     )
     db.add(fechamento)
     db.commit()

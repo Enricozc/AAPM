@@ -5,7 +5,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from app.config.database import get_db
-from app.config.security import require_admin
+from app.config.security import get_current_user
 from app.models.armario_model import Armario, ArmarioHistorico
 from app.models.user_model import Usuario
 from app.services.log_service import registrar_log
@@ -20,7 +20,7 @@ def _obj(p):
     return U()
 
 @router.get("/")
-def listar(request: Request, payload=Depends(require_admin), db: Session=Depends(get_db)):
+def listar(request: Request, payload=Depends(get_current_user), db: Session=Depends(get_db)):
     u = _obj(payload)
     armarios = db.query(Armario).filter(Armario.ativo==True).order_by(Armario.numero).all()
     usuarios = db.query(Usuario).filter(Usuario.ativo==True).all()
@@ -30,7 +30,7 @@ def listar(request: Request, payload=Depends(require_admin), db: Session=Depends
                  "total":total,"ocupados":ocupados,"livres":total-ocupados})
 
 @router.post("/novo")
-def criar(numero: str=Form(...), localizacao: str=Form(""), payload=Depends(require_admin), db: Session=Depends(get_db)):
+def criar(numero: str=Form(...), localizacao: str=Form(""), payload=Depends(get_current_user), db: Session=Depends(get_db)):
     ul = _obj(payload)
     if db.query(Armario).filter(Armario.numero==numero).first():
         return RedirectResponse(url="/armarios/?erro=numero_duplicado", status_code=status.HTTP_303_SEE_OTHER)
@@ -39,7 +39,7 @@ def criar(numero: str=Form(...), localizacao: str=Form(""), payload=Depends(requ
     return RedirectResponse(url="/armarios/?sucesso=criado", status_code=status.HTTP_303_SEE_OTHER)
 
 @router.post("/{aid}/atribuir")
-def atribuir(aid: int, usuario_id: int=Form(...), payload=Depends(require_admin), db: Session=Depends(get_db)):
+def atribuir(aid: int, usuario_id: int=Form(...), payload=Depends(get_current_user), db: Session=Depends(get_db)):
     ul = _obj(payload)
     a = db.query(Armario).filter(Armario.id==aid).first()
     u = db.query(Usuario).filter(Usuario.id==usuario_id).first()
@@ -52,7 +52,7 @@ def atribuir(aid: int, usuario_id: int=Form(...), payload=Depends(require_admin)
     return RedirectResponse(url="/armarios/?sucesso=atribuido", status_code=status.HTTP_303_SEE_OTHER)
 
 @router.post("/{aid}/liberar")
-def liberar(aid: int, payload=Depends(require_admin), db: Session=Depends(get_db)):
+def liberar(aid: int, payload=Depends(get_current_user), db: Session=Depends(get_db)):
     ul = _obj(payload)
     a = db.query(Armario).filter(Armario.id==aid).first()
     if not a or not a.ocupado:
@@ -64,7 +64,7 @@ def liberar(aid: int, payload=Depends(require_admin), db: Session=Depends(get_db
     return RedirectResponse(url="/armarios/?sucesso=liberado", status_code=status.HTTP_303_SEE_OTHER)
 
 @router.get("/{aid}/historico")
-def historico(aid: int, request: Request, payload=Depends(require_admin), db: Session=Depends(get_db)):
+def historico(aid: int, request: Request, payload=Depends(get_current_user), db: Session=Depends(get_db)):
     a = db.query(Armario).filter(Armario.id==aid).first()
     if not a: return RedirectResponse(url="/armarios/")
     hist = db.query(ArmarioHistorico).filter(ArmarioHistorico.armario_id==aid).order_by(ArmarioHistorico.feito_em.desc()).all()
@@ -72,8 +72,11 @@ def historico(aid: int, request: Request, payload=Depends(require_admin), db: Se
         context={"request":request,"usuario":_obj(payload),"armario":a,"historico":hist})
 
 @router.post("/{aid}/desativar")
-def desativar(aid: int, payload=Depends(require_admin), db: Session=Depends(get_db)):
+def desativar(aid: int, payload=Depends(get_current_user), db: Session=Depends(get_db)):
     ul = _obj(payload)
+    # Apenas ADMIN pode desativar
+    if ul.role != "ADMIN":
+        return RedirectResponse(url="/armarios/?erro=sem_permissao", status_code=status.HTTP_303_SEE_OTHER)
     a = db.query(Armario).filter(Armario.id==aid).first()
     if a:
         a.ativo=False; a.ocupado=False; a.usuario_id=None; db.commit()

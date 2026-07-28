@@ -8,6 +8,7 @@ from app.config.security import get_current_user
 from app.config.database import get_db
 from app.models.user_model import Usuario
 from app.models.produto_model import Produto
+from app.models.produto_variacao_model import ProdutoVariacao
 from app.models.categoria_model import Categoria
 from app.models.venda_model import Venda
 
@@ -25,7 +26,7 @@ async def dashboard(
 
     total_usuarios   = db.query(func.count(Usuario.id)).filter(Usuario.ativo == True).scalar() or 0
     total_produtos   = db.query(func.count(Produto.id)).filter(Produto.ativo == True).scalar() or 0
-    total_estoque    = db.query(func.sum(Produto.estoque_atual)).scalar() or 0
+    total_estoque    = db.query(func.sum(ProdutoVariacao.estoque_atual)).filter(ProdutoVariacao.ativo == True).scalar() or 0
     total_categorias = db.query(func.count(Categoria.id)).filter(Categoria.ativo == True).scalar() or 0
 
     vendas = db.query(Venda).all()

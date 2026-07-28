@@ -14,188 +14,261 @@
 :root{
     --blue:#0052cc;
     --orange:#ff6600;
-    --bg:#f5f7fb;
     --text:#0f172a;
+    --muted:#64748b;
 }
 
-body{
-    font-family:Inter, sans-serif;
-    background:
-        radial-gradient(circle at top left, rgba(0,82,204,.08), transparent 45%),
-        radial-gradient(circle at top right, rgba(255,102,0,.06), transparent 45%),
-        var(--bg);
+.form-page{
+    max-width:560px;
+    margin:25px auto
 }
 
-/* CENTER LAYOUT */
-.wrapper{
-    max-width:520px;
-    margin:0 auto;
+/* CARD */
+.form-card{
+    position:relative;
+    background:white;
+    border:1px solid #e8edf4;
+    border-radius:26px;
+    padding:30px;
+    overflow:hidden;
+    box-shadow:0 18px 50px rgba(15,23,42,.08)
 }
 
-/* CARD PRINCIPAL */
-.card{
-    background:rgba(255,255,255,.85);
-    backdrop-filter:blur(16px);
-    border:1px solid rgba(226,232,240,.8);
-    border-radius:24px;
-    padding:26px;
-    box-shadow:0 20px 60px rgba(0,0,0,.06);
+.form-card:before{
+    content:"";
+    position:absolute;
+    width:180px;
+    height:180px;
+    right:-80px;
+    top:-80px;
+    border-radius:50%;
+    background:#0052cc12
 }
 
-/* TITLE */
-.title{
-    font-size:18px;
+/* HEADER */
+.form-header{
+    display:flex;
+    align-items:center;
+    gap:15px;
+    margin-bottom:25px
+}
+
+.form-icon{
+    width:52px;
+    height:52px;
+    display:grid;
+    place-items:center;
+    border-radius:16px;
+    color:white;
+    font-size:24px;
     font-weight:900;
-    color:var(--text);
-    margin-bottom:18px;
+    box-shadow:0 8px 20px rgba(0,82,204,.2)
+}
+
+.form-title{
+    font-size:21px;
+    font-weight:900;
+    color:var(--text)
+}
+
+.form-subtitle{
+    color:var(--muted);
+    font-size:12px;
+    margin-top:4px
 }
 
 /* ERROR */
 .error{
-    background:#ffe4e6;
-    color:#9f1239;
-    padding:12px;
-    border-radius:14px;
+    padding:12px 14px;
+    margin-bottom:18px;
+    border-radius:13px;
+    background:#fee2e2;
+    color:#991b1b;
     font-size:13px;
-    font-weight:700;
-    margin-bottom:14px;
+    font-weight:700
 }
 
 /* LABEL */
 label{
     display:block;
+    margin-bottom:8px;
+    color:#334155;
     font-size:12px;
-    font-weight:800;
-    color:#64748b;
-    margin-bottom:6px;
+    font-weight:800
 }
 
 /* INPUT */
-input{
+.input{
     width:100%;
-    padding:12px 14px;
+    box-sizing:border-box;
+    padding:14px 15px;
+    border:1px solid #e2e8f0;
     border-radius:14px;
-    border:1px solid #e5e7eb;
-    background:#f9fafb;
+    background:#f8fafc;
+    color:var(--text);
+    font-size:14px;
     font-weight:600;
     outline:none;
-    transition:.2s;
+    transition:.2s
 }
 
-input:focus{
-    border-color:var(--blue);
-    box-shadow:0 0 0 3px rgba(0,82,204,.12);
+.input::placeholder{
+    color:#94a3b8
+}
+
+.input:focus{
     background:white;
+    border-color:var(--blue);
+    box-shadow:0 0 0 4px #0052cc15
+}
+
+/* DICA */
+.hint{
+    margin-top:8px;
+    color:#94a3b8;
+    font-size:11px
 }
 
 /* BUTTONS */
 .actions{
     display:flex;
     gap:10px;
-    margin-top:18px;
+    margin-top:25px
 }
 
-.btn-primary{
+.btn{
     flex:1;
+    padding:13px;
+    border-radius:13px;
     border:none;
-    padding:12px;
-    border-radius:14px;
+    text-align:center;
+    font-size:13px;
     font-weight:900;
     cursor:pointer;
-    color:white;
-    background:linear-gradient(135deg,
-        {{ '#ff6600' if editando else '#0052cc' }},
-        {{ '#cc5200' if editando else '#003a99' }}
-    );
-    box-shadow:0 15px 40px rgba(0,82,204,.2);
-    transition:.25s;
-}
-
-.btn-primary:hover{
-    transform:translateY(-3px);
-}
-
-.btn-secondary{
-    flex:1;
-    display:flex;
-    align-items:center;
-    justify-content:center;
     text-decoration:none;
-    background:#f1f5f9;
-    color:#0f172a;
-    font-weight:800;
-    border-radius:14px;
-    transition:.2s;
+    transition:.2s
 }
 
-.btn-secondary:hover{
-    transform:translateY(-2px);
-    background:#e2e8f0;
+.btn:hover{
+    transform:translateY(-3px)
 }
 
-/* HEADER BADGE STYLE */
-.badge{
-    display:inline-block;
-    font-size:11px;
-    font-weight:800;
-    padding:6px 10px;
-    border-radius:999px;
-    background:#f1f5f9;
+.primary{
+    color:white;
+    box-shadow:0 10px 25px #0052cc25;
+}
+
+.secondary{
     color:#475569;
-    margin-bottom:10px;
+    background:#f1f5f9
 }
 
-/* RESPONSIVO */
+.secondary:hover{
+    background:#e2e8f0
+}
+
+/* MOBILE */
 @media(max-width:600px){
+    .form-page{
+        margin:15px auto
+    }
+
+    .form-card{
+        padding:22px
+    }
+
     .actions{
-        flex-direction:column;
+        flex-direction:column
     }
 }
 </style>
 
-<div class="wrapper">
+<div class="form-page">
 
-    <div class="card">
 
-        <div class="badge">
-            {{ 'EDIT MODE' if editando else 'CREATE MODE' }}
-        </div>
+<div class="form-card">
 
-        <div class="title">
-            {{ 'Editar Categoria #' ~ editando.id if editando else 'Nova Categoria' }}
-        </div>
+    <div class="form-header">
 
-        {% if erro %}
-            <div class="error">
-                ⚠️ {{ erro }}
+        {% if editando %}
+            <div class="form-icon" style="background:linear-gradient(135deg, #ff6600, #cc5200);">
+                ✎
+            </div>
+        {% else %}
+            <div class="form-icon" style="background:linear-gradient(135deg, #0052cc, #287be0);">
+                +
             </div>
         {% endif %}
 
-        <form action="{{ '/categorias/' ~ editando.id ~ '/editar' if editando else '/categorias/nova' }}"
-              method="POST">
-
-            <label>Nome da Categoria</label>
-            <input type="text"
-                   name="nome"
-                   value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
-                   placeholder="Ex: Uniformes, Papelaria..."
-                   required>
-
-            <div class="actions">
-
-                <button type="submit" class="btn-primary">
-                    {{ 'Salvar Alterações' if editando else 'Criar Categoria' }}
-                </button>
-
-                <a href="/categorias/" class="btn-secondary">
-                    Cancelar
-                </a>
-
+        <div>
+            <div class="form-title">
+                {{ 'Editar Categoria' if editando else 'Nova Categoria' }}
             </div>
 
-        </form>
+            <div class="form-subtitle">
+                {% if editando %}
+                    Altere as informações da categoria #{{ editando.id }}
+                {% else %}
+                    Cadastre uma nova categoria para seus produtos
+                {% endif %}
+            </div>
+        </div>
 
     </div>
+
+    {% if erro %}
+    <div class="error">
+        ⚠️ {{ erro }}
+    </div>
+    {% endif %}
+
+    <form
+        action="{{ '/categorias/' ~ editando.id ~ '/editar' if editando else '/categorias/nova' }}"
+        method="POST"
+    >
+
+        <label for="nome">
+            Nome da Categoria
+        </label>
+
+        <input
+            id="nome"
+            class="input"
+            type="text"
+            name="nome"
+            value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
+            placeholder="Ex: Uniformes, Papelaria, Bebidas..."
+            maxlength="100"
+            required
+            autofocus
+        >
+
+        <div class="hint">
+            Escolha um nome simples e fácil de identificar.
+        </div>
+
+        <div class="actions">
+
+            {% if editando %}
+                <button type="submit" class="btn primary" style="background:linear-gradient(135deg, #ff6600, #cc5200);">
+                    ✓ Salvar Alterações
+                </button>
+            {% else %}
+                <button type="submit" class="btn primary" style="background:linear-gradient(135deg, #0052cc, #003a99);">
+                    + Criar Categoria
+                </button>
+            {% endif %}
+
+            <a href="/categorias/" class="btn secondary">
+                Cancelar
+            </a>
+
+        </div>
+
+    </form>
+
+</div>
+
 
 </div>
 

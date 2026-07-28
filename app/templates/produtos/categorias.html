@@ -133,7 +133,7 @@
 
     {% for cat in categorias %}
 
-    <div class="item" style="opacity:{{ '1' if cat.ativo else '0.6' }}">
+    <div class="item" {% if not cat.ativo %}style="opacity:0.6"{% endif %}>
 
         <!-- LEFT INFO -->
         <div class="left">

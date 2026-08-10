@@ -12,7 +12,7 @@ Cauã Theodoro - RESPONSAVEL POR BACK- END
 
 # Instalar o requirements.txt
 
-pip install -r requirements.txt
+python -m pip install fastapi uvicorn sqlalchemy alembic pydantic pydantic-settings PyJWT passlib bcrypt jinja2 python-multipart
 
 
 #Inicializar o alembic

@@ -11,6 +11,7 @@ from app.config.security import get_current_user
 from app.models.venda_model import Venda
 from app.models.venda_item_model import VendaItem
 from app.models.produto_model import Produto
+from app.models.produto_variacao_model import ProdutoVariacao
 
 router = APIRouter(prefix="/vendas", tags=["Vendas"], redirect_slashes=False)
 
@@ -27,10 +28,21 @@ def listar_vendas(
 ):
     vendas      = db.query(Venda).order_by(Venda.data_venda.desc()).all()
     produtos_db = db.query(Produto).filter(Produto.ativo == True).all()
-    produtos    = [
-        {"id": p.id, "nome": p.nome, "preco": p.preco, "estoque_atual": p.estoque_atual}
-        for p in produtos_db
-    ]
+
+    # Monta produto -> variações (é a variação que tem estoque de verdade)
+    produtos = []
+    for p in produtos_db:
+        variacoes = [
+            {
+                "id": v.id,
+                "descricao": v.descricao,
+                "preco": v.preco_efetivo,
+                "estoque_atual": v.estoque_atual,
+            }
+            for v in p.variacoes if v.ativo
+        ]
+        if variacoes:  # só mostra produtos que têm ao menos uma variação ativa
+            produtos.append({"id": p.id, "nome": p.nome, "variacoes": variacoes})
 
     hoje        = datetime.utcnow().date()
     vendas_hoje = sum(1 for v in vendas if v.data_venda.date() == hoje)
@@ -59,7 +71,7 @@ def listar_vendas(
 def criar_venda(
     request: Request,
     responsavel:     str         = Form(...),
-    produto_ids:     List[int]   = Form(...),
+    variacao_ids:    List[int]   = Form(...),
     quantidades:     List[int]   = Form(...),
     precos:          List[float] = Form(...),
     forma_pagamento: str         = Form(...),
@@ -70,13 +82,13 @@ def criar_venda(
 ):
     itens_validos = []
 
-    for produto_id, quantidade, preco in zip(produto_ids, quantidades, precos):
-        produto = db.query(Produto).filter(Produto.id == produto_id).first()
-        if not produto:
+    for variacao_id, quantidade, preco in zip(variacao_ids, quantidades, precos):
+        variacao = db.query(ProdutoVariacao).filter(ProdutoVariacao.id == variacao_id).first()
+        if not variacao:
             continue
-        if produto.estoque_atual < quantidade:
+        if variacao.estoque_atual < quantidade:
             continue
-        itens_validos.append((produto, quantidade, preco))
+        itens_validos.append((variacao, quantidade, preco))
 
     if not itens_validos:
         return RedirectResponse(url="/vendas?erro=estoque", status_code=303)
@@ -93,16 +105,16 @@ def criar_venda(
     db.add(venda)
     db.flush()
 
-    for produto, quantidade, preco in itens_validos:
+    for variacao, quantidade, preco in itens_validos:
         item = VendaItem(
             venda_id=venda.id,
-            produto_id=produto.id,
+            produto_variacao_id=variacao.id,
             quantidade=quantidade,
             preco_unitario=preco,
             valor_total=quantidade * preco,
         )
         db.add(item)
-        produto.estoque_atual -= quantidade
+        variacao.estoque_atual -= quantidade
 
     db.commit()
     return RedirectResponse(url="/vendas?sucesso=1", status_code=303)

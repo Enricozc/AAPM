@@ -1,3 +1,4 @@
+
 {% extends "base.html" %}
 
 {% block title %}
@@ -13,182 +14,715 @@
 <style>
 :root{
     --blue:#0052cc;
+    --blue-dark:#003a99;
     --orange:#ff6600;
+    --orange-dark:#cc5200;
     --bg:#f5f7fb;
     --text:#0f172a;
+    --muted:#64748b;
 }
 
+/* FUNDO */
 body{
     font-family:Inter, sans-serif;
     background:
-        radial-gradient(circle at top left, rgba(0,82,204,.08), transparent 45%),
-        radial-gradient(circle at top right, rgba(255,102,0,.06), transparent 45%),
+        radial-gradient(
+            circle at 0% 0%,
+            rgba(0,82,204,.08),
+            transparent 40%
+        ),
+        radial-gradient(
+            circle at 100% 0%,
+            rgba(255,102,0,.07),
+            transparent 40%
+        ),
         var(--bg);
 }
 
-/* CENTER LAYOUT */
-.wrapper{
-    max-width:520px;
-    margin:0 auto;
-}
-
-/* CARD PRINCIPAL */
-.card{
-    background:rgba(255,255,255,.85);
-    backdrop-filter:blur(16px);
-    border:1px solid rgba(226,232,240,.8);
-    border-radius:24px;
-    padding:26px;
-    box-shadow:0 20px 60px rgba(0,0,0,.06);
-}
-
-/* TITLE */
-.title{
-    font-size:18px;
-    font-weight:900;
-    color:var(--text);
-    margin-bottom:18px;
-}
-
-/* ERROR */
-.error{
-    background:#ffe4e6;
-    color:#9f1239;
-    padding:12px;
-    border-radius:14px;
-    font-size:13px;
-    font-weight:700;
-    margin-bottom:14px;
-}
-
-/* LABEL */
-label{
-    display:block;
-    font-size:12px;
-    font-weight:800;
-    color:#64748b;
-    margin-bottom:6px;
-}
-
-/* INPUT */
-input{
+/* PÁGINA */
+.category-form-page{
     width:100%;
-    padding:12px 14px;
-    border-radius:14px;
-    border:1px solid #e5e7eb;
-    background:#f9fafb;
-    font-weight:600;
-    outline:none;
-    transition:.2s;
+    max-width:700px;
+    margin:0 auto;
+    padding-bottom:30px;
 }
 
-input:focus{
-    border-color:var(--blue);
-    box-shadow:0 0 0 3px rgba(0,82,204,.12);
-    background:white;
+/* =========================
+   CABEÇALHO
+========================= */
+
+.form-header{
+    text-align:center;
+    margin-bottom:25px;
 }
 
-/* BUTTONS */
-.actions{
-    display:flex;
-    gap:10px;
-    margin-top:18px;
-}
+.form-icon{
+    width:68px;
+    height:68px;
+    margin:0 auto 14px;
 
-.btn-primary{
-    flex:1;
-    border:none;
-    padding:12px;
-    border-radius:14px;
-    font-weight:900;
-    cursor:pointer;
-    color:white;
-    background:linear-gradient(135deg,
-        {{ '#ff6600' if editando else '#0052cc' }},
-        {{ '#cc5200' if editando else '#003a99' }}
-    );
-    box-shadow:0 15px 40px rgba(0,82,204,.2);
-    transition:.25s;
-}
-
-.btn-primary:hover{
-    transform:translateY(-3px);
-}
-
-.btn-secondary{
-    flex:1;
     display:flex;
     align-items:center;
     justify-content:center;
-    text-decoration:none;
+
+    border-radius:21px;
+
+    color:white;
+    font-size:29px;
+}
+
+/* NOVA CATEGORIA */
+.form-icon.create{
+    background:linear-gradient(
+        135deg,
+        var(--blue),
+        var(--blue-dark)
+    );
+
+    box-shadow:
+        0 18px 40px
+        rgba(0,82,204,.25);
+}
+
+/* EDITAR CATEGORIA */
+.form-icon.edit{
+    background:linear-gradient(
+        135deg,
+        var(--orange),
+        var(--orange-dark)
+    );
+
+    box-shadow:
+        0 18px 40px
+        rgba(255,102,0,.25);
+}
+
+.form-header h2{
+    margin:0;
+    font-size:24px;
+    font-weight:900;
+    color:var(--text);
+}
+
+.form-header p{
+    margin:7px 0 0;
+    font-size:13px;
+    color:var(--muted);
+}
+
+/* =========================
+   CARD
+========================= */
+
+.form-card{
+    background:rgba(255,255,255,.94);
+    backdrop-filter:blur(18px);
+
+    border:1px solid rgba(226,232,240,.9);
+    border-radius:26px;
+
+    padding:28px;
+
+    box-shadow:
+        0 25px 70px rgba(15,23,42,.07),
+        0 4px 15px rgba(15,23,42,.03);
+}
+
+/* =========================
+   TOPO DO CARD
+========================= */
+
+.card-top{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+
+    gap:15px;
+
+    margin-bottom:23px;
+    padding-bottom:18px;
+
+    border-bottom:1px solid #eef2f7;
+}
+
+.card-title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    font-size:16px;
+    font-weight:900;
+    color:var(--text);
+}
+
+.card-title-icon{
+    width:37px;
+    height:37px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:#eff6ff;
+    color:var(--blue);
+}
+
+/* =========================
+   BADGE
+========================= */
+
+.mode-badge{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    padding:7px 11px;
+
+    border-radius:999px;
+
     background:#f1f5f9;
-    color:#0f172a;
+    color:#475569;
+
+    font-size:10px;
+    font-weight:900;
+    white-space:nowrap;
+}
+
+.mode-dot{
+    width:7px;
+    height:7px;
+    border-radius:50%;
+}
+
+/* CORES DO STATUS */
+.mode-dot.create{
+    background:var(--blue);
+}
+
+.mode-dot.edit{
+    background:var(--orange);
+}
+
+/* =========================
+   ERRO
+========================= */
+
+.error{
+    display:flex;
+    align-items:center;
+    gap:10px;
+
+    background:#fff1f2;
+    color:#9f1239;
+
+    border:1px solid #fecdd3;
+
+    padding:13px 15px;
+
+    border-radius:15px;
+
+    font-size:13px;
     font-weight:800;
-    border-radius:14px;
-    transition:.2s;
+
+    margin-bottom:20px;
+}
+
+/* =========================
+   CAMPO
+========================= */
+
+.field{
+    margin-bottom:20px;
+}
+
+label{
+    display:flex;
+    align-items:center;
+    gap:7px;
+
+    font-size:12px;
+    font-weight:900;
+
+    color:#475569;
+
+    margin-bottom:8px;
+}
+
+.input-container{
+    position:relative;
+}
+
+.input-icon{
+    position:absolute;
+
+    left:15px;
+    top:50%;
+
+    transform:translateY(-50%);
+
+    font-size:17px;
+
+    pointer-events:none;
+}
+
+input{
+    width:100%;
+    box-sizing:border-box;
+
+    padding:14px 16px 14px 45px;
+
+    border-radius:15px;
+
+    border:1px solid #e2e8f0;
+
+    background:#f8fafc;
+
+    color:var(--text);
+
+    font-size:14px;
+    font-weight:700;
+
+    outline:none;
+
+    transition:.25s;
+}
+
+input::placeholder{
+    color:#94a3b8;
+}
+
+input:hover{
+    border-color:#cbd5e1;
+    background:white;
+}
+
+input:focus{
+    background:white;
+}
+
+/* INPUT NOVO */
+.input-container.create input:focus{
+    border-color:var(--blue);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(0,82,204,.10);
+}
+
+/* INPUT EDIÇÃO */
+.input-container.edit input:focus{
+    border-color:var(--orange);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(255,102,0,.10);
+}
+
+/* =========================
+   TEXTO DE AJUDA
+========================= */
+
+.help-text{
+    display:flex;
+    align-items:center;
+    gap:6px;
+
+    margin-top:8px;
+
+    color:#94a3b8;
+
+    font-size:11px;
+    font-weight:600;
+}
+
+/* =========================
+   CARD DE INFORMAÇÃO
+========================= */
+
+.info-card{
+    display:flex;
+    align-items:flex-start;
+
+    gap:12px;
+
+    background:linear-gradient(
+        135deg,
+        #f8fafc,
+        #f1f5f9
+    );
+
+    border:1px solid #e2e8f0;
+
+    border-radius:16px;
+
+    padding:14px;
+
+    margin-bottom:23px;
+}
+
+.info-icon{
+    width:34px;
+    height:34px;
+
+    flex-shrink:0;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:#e0edff;
+    color:var(--blue);
+}
+
+.info-content strong{
+    display:block;
+
+    font-size:12px;
+    font-weight:900;
+
+    color:#334155;
+
+    margin-bottom:3px;
+}
+
+.info-content span{
+    display:block;
+
+    font-size:11px;
+    line-height:1.5;
+
+    color:#64748b;
+}
+
+/* =========================
+   BOTÕES
+========================= */
+
+.actions{
+    display:grid;
+
+    grid-template-columns:1fr 1fr;
+
+    gap:11px;
+}
+
+.btn{
+    min-height:48px;
+
+    border:none;
+    border-radius:15px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    gap:7px;
+
+    font-size:13px;
+    font-weight:900;
+
+    text-decoration:none;
+
+    cursor:pointer;
+
+    transition:.25s;
+}
+
+.btn:hover{
+    transform:translateY(-3px);
+}
+
+/* BOTÃO CRIAR */
+.btn-primary.create{
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        var(--blue),
+        var(--blue-dark)
+    );
+
+    box-shadow:
+        0 14px 32px
+        rgba(0,82,204,.22);
+}
+
+.btn-primary.create:hover{
+    box-shadow:
+        0 18px 38px
+        rgba(0,82,204,.30);
+}
+
+/* BOTÃO EDITAR */
+.btn-primary.edit{
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        var(--orange),
+        var(--orange-dark)
+    );
+
+    box-shadow:
+        0 14px 32px
+        rgba(255,102,0,.22);
+}
+
+.btn-primary.edit:hover{
+    box-shadow:
+        0 18px 38px
+        rgba(255,102,0,.30);
+}
+
+/* CANCELAR */
+.btn-secondary{
+    background:#f1f5f9;
+    color:#334155;
 }
 
 .btn-secondary:hover{
-    transform:translateY(-2px);
     background:#e2e8f0;
 }
 
-/* HEADER BADGE STYLE */
-.badge{
-    display:inline-block;
+/* =========================
+   RODAPÉ
+========================= */
+
+.form-footer{
+    text-align:center;
+
+    margin-top:18px;
+
+    color:#94a3b8;
+
     font-size:11px;
-    font-weight:800;
-    padding:6px 10px;
-    border-radius:999px;
-    background:#f1f5f9;
-    color:#475569;
-    margin-bottom:10px;
+    font-weight:600;
 }
 
-/* RESPONSIVO */
+/* =========================
+   RESPONSIVO
+========================= */
+
 @media(max-width:600px){
+
+    .category-form-page{
+        padding:
+            0 5px
+            25px;
+    }
+
+    .form-card{
+        padding:20px;
+        border-radius:21px;
+    }
+
+    .form-header h2{
+        font-size:20px;
+    }
+
     .actions{
+        grid-template-columns:1fr;
+    }
+
+    .card-top{
+        align-items:flex-start;
         flex-direction:column;
+    }
+
+    .mode-badge{
+        font-size:9px;
     }
 }
 </style>
 
-<div class="wrapper">
 
-    <div class="card">
+<div class="category-form-page">
 
-        <div class="badge">
-            {{ 'EDIT MODE' if editando else 'CREATE MODE' }}
+    <!-- =========================
+         CABEÇALHO
+    ========================== -->
+
+    <div class="form-header">
+
+        <div class="form-icon {{ 'edit' if editando else 'create' }}">
+            {{ '✏️' if editando else '📂' }}
         </div>
 
-        <div class="title">
-            {{ 'Editar Categoria #' ~ editando.id if editando else 'Nova Categoria' }}
+        <h2>
+            {{ 'Editar Categoria' if editando else 'Nova Categoria' }}
+        </h2>
+
+        <p>
+            {% if editando %}
+                Atualize as informações da categoria selecionada.
+            {% else %}
+                Cadastre uma nova categoria para organizar seus produtos.
+            {% endif %}
+        </p>
+
+    </div>
+
+
+    <!-- =========================
+         CARD PRINCIPAL
+    ========================== -->
+
+    <div class="form-card">
+
+        <!-- TOPO DO CARD -->
+
+        <div class="card-top">
+
+            <div class="card-title">
+
+                <div class="card-title-icon">
+
+                    {% if editando %}
+                        ✏️
+                    {% else %}
+                        ＋
+                    {% endif %}
+
+                </div>
+
+                {{ 'Informações da Categoria'
+                   if editando
+                   else 'Cadastrar Categoria' }}
+
+            </div>
+
+
+            <div class="mode-badge">
+
+                <span
+                    class="mode-dot {{ 'edit' if editando else 'create' }}">
+                </span>
+
+                {{ 'MODO EDIÇÃO'
+                   if editando
+                   else 'NOVA CATEGORIA' }}
+
+            </div>
+
         </div>
+
+
+        <!-- =========================
+             ERRO
+        ========================== -->
 
         {% if erro %}
-            <div class="error">
-                ⚠️ {{ erro }}
-            </div>
+
+        <div class="error">
+
+            <span>⚠️</span>
+
+            <span>{{ erro }}</span>
+
+        </div>
+
         {% endif %}
 
-        <form action="{{ '/categorias/' ~ editando.id ~ '/editar' if editando else '/categorias/nova' }}"
-              method="POST">
 
-            <label>Nome da Categoria</label>
-            <input type="text"
-                   name="nome"
-                   value="{{ editando.nome if editando else (valores.nome if valores else '') }}"
-                   placeholder="Ex: Uniformes, Papelaria..."
-                   required>
+        <!-- =========================
+             FORMULÁRIO
+        ========================== -->
+
+        <form
+            action="{% if editando %}/categorias/{{ editando.id }}/editar{% else %}/categorias/nova{% endif %}"
+            method="POST"
+        >
+
+            <!-- NOME DA CATEGORIA -->
+
+            <div class="field">
+
+                <label>
+                    🏷️ Nome da Categoria
+                </label>
+
+                <div
+                    class="input-container {{ 'edit' if editando else 'create' }}"
+                >
+
+                    <span class="input-icon">
+                        📁
+                    </span>
+
+                    <input
+                        type="text"
+                        name="nome"
+                        value="{% if editando %}{{ editando.nome }}{% elif valores %}{{ valores.nome }}{% endif %}"
+                        placeholder="Ex: Uniformes, Papelaria, Eletrônicos..."
+                        required
+                        autocomplete="off"
+                    >
+
+                </div>
+
+                <div class="help-text">
+                    💡 Use um nome simples e fácil de identificar.
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 INFORMAÇÃO
+            ========================== -->
+
+            <div class="info-card">
+
+                <div class="info-icon">
+                    ℹ️
+                </div>
+
+                <div class="info-content">
+
+                    <strong>
+                        Organização do estoque
+                    </strong>
+
+                    <span>
+                        As categorias ajudam a organizar os produtos
+                        cadastrados no sistema e facilitam o gerenciamento
+                        do estoque.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <!-- =========================
+                 BOTÕES
+            ========================== -->
 
             <div class="actions">
 
-                <button type="submit" class="btn-primary">
-                    {{ 'Salvar Alterações' if editando else 'Criar Categoria' }}
+                <button
+                    type="submit"
+                    class="btn btn-primary {{ 'edit' if editando else 'create' }}"
+                >
+
+                    {% if editando %}
+                        💾 Salvar Alterações
+                    {% else %}
+                        ＋ Criar Categoria
+                    {% endif %}
+
                 </button>
 
-                <a href="/categorias/" class="btn-secondary">
-                    Cancelar
+
+                <a
+                    href="/categorias/"
+                    class="btn btn-secondary"
+                >
+                    ← Cancelar
                 </a>
 
             </div>
@@ -197,6 +731,16 @@ input:focus{
 
     </div>
 
+
+    <!-- =========================
+         RODAPÉ
+    ========================== -->
+
+    <div class="form-footer">
+        AAPM SENAI • Gerenciamento de Categorias
+    </div>
+
 </div>
 
 {% endblock %}
+```

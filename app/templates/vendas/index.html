@@ -80,7 +80,13 @@
             <td class="px-6 py-4 text-gray-600">{{ venda.responsavel }}</td>
             <td class="px-6 py-4 text-gray-800">
               {% for item in venda.itens %}
-                <span class="block text-sm">{{ item.produto.nome if item.produto else "—" }} × {{ item.quantidade }}</span>
+                <span class="block text-sm">
+                  {% if item.produto_variacao %}
+                    {{ item.produto_variacao.produto.nome }} ({{ item.produto_variacao.descricao }}) × {{ item.quantidade }}
+                  {% else %}
+                    Produto removido × {{ item.quantidade }}
+                  {% endif %}
+                </span>
               {% else %}
                 <span class="text-gray-400">—</span>
               {% endfor %}
@@ -135,7 +141,6 @@
       <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
     </div>
 
-    <!-- CORREÇÃO: action="/vendas/" com barra final -->
     <form action="/vendas/" method="post">
       <div class="px-6 py-5 flex flex-col gap-4">
 
@@ -219,6 +224,7 @@
 </div>
 
 <script>
+// produtos = [{ id, nome, variacoes: [{ id, descricao, preco, estoque_atual }] }]
 const produtos = {{ produtos | tojson }};
 
 function abrirModal() {
@@ -244,14 +250,21 @@ function adicionarItem() {
   const lista = document.getElementById('lista-itens');
 
   const div = document.createElement('div');
-  div.className = 'item-linha grid grid-cols-[1fr_80px_80px_32px] gap-2 items-end';
+  div.className = 'item-linha grid grid-cols-[1fr_1fr_60px_75px_28px] gap-2 items-end';
   div.innerHTML = `
     <div>
       <label class="block text-xs text-gray-400 mb-1">Produto</label>
-      <select name="produto_ids" required onchange="preencherPreco(this)"
-        class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-400">
+      <select class="select-produto w-full border border-gray-200 rounded-xl px-2 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-400"
+        onchange="atualizarVariacoes(this)">
         <option value="">Selecione...</option>
-        ${produtos.map(p => `<option value="${p.id}" data-preco="${p.preco}" data-estoque="${p.estoque_atual}">${p.nome} (estoque: ${p.estoque_atual})</option>`).join('')}
+        ${produtos.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Variação</label>
+      <select name="variacao_ids" required onchange="preencherPreco(this)"
+        class="select-variacao w-full border border-gray-200 rounded-xl px-2 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-400">
+        <option value="">Selecione um produto</option>
       </select>
     </div>
     <div>
@@ -270,17 +283,36 @@ function adicionarItem() {
   lista.appendChild(div);
 }
 
-function preencherPreco(sel) {
-  const opt   = sel.options[sel.selectedIndex];
+function atualizarVariacoes(selProduto) {
+  const produtoId = parseInt(selProduto.value);
+  const linha = selProduto.closest('.item-linha');
+  const selVariacao = linha.querySelector('.select-variacao');
+  const produto = produtos.find(p => p.id === produtoId);
+
+  selVariacao.innerHTML = '<option value="">Selecione...</option>';
+  if (produto) {
+    produto.variacoes.forEach(v => {
+      const semEstoque = v.estoque_atual <= 0;
+      selVariacao.innerHTML += `<option value="${v.id}" data-preco="${v.preco}" data-estoque="${v.estoque_atual}" ${semEstoque ? 'disabled' : ''}>${v.descricao} (estoque: ${v.estoque_atual})</option>`;
+    });
+  }
+
+  linha.querySelector('input[name="precos"]').value = '0.00';
+  linha.querySelector('input[name="quantidades"]').value = 1;
+  calcularTotal();
+}
+
+function preencherPreco(selVariacao) {
+  const opt   = selVariacao.options[selVariacao.selectedIndex];
   const preco = opt.dataset.preco || 0;
-  const linha = sel.closest('.item-linha');
+  const linha = selVariacao.closest('.item-linha');
   linha.querySelector('input[name="precos"]').value = parseFloat(preco).toFixed(2);
 
-  // Limita quantidade ao estoque disponível
+  // Limita quantidade ao estoque disponível daquela variação
   const estoque = parseInt(opt.dataset.estoque) || 0;
   const qtdInput = linha.querySelector('input[name="quantidades"]');
   qtdInput.max = estoque;
-  if (parseInt(qtdInput.value) > estoque) qtdInput.value = estoque;
+  if (parseInt(qtdInput.value) > estoque) qtdInput.value = estoque || 1;
 
   calcularTotal();
 }

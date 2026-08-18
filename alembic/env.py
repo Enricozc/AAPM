@@ -8,9 +8,12 @@ from alembic import context
 from app.config.database import Base
 
 # IMPORTAR OS MODELS
-from app.models.user_model import User
+from app.models.user_model import Usuario
 from app.models.categoria_model import Categoria
 from app.models.produto_model import Produto
+from app.models.produto_variacao_model import ProdutoVariacao
+from app.models.venda_model import Venda
+from app.models.venda_item_model import VendaItem
 
 config = context.config
 
@@ -31,6 +34,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        render_as_batch=True,
     )
 
     with context.begin_transaction():
@@ -49,7 +53,8 @@ def run_migrations_online() -> None:
 
         context.configure(
             connection=connection,
-            target_metadata=target_metadata
+            target_metadata=target_metadata,
+            render_as_batch=True,
         )
 
         with context.begin_transaction():

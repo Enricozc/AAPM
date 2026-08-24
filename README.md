@@ -12,7 +12,7 @@ Cauã Theodoro - RESPONSAVEL POR BACK- END
 
 # Instalar o requirements.txt
 
-python -m pip install fastapi uvicorn sqlalchemy alembic pydantic pydantic-settings PyJWT passlib bcrypt jinja2 python-multipart
+pip install -r requirements.txt
 
 
 #Inicializar o alembic
@@ -27,4 +27,4 @@ python -m alembic upgrade head
 
 
 #Rodar o código
-python -m uvicorn main:app --reload
+python -m uvicorn app.main:app --reload

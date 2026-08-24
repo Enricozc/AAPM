@@ -24,12 +24,15 @@ from app.routes.dashboard_routes import router as dashboard_router
 from app.config.security import get_usuario_opcional
 
 # Models
+# Models
 import app.models.user_model
 import app.models.produto_model
+import app.models.produto_variacao_model
 import app.models.categoria_model
 import app.models.log_model
 import app.models.armario_model
 import app.models.venda_model
+import app.models.venda_item_model
 import app.models.fechamento_model
 
 from app.models.produto_model import Produto

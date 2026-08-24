@@ -23,6 +23,7 @@ class Produto(Base):
 
     @property
     def imagem_url(self):
+        # ✅ Retorna None quando sem imagem — o template usa o placehold.co como fallback
         if self.imagem_path:
             return f"/static/{self.imagem_path}"
         return None

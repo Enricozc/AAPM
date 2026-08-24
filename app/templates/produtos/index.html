@@ -5,360 +5,1076 @@
 {% block conteudo %}
 
 <style>
-    :root {
-        --blue: #0052cc;
-        --orange: #ff6600;
-        --bg: #f5f7fb;
-        --text: #0f172a;
+
+:root {
+    --blue: #0052cc;
+    --blue-dark: #003d99;
+    --orange: #ff6600;
+    --orange-light: #fff3eb;
+
+    --bg: #f5f7fb;
+    --text: #0f172a;
+    --muted: #64748b;
+    --border: #e2e8f0;
+}
+
+
+/* =========================================================
+   GERAL
+========================================================= */
+
+.produtos-wrapper {
+
+    max-width: 1250px;
+
+    margin: 0 auto;
+
+    padding: 25px 20px 50px;
+
+    font-family:
+        Inter,
+        Arial,
+        sans-serif;
+}
+
+
+/* =========================================================
+   CABEÇALHO
+========================================================= */
+
+.produtos-top {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 25px;
+}
+
+
+.produtos-title {
+
+    font-size: 34px;
+
+    font-weight: 900;
+
+    color: var(--text);
+
+    letter-spacing: -1px;
+}
+
+
+.produtos-subtitle {
+
+    margin-top: 5px;
+
+    color: var(--muted);
+
+    font-size: 14px;
+}
+
+
+.btn-novo {
+
+    background:
+        linear-gradient(
+            135deg,
+            var(--blue),
+            #006eff
+        );
+
+    color: white;
+
+    text-decoration: none;
+
+    padding: 13px 20px;
+
+    border-radius: 12px;
+
+    font-weight: 800;
+
+    box-shadow:
+        0 8px 20px
+        rgba(0,82,204,.22);
+
+    transition: .2s;
+}
+
+
+.btn-novo:hover {
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 12px 25px
+        rgba(0,82,204,.3);
+}
+
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.filtros {
+
+    background: white;
+
+    border: 1px solid var(--border);
+
+    border-radius: 16px;
+
+    padding: 15px;
+
+    display: grid;
+
+    grid-template-columns:
+        2fr
+        1fr
+        1fr
+        auto
+        auto;
+
+    gap: 10px;
+
+    margin-bottom: 20px;
+
+    box-shadow:
+        0 5px 20px
+        rgba(15,23,42,.04);
+}
+
+
+.filtros input,
+.filtros select {
+
+    width: 100%;
+
+    box-sizing: border-box;
+
+    padding: 12px 13px;
+
+    border-radius: 10px;
+
+    border: 1px solid var(--border);
+
+    outline: none;
+
+    background: #fff;
+
+    font-size: 14px;
+
+    color: var(--text);
+
+    font-weight: 600;
+}
+
+
+.filtros input:focus,
+.filtros select:focus {
+
+    border-color: var(--blue);
+
+    box-shadow:
+        0 0 0 3px
+        rgba(0,82,204,.10);
+}
+
+
+.btn-filtrar {
+
+    border: none;
+
+    background: var(--blue);
+
+    color: white;
+
+    padding: 0 18px;
+
+    border-radius: 10px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+.btn-filtrar:hover {
+
+    background: var(--blue-dark);
+}
+
+
+.btn-limpar {
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    padding: 0 16px;
+
+    border-radius: 10px;
+
+    background: #f1f5f9;
+
+    color: var(--text);
+
+    text-decoration: none;
+
+    font-weight: 700;
+}
+
+
+/* =========================================================
+   RESUMO
+========================================================= */
+
+.resumo {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    margin-bottom: 18px;
+
+    color: var(--muted);
+
+    font-size: 13px;
+}
+
+
+.resumo strong {
+
+    color: var(--text);
+}
+
+
+/* =========================================================
+   GRID
+========================================================= */
+
+.produtos-grid {
+
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, 1fr);
+
+    gap: 22px;
+}
+
+
+/* =========================================================
+   CARD
+========================================================= */
+
+.produto-card {
+
+    background: white;
+
+    border:
+        1px solid
+        var(--border);
+
+    border-radius: 18px;
+
+    overflow: hidden;
+
+    transition:
+        transform .2s,
+        box-shadow .2s;
+
+    box-shadow:
+        0 6px 20px
+        rgba(15,23,42,.05);
+}
+
+
+.produto-card:hover {
+
+    transform:
+        translateY(-5px);
+
+    box-shadow:
+        0 15px 35px
+        rgba(15,23,42,.10);
+}
+
+
+/* =========================================================
+   IMAGEM
+========================================================= */
+
+.produto-img {
+
+    height: 205px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc,
+            #eef2f7
+        );
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-bottom:
+        1px solid
+        var(--border);
+}
+
+
+.produto-img img {
+
+    width: 100%;
+
+    height: 100%;
+
+    object-fit: contain;
+
+    padding: 15px;
+
+    box-sizing: border-box;
+}
+
+
+/* =========================================================
+   CONTEÚDO
+========================================================= */
+
+.produto-content {
+
+    padding: 18px;
+}
+
+
+.produto-nome {
+
+    font-size: 18px;
+
+    font-weight: 800;
+
+    color: var(--text);
+
+    margin-bottom: 5px;
+
+    display: block;
+
+    text-decoration: none;
+}
+
+
+.produto-categoria {
+
+    color: var(--muted);
+
+    font-size: 12px;
+
+    font-weight: 600;
+}
+
+
+.produto-preco {
+
+    color: var(--blue);
+
+    font-size: 25px;
+
+    font-weight: 900;
+
+    margin-top: 13px;
+}
+
+
+.estoque {
+
+    display: inline-block;
+
+    margin-top: 8px;
+
+    padding: 6px 10px;
+
+    border-radius: 999px;
+
+    background:
+        var(--orange-light);
+
+    color:
+        var(--orange);
+
+    font-size: 12px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   AÇÕES
+========================================================= */
+
+.acoes {
+
+    display: flex;
+
+    gap: 8px;
+
+    margin-top: 17px;
+}
+
+
+.btn-editar {
+
+    flex: 1;
+
+    text-align: center;
+
+    padding: 10px;
+
+    border-radius: 9px;
+
+    background: var(--blue);
+
+    color: white;
+
+    text-decoration: none;
+
+    font-size: 13px;
+
+    font-weight: 800;
+}
+
+
+.btn-editar:hover {
+
+    background:
+        var(--blue-dark);
+}
+
+
+.btn-desativar {
+
+    flex: 1;
+
+    border: none;
+
+    padding: 10px;
+
+    border-radius: 9px;
+
+    background: #fee2e2;
+
+    color: #b91c1c;
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+}
+
+
+.btn-desativar:hover {
+
+    background: #fecaca;
+}
+
+
+/* =========================================================
+   PAGINAÇÃO
+========================================================= */
+
+.paginacao {
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 7px;
+
+    margin-top: 35px;
+}
+
+
+.pagina {
+
+    min-width: 38px;
+
+    height: 38px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 9px;
+
+    text-decoration: none;
+
+    border: 1px solid var(--border);
+
+    background: white;
+
+    color: var(--text);
+
+    font-weight: 700;
+
+    font-size: 13px;
+}
+
+
+.pagina:hover {
+
+    border-color: var(--blue);
+
+    color: var(--blue);
+}
+
+
+.pagina.ativa {
+
+    background: var(--blue);
+
+    border-color: var(--blue);
+
+    color: white;
+}
+
+
+.pagina.desativada {
+
+    opacity: .4;
+
+    pointer-events: none;
+}
+
+
+/* =========================================================
+   VAZIO
+========================================================= */
+
+.vazio {
+
+    grid-column: 1 / -1;
+
+    text-align: center;
+
+    padding: 70px 20px;
+
+    background: white;
+
+    border-radius: 18px;
+
+    border: 1px solid var(--border);
+
+    color: var(--muted);
+
+    font-weight: 600;
+}
+
+
+.vazio-icon {
+
+    font-size: 40px;
+
+    margin-bottom: 10px;
+}
+
+
+/* =========================================================
+   RESPONSIVO
+========================================================= */
+
+@media(max-width: 1000px) {
+
+    .produtos-grid {
+
+        grid-template-columns:
+            repeat(2, 1fr);
     }
 
-    body {
-        margin: 0;
-        font-family: Inter, sans-serif;
-        background: var(--bg);
+    .filtros {
+
+        grid-template-columns:
+            1fr 1fr;
+    }
+}
+
+
+@media(max-width: 650px) {
+
+    .produtos-top {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 15px;
     }
 
-    /* ===== CONTAINER MAIS FLUIDO ===== */
-    .wrapper {
-        max-width: 1200px;
-        margin: 0 auto;
+    .produtos-title {
+
+        font-size: 28px;
     }
 
-    /* ===== HEADER MINIMALISTA ===== */
-    .top {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-end;
-        margin-bottom: 26px;
+    .produtos-grid {
+
+        grid-template-columns:
+            1fr;
     }
 
-    .title {
-        font-size: 34px;
-        font-weight: 900;
-        letter-spacing: -1.2px;
-        color: var(--text);
+    .filtros {
+
+        grid-template-columns:
+            1fr;
     }
 
-    .subtitle {
-        font-size: 13px;
-        color: #94a3b8;
-        margin-top: 6px;
-        font-weight: 500;
+    .btn-filtrar,
+    .btn-limpar {
+
+        min-height: 42px;
     }
 
-    /* BOTÃO FLUTUANTE CLEAN */
-    .btn {
-        background: rgba(0, 82, 204, .95);
-        color: white;
-        padding: 12px 18px;
-        border-radius: 14px;
-        text-decoration: none;
-        font-weight: 800;
-        box-shadow: 0 10px 30px rgba(0, 82, 204, .25);
-        transition: .25s;
+    .resumo {
+
+        flex-direction: column;
+
+        align-items: flex-start;
+
+        gap: 5px;
     }
+}
 
-    .btn:hover {
-        transform: translateY(-3px);
-    }
-
-    /* ===== FILTRO STYLE CLAUDE ===== */
-    .filter {
-        display: flex;
-        gap: 10px;
-        padding: 12px;
-        background: rgba(255, 255, 255, .7);
-        backdrop-filter: blur(18px);
-        border-radius: 18px;
-        border: 1px solid rgba(226, 232, 240, .6);
-        margin-bottom: 28px;
-    }
-
-    .filter input,
-    .filter select {
-        flex: 1;
-        padding: 11px 12px;
-        border-radius: 12px;
-        border: 1px solid #e5e7eb;
-        background: white;
-        font-weight: 600;
-        outline: none;
-        transition: .2s;
-    }
-
-    .filter input:focus,
-    .filter select:focus {
-        border-color: var(--blue);
-        box-shadow: 0 0 0 3px rgba(0, 82, 204, .12);
-    }
-
-    /* BOTÕES SILENCIOSOS */
-    .filter button {
-        background: #0f172a;
-        color: white;
-        border: none;
-        padding: 11px 14px;
-        border-radius: 12px;
-        font-weight: 800;
-        cursor: pointer;
-    }
-
-    .filter a {
-        padding: 11px 14px;
-        background: #f1f5f9;
-        border-radius: 12px;
-        text-decoration: none;
-        color: #0f172a;
-        font-weight: 800;
-    }
-
-    /* ===== GRID MAIS "RESPIRADO" ===== */
-    .grid {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 22px;
-    }
-
-    /* ===== CARD STYLE CLAUDE (soft + elegant) ===== */
-    .card {
-        background: white;
-        border-radius: 22px;
-        overflow: hidden;
-        border: 1px solid rgba(226, 232, 240, .8);
-        box-shadow: 0 10px 30px rgba(0, 0, 0, .04);
-        transition: .25s ease;
-    }
-
-    .card:hover {
-        transform: translateY(-6px);
-        box-shadow: 0 25px 60px rgba(0, 0, 0, .10);
-    }
-
-    /* CONTAINER DA IMAGEM AJUSTADO */
-    .img-container {
-        width: 100%;
-        height: 200px;
-        background-color: #fafafa;
-        /* Fundo neutro suave caso a imagem tenha transparência */
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        border-bottom: 1px solid rgba(226, 232, 240, .6);
-        overflow: hidden;
-    }
-
-    /* IMAGEM CORRIGIDA SEM CORTES DRÁSTICOS */
-    .img {
-        width: 100%;
-        height: 100%;
-        object-fit: contain;
-        /* Garante que o produto apareça inteiro */
-        padding: 10px;
-        /* Evita que o produto cole nas bordas do card */
-        box-sizing: border-box;
-    }
-
-    /* CONTEÚDO LIMPO */
-    .content {
-        padding: 16px 18px;
-    }
-
-    .name {
-        font-size: 17px;
-        font-weight: 800;
-        color: var(--text);
-        text-decoration: none;
-    }
-
-    .cat {
-        font-size: 12px;
-        margin-top: 6px;
-        color: #94a3b8;
-        font-weight: 600;
-    }
-
-    /* PREÇO MAIS “SILENCIOSO” */
-    .price {
-        margin-top: 12px;
-        font-size: 24px;
-        font-weight: 900;
-        color: var(--blue);
-        letter-spacing: -0.5px;
-    }
-
-    /* STOCK DISCRETO */
-    .stock {
-        display: inline-block;
-        margin-top: 10px;
-        font-size: 12px;
-        font-weight: 700;
-        padding: 6px 10px;
-        border-radius: 999px;
-        background: #f1f5f9;
-        color: #475569;
-    }
-
-    .actions {
-        margin-top: 18px;
-        display: flex;
-        gap: 10px;
-    }
-
-    .edit {
-        flex: 1;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-
-        padding: 10px;
-        border-radius: 12px;
-
-        background: #0052cc;
-        color: #fff;
-
-        text-decoration: none;
-        font-size: 13px;
-        font-weight: 700;
-
-        transition: .25s;
-    }
-
-    .edit:hover {
-        background: #0044aa;
-    }
-
-    .delete {
-        width: 100%;
-
-        padding: 10px;
-
-        border: none;
-        border-radius: 12px;
-
-        background: #ef4444;
-        color: #fff;
-
-        font-size: 13px;
-        font-weight: 700;
-
-        cursor: pointer;
-
-        transition: .25s;
-    }
-
-    .delete:hover {
-        background: #dc2626;
-    }
-
-    /* EMPTY STATE */
-    .empty {
-        text-align: center;
-        padding: 60px;
-        color: #94a3b8;
-        font-weight: 500;
-    }
-
-    /* RESPONSIVO */
-    @media(max-width:1000px) {
-        .grid {
-            grid-template-columns: 1fr;
-        }
-
-        .top {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 10px;
-        }
-    }
 </style>
 
-<div class="wrapper">
 
-    <div class="top">
+<div class="produtos-wrapper">
+
+
+    <!-- =====================================================
+         CABEÇALHO
+    ====================================================== -->
+
+    <div class="produtos-top">
+
         <div>
-            <div class="title">Produtos</div>
-            <div class="subtitle">Gestão leve, fluida e moderna de catálogo</div>
-        </div>
 
-        {% if usuario.role == 'ADMIN' %}
-        <a class="btn" href="/produtos/novo">+ Novo Produto</a>
-        {% endif %}
-    </div>
-
-    <form class="filter" method="get">
-        <input type="text" name="busca" placeholder="Buscar produto..." value="{{ busca }}">
-
-        <select name="categoria_id">
-            <option value="0">Todas categorias</option>
-            {% for c in categorias %}
-            <option value="{{ c.id }}" {% if categoria_id|int==c.id|int %}selected{% endif %}>
-                {{ c.nome }}
-            </option>
-            {% endfor %}
-        </select>
-
-        <button type="submit">Filtrar</button>
-
-        {% if busca or categoria_id|int > 0 %}
-        <a href="/produtos">Limpar</a>
-        {% endif %}
-    </form>
-
-    <div class="grid">
-
-        {% for p in produtos %}
-        <div class="card">
-
-            <div class="img-container">
-                <img class="img"
-                    src="{{ p.imagem_url if p.imagem_url else 'https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem' }}"
-                    onerror="this.onerror=null; this.src='https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem';">
+            <div class="produtos-title">
+                Produtos
             </div>
 
-            <div class="content">
-                <a class="name" href="/produtos/{{ p.id }}">
+            <div class="produtos-subtitle">
+                Gerencie o catálogo, estoque e produtos da AAPM SENAI.
+            </div>
+
+        </div>
+
+
+        {% if usuario.role == 'ADMIN' %}
+
+        <a
+            href="/produtos/novo"
+            class="btn-novo"
+        >
+            + Novo Produto
+        </a>
+
+        {% endif %}
+
+    </div>
+
+
+    <!-- =====================================================
+         FILTROS
+    ====================================================== -->
+
+    <form
+        class="filtros"
+        method="get"
+    >
+
+        <!-- BUSCA -->
+
+        <input
+            type="text"
+            name="busca"
+            placeholder="🔎 Buscar produto..."
+            value="{{ busca }}"
+        >
+
+
+        <!-- CATEGORIA -->
+
+        <select name="categoria_id">
+
+            <option value="0">
+                Todas as categorias
+            </option>
+
+            {% for c in categorias %}
+
+            <option
+                value="{{ c.id }}"
+                {% if categoria_id|int == c.id|int %}
+                    selected
+                {% endif %}
+            >
+
+                {{ c.nome }}
+
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+
+        <!-- ORDENAÇÃO -->
+
+        <select name="ordenar">
+
+            <option
+                value="nome"
+                {% if ordenar == "nome" %}
+                    selected
+                {% endif %}
+            >
+                Ordenar: Nome
+            </option>
+
+            <option
+                value="preco"
+                {% if ordenar == "preco" %}
+                    selected
+                {% endif %}
+            >
+                Ordenar: Preço
+            </option>
+
+            <option
+                value="estoque"
+                {% if ordenar == "estoque" %}
+                    selected
+                {% endif %}
+            >
+                Ordenar: Estoque
+            </option>
+
+        </select>
+
+
+        <!-- DIREÇÃO -->
+
+        <select name="direcao">
+
+            <option
+                value="asc"
+                {% if direcao == "asc" %}
+                    selected
+                {% endif %}
+            >
+                ↑ Crescente
+            </option>
+
+            <option
+                value="desc"
+                {% if direcao == "desc" %}
+                    selected
+                {% endif %}
+            >
+                ↓ Decrescente
+            </option>
+
+        </select>
+
+
+        <!-- FILTRAR -->
+
+        <button
+            type="submit"
+            class="btn-filtrar"
+        >
+            Filtrar
+        </button>
+
+
+        {% if busca or categoria_id|int > 0 %}
+
+        <a
+            href="/produtos"
+            class="btn-limpar"
+        >
+            Limpar
+        </a>
+
+        {% endif %}
+
+    </form>
+
+
+    <!-- =====================================================
+         RESUMO
+    ====================================================== -->
+
+    <div class="resumo">
+
+        <div>
+
+            Encontrados:
+
+            <strong>
+                {{ total }}
+            </strong>
+
+            produto(s)
+
+        </div>
+
+
+        <div>
+
+            Página
+
+            <strong>
+                {{ pagina }}
+            </strong>
+
+            de
+
+            <strong>
+                {{ total_paginas }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         PRODUTOS
+    ====================================================== -->
+
+    <div class="produtos-grid">
+
+        {% for p in produtos %}
+
+        <div class="produto-card">
+
+
+            <!-- IMAGEM -->
+
+            <div class="produto-img">
+
+                <img
+                    src="{{ p.imagem_url if p.imagem_url else 'https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem' }}"
+                    alt="{{ p.nome }}"
+                    onerror="
+                        this.onerror=null;
+                        this.src='https://placehold.co/300x200/f1f5f9/94a3b8?text=Sem+Imagem';
+                    "
+                >
+
+            </div>
+
+
+            <!-- CONTEÚDO -->
+
+            <div class="produto-content">
+
+
+                <a
+                    class="produto-nome"
+                    href="/produtos/{{ p.id }}"
+                >
                     {{ p.nome }}
                 </a>
 
-                <div class="cat">
-                    {{ p.categoria.nome if p.categoria else "Sem categoria" }}
+
+                <div class="produto-categoria">
+
+                    {{ p.categoria.nome
+                       if p.categoria
+                       else "Sem categoria" }}
+
                 </div>
 
-                <div class="price">
-                    R$ {{ "%.2f"|format(p.preco) }}
+
+                <div class="produto-preco">
+
+                    R$
+                    {{ "%.2f"|format(p.preco) }}
+
                 </div>
 
-                <div class="stock">
-                    Estoque: {{ p.estoque_atual }}
-                </div>
+
+                <span class="estoque">
+
+                    📦 Estoque:
+                    {{ p.estoque_atual }}
+
+                </span>
+
 
                 {% if usuario.role == 'ADMIN' %}
-                <div class="actions">
 
-                    <a class="edit" href="/produtos/{{ p.id }}/editar">
-                        Editar
+                <div class="acoes">
+
+
+                    <a
+                        href="/produtos/{{ p.id }}/editar"
+                        class="btn-editar"
+                    >
+                        ✏️ Editar
                     </a>
 
-                    <form action="/produtos/{{ p.id }}/desativar" method="post" style="flex:1;"
-                        onsubmit="return confirm('Desativar {{ p.nome }}?')">
 
-                        <button class="delete" type="submit">
-                            Desativar
+                    <form
+                        action="/produtos/{{ p.id }}/desativar"
+                        method="post"
+                        style="flex:1;"
+                        onsubmit="
+                            return confirm(
+                                'Deseja desativar {{ p.nome }}?'
+                            );
+                        "
+                    >
+
+                        <button
+                            type="submit"
+                            class="btn-desativar"
+                            style="width:100%;"
+                        >
+                            🗑️ Desativar
                         </button>
 
                     </form>
 
                 </div>
+
                 {% endif %}
+
+
             </div>
+
         </div>
+
+
         {% else %}
-        <div class="empty">
-            Nenhum produto encontrado
+
+        <div class="vazio">
+
+            <div class="vazio-icon">
+                📦
+            </div>
+
+            Nenhum produto encontrado.
+
+            {% if busca %}
+
+            <br>
+
+            Tente pesquisar por outro nome.
+
+            {% endif %}
+
         </div>
+
         {% endfor %}
 
     </div>
+
+
+    <!-- =====================================================
+         PAGINAÇÃO
+    ====================================================== -->
+
+    {% if total_paginas > 1 %}
+
+    <div class="paginacao">
+
+
+        <!-- ANTERIOR -->
+
+        <a
+            class="pagina {% if pagina <= 1 %}desativada{% endif %}"
+            href="?pagina={{ pagina - 1 }}&por_pagina={{ por_pagina }}&busca={{ busca|urlencode }}&categoria_id={{ categoria_id }}&ordenar={{ ordenar }}&direcao={{ direcao }}"
+        >
+            ←
+        </a>
+
+
+        <!-- PRIMEIRA PÁGINA -->
+
+        {% if pagina > 3 %}
+
+        <a
+            class="pagina"
+            href="?pagina=1&por_pagina={{ por_pagina }}&busca={{ busca|urlencode }}&categoria_id={{ categoria_id }}&ordenar={{ ordenar }}&direcao={{ direcao }}"
+        >
+            1
+        </a>
+
+        <span>...</span>
+
+        {% endif %}
+
+
+        <!-- PÁGINAS -->
+
+        {% for numero in paginas %}
+
+        <a
+            class="pagina {% if numero == pagina %}ativa{% endif %}"
+            href="?pagina={{ numero }}&por_pagina={{ por_pagina }}&busca={{ busca|urlencode }}&categoria_id={{ categoria_id }}&ordenar={{ ordenar }}&direcao={{ direcao }}"
+        >
+            {{ numero }}
+        </a>
+
+        {% endfor %}
+
+
+        <!-- ÚLTIMA PÁGINA -->
+
+        {% if pagina < total_paginas - 2 %}
+
+        <span>...</span>
+
+        <a
+            class="pagina"
+            href="?pagina={{ total_paginas }}&por_pagina={{ por_pagina }}&busca={{ busca|urlencode }}&categoria_id={{ categoria_id }}&ordenar={{ ordenar }}&direcao={{ direcao }}"
+        >
+            {{ total_paginas }}
+        </a>
+
+        {% endif %}
+
+
+        <!-- PRÓXIMO -->
+
+        <a
+            class="pagina {% if pagina >= total_paginas %}desativada{% endif %}"
+            href="?pagina={{ pagina + 1 }}&por_pagina={{ por_pagina }}&busca={{ busca|urlencode }}&categoria_id={{ categoria_id }}&ordenar={{ ordenar }}&direcao={{ direcao }}"
+        >
+            →
+        </a>
+
+
+    </div>
+
+    {% endif %}
+
+
 </div>
 
 {% endblock %}

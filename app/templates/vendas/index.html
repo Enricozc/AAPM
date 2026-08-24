@@ -1,0 +1,347 @@
+{% extends "base.html" %}
+
+{% block titulo %}Vendas | AAPM SENAI{% endblock %}
+
+{% block conteudo %}
+
+<div class="pt-6 flex flex-col gap-5 pb-6">
+
+  {% if request.query_params.get('sucesso') == '1' %}
+  <div class="bg-green-100 text-green-700 font-bold text-sm px-4 py-3 rounded-xl">✅ Venda registrada com sucesso!</div>
+  {% endif %}
+
+  {% if request.query_params.get('erro') == 'estoque' %}
+  <div class="bg-red-100 text-red-700 font-bold text-sm px-4 py-3 rounded-xl">❌ Nenhum item tinha estoque suficiente. Venda cancelada.</div>
+  {% endif %}
+
+  <!-- HEADER -->
+  <div class="flex items-center justify-between">
+    <div>
+      <h1 class="text-2xl font-extrabold text-gray-800">Vendas</h1>
+      <p class="text-sm text-gray-400 mt-0.5">Registre uma nova venda ou consulte o histórico</p>
+    </div>
+    <button onclick="abrirModal()"
+      class="bg-[#0052cc] hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm">
+      + Nova Venda
+    </button>
+  </div>
+
+  <!-- STATS -->
+  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
+    <div class="bg-white border border-gray-200 border-t-4 border-t-[#0052cc] rounded-2xl p-5 shadow-sm">
+      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Vendas Hoje</p>
+      <p class="text-4xl font-extrabold text-gray-800 mt-2 mb-1">{{ vendas_hoje }}</p>
+      <p class="text-xs font-semibold text-green-600">↑ transações</p>
+    </div>
+    <div class="bg-white border border-gray-200 border-t-4 border-t-[#f37b24] rounded-2xl p-5 shadow-sm">
+      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Total do Mês</p>
+      <p class="text-4xl font-extrabold text-gray-800 mt-2 mb-1">{{ total_mes }}</p>
+      <p class="text-xs font-semibold text-green-600">↑ vendas realizadas</p>
+    </div>
+    <div class="bg-white border border-gray-200 border-t-4 border-t-[#16a34a] rounded-2xl p-5 shadow-sm">
+      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Receita Mês</p>
+      <p class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">R$ {{ "%.2f"|format(receita_mes) }}</p>
+      <p class="text-xs font-semibold text-green-600">↑ em vendas</p>
+    </div>
+    <div class="bg-white border border-gray-200 border-t-4 border-t-[#7c3aed] rounded-2xl p-5 shadow-sm">
+      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Pendentes</p>
+      <p class="text-4xl font-extrabold text-gray-800 mt-2 mb-1">{{ pendentes }}</p>
+      <p class="text-xs font-semibold text-yellow-500">⚠ aguardando</p>
+    </div>
+  </div>
+
+  <!-- TABELA -->
+  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
+    <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+      <span class="text-base font-bold text-gray-800">Histórico de Vendas</span>
+      <input type="text" id="busca" placeholder="Buscar venda..."
+        oninput="filtrarTabela()"
+        class="text-sm border border-gray-200 rounded-lg px-3 py-1.5 w-52 focus:outline-none focus:border-blue-400">
+    </div>
+
+    <div class="overflow-x-auto">
+      <table class="w-full text-sm" id="tabela-vendas">
+        <thead>
+          <tr class="bg-gray-50 text-gray-400 text-xs uppercase tracking-widest">
+            <th class="text-left px-6 py-3 font-semibold">#</th>
+            <th class="text-left px-6 py-3 font-semibold">Responsável</th>
+            <th class="text-left px-6 py-3 font-semibold">Produtos</th>
+            <th class="text-left px-6 py-3 font-semibold">Pagamento</th>
+            <th class="text-left px-6 py-3 font-semibold">Total</th>
+            <th class="text-left px-6 py-3 font-semibold">Data</th>
+            <th class="text-left px-6 py-3 font-semibold">Status</th>
+            <th class="text-left px-6 py-3 font-semibold"></th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-gray-100">
+          {% for venda in vendas %}
+          <tr class="hover:bg-gray-50 transition">
+            <td class="px-6 py-4 text-gray-400 font-mono">#{{ "%03d"|format(venda.id) }}</td>
+            <td class="px-6 py-4 text-gray-600">{{ venda.responsavel }}</td>
+            <td class="px-6 py-4 text-gray-800">
+              {% for item in venda.itens %}
+                <span class="block text-sm">
+                  {% if item.produto_variacao %}
+                    {{ item.produto_variacao.produto.nome }} ({{ item.produto_variacao.descricao }}) × {{ item.quantidade }}
+                  {% else %}
+                    Produto removido × {{ item.quantidade }}
+                  {% endif %}
+                </span>
+              {% else %}
+                <span class="text-gray-400">—</span>
+              {% endfor %}
+            </td>
+            <td class="px-6 py-4">
+              {% if venda.forma_pagamento == 'pix' %}
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">PIX</span>
+              {% elif venda.forma_pagamento == 'cartao' %}
+                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full">Cartão</span>
+              {% else %}
+                <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">Dinheiro</span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4 font-bold text-gray-800">R$ {{ "%.2f"|format(venda.valor_total) }}</td>
+            <td class="px-6 py-4 text-gray-400">{{ venda.data_venda.strftime('%d/%m/%Y') }}</td>
+            <td class="px-6 py-4">
+              {% if venda.status == 'concluida' %}
+                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Concluída</span>
+              {% else %}
+                <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2.5 py-1 rounded-full">Pendente</span>
+              {% endif %}
+            </td>
+            <td class="px-6 py-4">
+              <form action="/vendas/{{ venda.id }}/deletar" method="post"
+                onsubmit="return confirm('Excluir esta venda?')">
+                <button type="submit" class="text-red-400 hover:text-red-600 text-xs font-bold transition">Excluir</button>
+              </form>
+            </td>
+          </tr>
+          {% else %}
+          <tr>
+            <td colspan="8" class="px-6 py-10 text-center text-gray-400 text-sm">Nenhuma venda registrada ainda.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="px-6 py-3 border-t border-gray-100 text-xs text-gray-400 text-right">
+      {{ vendas|length }} venda(s) encontrada(s)
+    </div>
+  </div>
+
+</div>
+
+<!-- MODAL NOVA VENDA -->
+<div id="modal-venda" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+
+    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+      <h2 class="text-lg font-extrabold text-gray-800">Nova Venda</h2>
+      <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+    </div>
+
+    <form action="/vendas/" method="post">
+      <div class="px-6 py-5 flex flex-col gap-4">
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Responsável</label>
+          <input type="text" name="responsavel" required placeholder="Nome do responsável"
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-200">
+        </div>
+
+        <!-- LISTA DE ITENS -->
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Produtos</label>
+          <div id="lista-itens" class="flex flex-col gap-3"></div>
+          <button type="button" onclick="adicionarItem()"
+            class="mt-2 text-sm text-[#0052cc] font-bold hover:underline">+ Adicionar produto</button>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Forma de Pagamento</label>
+          <div class="grid grid-cols-3 gap-2">
+            <label class="cursor-pointer">
+              <input type="radio" name="forma_pagamento" value="pix" class="peer sr-only" required>
+              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] transition-all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
+                PIX
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="forma_pagamento" value="cartao" class="peer sr-only">
+              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] transition-all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+                Cartão
+              </div>
+            </label>
+            <label class="cursor-pointer">
+              <input type="radio" name="forma_pagamento" value="dinheiro" class="peer sr-only">
+              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] transition-all">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
+                Dinheiro
+              </div>
+            </label>
+          </div>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Status</label>
+          <select name="status"
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-blue-400">
+            <option value="concluida">Concluída</option>
+            <option value="pendente">Pendente</option>
+          </select>
+        </div>
+
+        <div>
+          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">
+            Observação <span class="font-normal normal-case">(opcional)</span>
+          </label>
+          <textarea name="observacao" rows="2" placeholder="Ex: entrega parcial, pagamento em 2x..."
+            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 resize-none"></textarea>
+        </div>
+
+        <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex justify-between items-center">
+          <span class="text-sm font-bold text-gray-500">Total da Venda</span>
+          <span class="text-xl font-extrabold text-[#0052cc]" id="total-display">R$ 0,00</span>
+        </div>
+
+      </div>
+
+      <div class="px-6 py-4 border-t border-gray-100 flex gap-3 justify-end">
+        <button type="button" onclick="fecharModal()"
+          class="text-sm font-semibold text-gray-500 hover:text-gray-700 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
+          Cancelar
+        </button>
+        <button type="submit"
+          class="bg-[#0052cc] hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-sm">
+          Confirmar Venda
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+// produtos = [{ id, nome, variacoes: [{ id, descricao, preco, estoque_atual }] }]
+const produtos = {{ produtos | tojson }};
+
+function abrirModal() {
+  const m = document.getElementById('modal-venda');
+  m.classList.remove('hidden');
+  m.classList.add('flex');
+  if (document.querySelectorAll('#lista-itens .item-linha').length === 0) {
+    adicionarItem();
+  }
+}
+
+function fecharModal() {
+  const m = document.getElementById('modal-venda');
+  m.classList.add('hidden');
+  m.classList.remove('flex');
+}
+
+document.getElementById('modal-venda').addEventListener('click', function(e) {
+  if (e.target === this) fecharModal();
+});
+
+function adicionarItem() {
+  const lista = document.getElementById('lista-itens');
+
+  const div = document.createElement('div');
+  div.className = 'item-linha grid grid-cols-[1fr_1fr_60px_75px_28px] gap-2 items-end';
+  div.innerHTML = `
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Produto</label>
+      <select class="select-produto w-full border border-gray-200 rounded-xl px-2 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-400"
+        onchange="atualizarVariacoes(this)">
+        <option value="">Selecione...</option>
+        ${produtos.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Variação</label>
+      <select name="variacao_ids" required onchange="preencherPreco(this)"
+        class="select-variacao w-full border border-gray-200 rounded-xl px-2 py-2 text-sm text-gray-700 focus:outline-none focus:border-blue-400">
+        <option value="">Selecione um produto</option>
+      </select>
+    </div>
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Qtd</label>
+      <input type="number" name="quantidades" min="1" value="1" required oninput="calcularTotal()"
+        class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+    </div>
+    <div>
+      <label class="block text-xs text-gray-400 mb-1">Preço</label>
+      <input type="number" name="precos" step="0.01" min="0" value="0.00" required oninput="calcularTotal()"
+        class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm focus:outline-none focus:border-blue-400">
+    </div>
+    <button type="button" onclick="removerItem(this)"
+      class="text-red-400 hover:text-red-600 font-bold text-lg pb-1">✕</button>
+  `;
+  lista.appendChild(div);
+}
+
+function atualizarVariacoes(selProduto) {
+  const produtoId = parseInt(selProduto.value);
+  const linha = selProduto.closest('.item-linha');
+  const selVariacao = linha.querySelector('.select-variacao');
+  const produto = produtos.find(p => p.id === produtoId);
+
+  selVariacao.innerHTML = '<option value="">Selecione...</option>';
+  if (produto) {
+    produto.variacoes.forEach(v => {
+      const semEstoque = v.estoque_atual <= 0;
+      selVariacao.innerHTML += `<option value="${v.id}" data-preco="${v.preco}" data-estoque="${v.estoque_atual}" ${semEstoque ? 'disabled' : ''}>${v.descricao} (estoque: ${v.estoque_atual})</option>`;
+    });
+  }
+
+  linha.querySelector('input[name="precos"]').value = '0.00';
+  linha.querySelector('input[name="quantidades"]').value = 1;
+  calcularTotal();
+}
+
+function preencherPreco(selVariacao) {
+  const opt   = selVariacao.options[selVariacao.selectedIndex];
+  const preco = opt.dataset.preco || 0;
+  const linha = selVariacao.closest('.item-linha');
+  linha.querySelector('input[name="precos"]').value = parseFloat(preco).toFixed(2);
+
+  // Limita quantidade ao estoque disponível daquela variação
+  const estoque = parseInt(opt.dataset.estoque) || 0;
+  const qtdInput = linha.querySelector('input[name="quantidades"]');
+  qtdInput.max = estoque;
+  if (parseInt(qtdInput.value) > estoque) qtdInput.value = estoque || 1;
+
+  calcularTotal();
+}
+
+function removerItem(btn) {
+  const lista = document.getElementById('lista-itens');
+  if (lista.querySelectorAll('.item-linha').length > 1) {
+    btn.closest('.item-linha').remove();
+    calcularTotal();
+  }
+}
+
+function calcularTotal() {
+  let total = 0;
+  document.querySelectorAll('#lista-itens .item-linha').forEach(linha => {
+    const qtd   = parseFloat(linha.querySelector('input[name="quantidades"]').value) || 0;
+    const preco = parseFloat(linha.querySelector('input[name="precos"]').value) || 0;
+    total += qtd * preco;
+  });
+  document.getElementById('total-display').textContent =
+    'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+function filtrarTabela() {
+  const termo = document.getElementById('busca').value.toLowerCase();
+  document.querySelectorAll('#tabela-vendas tbody tr').forEach(tr => {
+    tr.style.display = tr.textContent.toLowerCase().includes(termo) ? '' : 'none';
+  });
+}
+</script>
+
+{% endblock %}

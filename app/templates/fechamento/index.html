@@ -3,178 +3,772 @@
 {% block titulo %}Fechamento do Dia | AAPM SENAI{% endblock %}
 
 {% block conteudo %}
-<div class="pt-6 flex flex-col gap-5 pb-6">
 
-  {% if request.query_params.get('sucesso') == '1' %}
-  <div class="bg-green-100 text-green-700 font-bold text-sm px-4 py-3 rounded-xl">✅ Fechamento do dia registrado com sucesso!</div>
-  {% endif %}
+<div class="min-h-screen bg-slate-50 pt-6 pb-10">
 
-  <!-- HEADER -->
-  <div class="flex items-center justify-between">
-    <div>
-      <h1 class="text-2xl font-extrabold text-gray-800">Fechamento do Dia</h1>
-      <p class="text-sm text-gray-400 mt-0.5">{{ hoje }}</p>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col gap-6">
+
+    <!-- ALERTA -->
+    {% if request.query_params.get('sucesso') == '1' %}
+    <div class="flex items-center gap-3 bg-emerald-50 border border-emerald-200 text-emerald-700 px-5 py-4 rounded-2xl shadow-sm">
+      <div class="w-9 h-9 rounded-xl bg-emerald-100 flex items-center justify-center text-lg">
+        ✓
+      </div>
+
+      <div>
+        <p class="font-bold text-sm">Fechamento realizado!</p>
+        <p class="text-xs text-emerald-600 mt-0.5">
+          O fechamento do dia foi registrado com sucesso.
+        </p>
+      </div>
     </div>
-    {% if not ja_fechou_hoje %}
-    <button onclick="abrirModal()"
-      class="bg-[#0052cc] hover:bg-blue-700 text-white text-sm font-bold px-5 py-2.5 rounded-xl transition-all shadow-sm">
-      Fechar o Dia
-    </button>
-    {% else %}
-    <span class="bg-green-100 text-green-700 text-sm font-bold px-5 py-2.5 rounded-xl">✅ Dia já fechado</span>
     {% endif %}
-  </div>
 
-  <!-- RESUMO DO DIA -->
-  <div class="grid grid-cols-2 lg:grid-cols-4 gap-4">
-    <div class="bg-white border border-gray-200 border-t-4 border-t-[#0052cc] rounded-2xl p-5 shadow-sm">
-      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Vendas Hoje</p>
-      <p class="text-4xl font-extrabold text-gray-800 mt-2 mb-1">{{ total_vendas }}</p>
-      <p class="text-xs font-semibold text-gray-400">transações</p>
-    </div>
-    <div class="bg-white border border-gray-200 border-t-4 border-t-[#16a34a] rounded-2xl p-5 shadow-sm">
-      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Receita Total</p>
-      <p class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">R$ {{ "%.2f"|format(receita_total) }}</p>
-      <p class="text-xs font-semibold text-green-600">↑ no dia</p>
-    </div>
-    <div class="bg-white border border-gray-200 border-t-4 border-t-[#16a34a] rounded-2xl p-5 shadow-sm">
-      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">PIX</p>
-      <p class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">R$ {{ "%.2f"|format(receita_pix) }}</p>
-      <p class="text-xs font-semibold text-gray-400">recebido</p>
-    </div>
-    <div class="bg-white border border-gray-200 border-t-4 border-t-[#f37b24] rounded-2xl p-5 shadow-sm">
-      <p class="text-[11px] font-bold text-gray-400 uppercase tracking-widest">Cartão + Dinheiro</p>
-      <p class="text-3xl font-extrabold text-gray-800 mt-2 mb-1">R$ {{ "%.2f"|format(receita_cartao + receita_dinheiro) }}</p>
-      <p class="text-xs font-semibold text-gray-400">recebido</p>
-    </div>
-  </div>
 
-  <!-- TABELA DE VENDAS DO DIA -->
-  <div class="bg-white border border-gray-200 rounded-2xl shadow-sm overflow-hidden">
-    <div class="px-6 py-4 border-b border-gray-100">
-      <span class="text-base font-bold text-gray-800">Vendas do Dia</span>
-    </div>
-    <div class="overflow-x-auto">
-      <table class="w-full text-sm">
-        <thead>
-          <tr class="bg-gray-50 text-gray-400 text-xs uppercase tracking-widest">
-            <th class="text-left px-6 py-3 font-semibold">#</th>
-            <th class="text-left px-6 py-3 font-semibold">Responsável</th>
-            <th class="text-left px-6 py-3 font-semibold">Produtos</th>
-            <th class="text-left px-6 py-3 font-semibold">Pagamento</th>
-            <th class="text-left px-6 py-3 font-semibold">Total</th>
-            <th class="text-left px-6 py-3 font-semibold">Status</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-gray-100">
-          {% for venda in vendas_hoje %}
-          <tr class="hover:bg-gray-50 transition">
-            <td class="px-6 py-4 text-gray-400 font-mono">#{{ "%03d"|format(venda.id) }}</td>
-            <td class="px-6 py-4 text-gray-600">{{ venda.responsavel }}</td>
-            <td class="px-6 py-4 text-gray-800">
-              {% for item in venda.itens %}
-                <span class="block text-sm">{{ item.produto.nome if item.produto else "—" }} × {{ item.quantidade }}</span>
-              {% else %}
-                <span class="text-gray-400">—</span>
-              {% endfor %}
-            </td>
-            <td class="px-6 py-4">
-              {% if venda.forma_pagamento == 'pix' %}
-                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">PIX</span>
-              {% elif venda.forma_pagamento == 'cartao' %}
-                <span class="bg-blue-100 text-blue-700 text-xs font-bold px-2.5 py-1 rounded-full">Cartão</span>
-              {% else %}
-                <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">Dinheiro</span>
+    <!-- HEADER -->
+    <div class="bg-white border border-slate-200 rounded-3xl p-6 shadow-sm">
+
+      <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-5">
+
+        <div class="flex items-center gap-4">
+
+          <div class="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600 to-indigo-700 flex items-center justify-center text-white shadow-lg shadow-blue-200">
+            <svg xmlns="http://www.w3.org/2000/svg"
+              class="w-7 h-7"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="1.8">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 12v-2m0 0c-1.11 0-2.08-.402-2.599-1M12 18c-1.657 0-3-.895-3-2m3 2c1.11 0 2.08-.402 2.599-1M12 18v-2" />
+            </svg>
+          </div>
+
+          <div>
+            <div class="flex items-center gap-2">
+              <h1 class="text-2xl font-black text-slate-800">
+                Fechamento do Dia
+              </h1>
+
+              {% if ja_fechou_hoje %}
+              <span class="hidden sm:inline-flex items-center gap-1 bg-emerald-100 text-emerald-700 px-2.5 py-1 rounded-full text-[10px] font-extrabold uppercase">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                Fechado
+              </span>
               {% endif %}
-            </td>
-            <td class="px-6 py-4 font-bold text-gray-800">R$ {{ "%.2f"|format(venda.valor_total) }}</td>
-            <td class="px-6 py-4">
-              {% if venda.status == 'concluida' %}
-                <span class="bg-green-100 text-green-700 text-xs font-bold px-2.5 py-1 rounded-full">Concluída</span>
-              {% else %}
-                <span class="bg-yellow-100 text-yellow-700 text-xs font-bold px-2.5 py-1 rounded-full">Pendente</span>
-              {% endif %}
-            </td>
-          </tr>
-          {% else %}
-          <tr>
-            <td colspan="6" class="px-6 py-10 text-center text-gray-400 text-sm">Nenhuma venda hoje.</td>
-          </tr>
-          {% endfor %}
-        </tbody>
-      </table>
-    </div>
-  </div>
+            </div>
 
-</div>
+            <p class="text-sm text-slate-400 mt-1">
+              Resumo financeiro e vendas de {{ hoje }}
+            </p>
+          </div>
 
-<!-- MODAL CONFIRMAR FECHAMENTO -->
-<div id="modal-fechamento" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-md mx-4">
-    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-      <h2 class="text-lg font-extrabold text-gray-800">Confirmar Fechamento</h2>
-      <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
-    </div>
-    <form action="/fechamento/confirmar" method="post">
-      <div class="px-6 py-5 flex flex-col gap-4">
-        <div class="bg-gray-50 rounded-xl p-4 flex flex-col gap-2 text-sm">
-          <div class="flex justify-between">
-            <span class="text-gray-500">Total de vendas</span>
-            <span class="font-bold text-gray-800">{{ total_vendas }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">Receita total</span>
-            <span class="font-bold text-[#0052cc]">R$ {{ "%.2f"|format(receita_total) }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">PIX</span>
-            <span class="font-semibold text-gray-700">R$ {{ "%.2f"|format(receita_pix) }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">Cartão</span>
-            <span class="font-semibold text-gray-700">R$ {{ "%.2f"|format(receita_cartao) }}</span>
-          </div>
-          <div class="flex justify-between">
-            <span class="text-gray-500">Dinheiro</span>
-            <span class="font-semibold text-gray-700">R$ {{ "%.2f"|format(receita_dinheiro) }}</span>
-          </div>
         </div>
+
+
+        {% if not ja_fechou_hoje %}
+
+        <button
+          onclick="abrirModal()"
+          class="group inline-flex items-center justify-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-bold text-sm px-6 py-3.5 rounded-2xl shadow-lg shadow-blue-200 hover:shadow-blue-300 transition-all duration-200 hover:-translate-y-0.5">
+
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5 group-hover:rotate-12 transition-transform"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 6v12m6-6H6" />
+          </svg>
+
+          Fechar o Dia
+        </button>
+
+        {% else %}
+
+        <div class="inline-flex items-center justify-center gap-2 bg-emerald-50 border border-emerald-200 text-emerald-700 font-bold text-sm px-6 py-3.5 rounded-2xl">
+          <span class="w-2 h-2 rounded-full bg-emerald-500"></span>
+          Dia já fechado
+        </div>
+
+        {% endif %}
+
+      </div>
+
+    </div>
+
+
+    <!-- CARDS -->
+    <div class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+
+
+      <!-- VENDAS -->
+      <div class="group bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+
+        <div class="flex items-start justify-between">
+
+          <div>
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.15em]">
+              Vendas Hoje
+            </p>
+
+            <p class="text-3xl font-black text-slate-800 mt-3">
+              {{ total_vendas }}
+            </p>
+
+            <p class="text-xs text-slate-400 font-medium mt-1">
+              transações realizadas
+            </p>
+          </div>
+
+          <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M3 3v18h18M7 16l4-5 3 3 5-7" />
+            </svg>
+
+          </div>
+
+        </div>
+
+        <div class="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full w-3/4 bg-blue-600 rounded-full"></div>
+        </div>
+
+      </div>
+
+
+      <!-- RECEITA -->
+      <div class="group bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+
+        <div class="flex items-start justify-between">
+
+          <div>
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.15em]">
+              Receita Total
+            </p>
+
+            <p class="text-2xl font-black text-slate-800 mt-3">
+              R$ {{ "%.2f"|format(receita_total) }}
+            </p>
+
+            <p class="text-xs text-emerald-600 font-semibold mt-1">
+              ↑ Total recebido hoje
+            </p>
+          </div>
+
+          <div class="w-11 h-11 rounded-2xl bg-emerald-50 text-emerald-600 flex items-center justify-center">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V6m0 12v-2m0 0c-1.11 0-2.08-.402-2.599-1M12 18c-1.657 0-3-.895-3-2m3 2c1.11 0 2.08-.402 2.599-1M12 18v-2" />
+            </svg>
+
+          </div>
+
+        </div>
+
+        <div class="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full w-full bg-emerald-500 rounded-full"></div>
+        </div>
+
+      </div>
+
+
+      <!-- PIX -->
+      <div class="group bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+
+        <div class="flex items-start justify-between">
+
+          <div>
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.15em]">
+              PIX
+            </p>
+
+            <p class="text-2xl font-black text-slate-800 mt-3">
+              R$ {{ "%.2f"|format(receita_pix) }}
+            </p>
+
+            <p class="text-xs text-slate-400 font-medium mt-1">
+              pagamentos via PIX
+            </p>
+          </div>
+
+          <div class="w-11 h-11 rounded-2xl bg-green-50 text-green-600 flex items-center justify-center">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 12c0 5.591 3.824 10.29 9 11.622C17.176 22.29 21 17.591 21 12c0-1.04-.133-2.049-.382-3.016z" />
+            </svg>
+
+          </div>
+
+        </div>
+
+        <div class="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full w-4/5 bg-green-500 rounded-full"></div>
+        </div>
+
+      </div>
+
+
+      <!-- CARTAO + DINHEIRO -->
+      <div class="group bg-white border border-slate-200 rounded-3xl p-5 shadow-sm hover:shadow-md transition-all duration-200 hover:-translate-y-1">
+
+        <div class="flex items-start justify-between">
+
+          <div>
+            <p class="text-[10px] font-extrabold text-slate-400 uppercase tracking-[0.15em]">
+              Cartão + Dinheiro
+            </p>
+
+            <p class="text-2xl font-black text-slate-800 mt-3">
+              R$ {{ "%.2f"|format(receita_cartao + receita_dinheiro) }}
+            </p>
+
+            <p class="text-xs text-slate-400 font-medium mt-1">
+              outros pagamentos
+            </p>
+          </div>
+
+          <div class="w-11 h-11 rounded-2xl bg-orange-50 text-orange-500 flex items-center justify-center">
+
+            <svg xmlns="http://www.w3.org/2000/svg"
+              class="w-5 h-5"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+              stroke-width="2">
+              <rect x="3" y="5" width="18" height="14" rx="2" />
+              <path stroke-linecap="round" d="M3 10h18" />
+            </svg>
+
+          </div>
+
+        </div>
+
+        <div class="mt-4 h-1.5 bg-slate-100 rounded-full overflow-hidden">
+          <div class="h-full w-1/2 bg-orange-500 rounded-full"></div>
+        </div>
+
+      </div>
+
+    </div>
+
+
+    <!-- VENDAS -->
+    <div class="bg-white border border-slate-200 rounded-3xl shadow-sm overflow-hidden">
+
+      <!-- HEADER TABELA -->
+      <div class="px-6 py-5 border-b border-slate-100 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+
         <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">
-            Observação <span class="font-normal normal-case">(opcional)</span>
-          </label>
-          <textarea name="observacao" rows="2" placeholder="Ex: caixa conferido, sangria realizada..."
-            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 resize-none"></textarea>
+          <h2 class="text-lg font-black text-slate-800">
+            Vendas do Dia
+          </h2>
+
+          <p class="text-xs text-slate-400 mt-1">
+            Todas as transações realizadas hoje
+          </p>
         </div>
+
+        <div class="flex items-center gap-2 bg-slate-50 px-3 py-2 rounded-xl">
+
+          <span class="w-2 h-2 bg-emerald-500 rounded-full animate-pulse"></span>
+
+          <span class="text-xs font-bold text-slate-500">
+            {{ total_vendas }} vendas
+          </span>
+
+        </div>
+
       </div>
-      <div class="px-6 py-4 border-t border-gray-100 flex gap-3 justify-end">
-        <button type="button" onclick="fecharModal()"
-          class="text-sm font-semibold text-gray-500 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
-          Cancelar
-        </button>
-        <button type="submit"
-          class="bg-[#0052cc] hover:bg-blue-700 text-white text-sm font-bold px-6 py-2.5 rounded-xl transition shadow-sm">
-          Confirmar Fechamento
-        </button>
+
+
+      <!-- TABELA -->
+      <div class="overflow-x-auto">
+
+        <table class="w-full text-sm">
+
+          <thead>
+            <tr class="bg-slate-50/80 text-slate-400 text-[10px] uppercase tracking-[0.15em]">
+
+              <th class="text-left px-6 py-4 font-extrabold">
+                #
+              </th>
+
+              <th class="text-left px-6 py-4 font-extrabold">
+                Responsável
+              </th>
+
+              <th class="text-left px-6 py-4 font-extrabold">
+                Produtos
+              </th>
+
+              <th class="text-left px-6 py-4 font-extrabold">
+                Pagamento
+              </th>
+
+              <th class="text-left px-6 py-4 font-extrabold">
+                Total
+              </th>
+
+              <th class="text-left px-6 py-4 font-extrabold">
+                Status
+              </th>
+
+            </tr>
+          </thead>
+
+
+          <tbody class="divide-y divide-slate-100">
+
+            {% for venda in vendas_hoje %}
+
+            <tr class="hover:bg-blue-50/30 transition-colors">
+
+              <!-- ID -->
+              <td class="px-6 py-5">
+
+                <span class="inline-flex items-center justify-center bg-slate-100 text-slate-500 font-bold font-mono text-xs px-2.5 py-1.5 rounded-lg">
+                  #{{ "%03d"|format(venda.id) }}
+                </span>
+
+              </td>
+
+
+              <!-- RESPONSÁVEL -->
+              <td class="px-6 py-5">
+
+                <div class="flex items-center gap-3">
+
+                  <div class="w-9 h-9 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-black text-xs uppercase">
+                    {{ venda.responsavel[:1] if venda.responsavel else '?' }}
+                  </div>
+
+                  <span class="font-semibold text-slate-700">
+                    {{ venda.responsavel }}
+                  </span>
+
+                </div>
+
+              </td>
+
+
+              <!-- PRODUTOS -->
+              <td class="px-6 py-5">
+
+                <div class="flex flex-col gap-1">
+
+                  {% for item in venda.itens %}
+
+                  <div class="flex items-center gap-2">
+
+                    <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+
+                    <span class="text-slate-700 text-sm">
+                      {{ item.produto.nome if item.produto else "—" }}
+                    </span>
+
+                    <span class="text-xs font-bold text-slate-400">
+                      × {{ item.quantidade }}
+                    </span>
+
+                  </div>
+
+                  {% else %}
+
+                  <span class="text-slate-400">
+                    —
+                  </span>
+
+                  {% endfor %}
+
+                </div>
+
+              </td>
+
+
+              <!-- PAGAMENTO -->
+              <td class="px-6 py-5">
+
+                {% if venda.forma_pagamento == 'pix' %}
+
+                <span class="inline-flex items-center gap-1.5 bg-emerald-50 border border-emerald-100 text-emerald-700 text-xs font-extrabold px-3 py-1.5 rounded-xl">
+                  <span class="w-1.5 h-1.5 rounded-full bg-emerald-500"></span>
+                  PIX
+                </span>
+
+                {% elif venda.forma_pagamento == 'cartao' %}
+
+                <span class="inline-flex items-center gap-1.5 bg-blue-50 border border-blue-100 text-blue-700 text-xs font-extrabold px-3 py-1.5 rounded-xl">
+                  <span class="w-1.5 h-1.5 rounded-full bg-blue-500"></span>
+                  Cartão
+                </span>
+
+                {% else %}
+
+                <span class="inline-flex items-center gap-1.5 bg-orange-50 border border-orange-100 text-orange-700 text-xs font-extrabold px-3 py-1.5 rounded-xl">
+                  <span class="w-1.5 h-1.5 rounded-full bg-orange-500"></span>
+                  Dinheiro
+                </span>
+
+                {% endif %}
+
+              </td>
+
+
+              <!-- TOTAL -->
+              <td class="px-6 py-5">
+
+                <span class="font-black text-slate-800">
+                  R$ {{ "%.2f"|format(venda.valor_total) }}
+                </span>
+
+              </td>
+
+
+              <!-- STATUS -->
+              <td class="px-6 py-5">
+
+                {% if venda.status == 'concluida' %}
+
+                <span class="inline-flex items-center gap-1.5 bg-emerald-50 text-emerald-700 text-xs font-extrabold px-3 py-1.5 rounded-xl">
+                  <svg xmlns="http://www.w3.org/2000/svg"
+                    class="w-3.5 h-3.5"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                    stroke-width="2">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                      d="M5 13l4 4L19 7" />
+                  </svg>
+                  Concluída
+                </span>
+
+                {% else %}
+
+                <span class="inline-flex items-center gap-1.5 bg-amber-50 text-amber-700 text-xs font-extrabold px-3 py-1.5 rounded-xl">
+                  <span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+                  Pendente
+                </span>
+
+                {% endif %}
+
+              </td>
+
+            </tr>
+
+            {% else %}
+
+            <tr>
+
+              <td colspan="6" class="px-6 py-16">
+
+                <div class="flex flex-col items-center justify-center text-center">
+
+                  <div class="w-16 h-16 rounded-2xl bg-slate-100 flex items-center justify-center text-slate-400 mb-4">
+
+                    <svg xmlns="http://www.w3.org/2000/svg"
+                      class="w-8 h-8"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                      stroke-width="1.5">
+                      <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 14.25l6-6m4.5 3.75a9 9 0 11-18 0 9 9 0 0118 0z" />
+                    </svg>
+
+                  </div>
+
+                  <p class="font-bold text-slate-600">
+                    Nenhuma venda hoje
+                  </p>
+
+                  <p class="text-xs text-slate-400 mt-1">
+                    As vendas realizadas aparecerão aqui.
+                  </p>
+
+                </div>
+
+              </td>
+
+            </tr>
+
+            {% endfor %}
+
+          </tbody>
+
+        </table>
+
       </div>
-    </form>
+
+    </div>
+
   </div>
+
 </div>
+
+
+<!-- ===================================================== -->
+<!-- MODAL -->
+<!-- ===================================================== -->
+
+<div
+  id="modal-fechamento"
+  class="fixed inset-0 z-50 hidden items-center justify-center bg-slate-950/60 backdrop-blur-sm p-4">
+
+  <div
+    class="bg-white rounded-3xl shadow-2xl w-full max-w-md overflow-hidden transform transition-all">
+
+    <!-- HEADER MODAL -->
+    <div class="px-6 py-5 border-b border-slate-100 flex items-center justify-between">
+
+      <div class="flex items-center gap-3">
+
+        <div class="w-11 h-11 rounded-2xl bg-blue-50 text-blue-600 flex items-center justify-center">
+
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="w-5 h-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M12 6v12m6-6H6" />
+          </svg>
+
+        </div>
+
+        <div>
+
+          <h2 class="text-lg font-black text-slate-800">
+            Confirmar Fechamento
+          </h2>
+
+          <p class="text-xs text-slate-400">
+            Confira os valores antes de finalizar
+          </p>
+
+        </div>
+
+      </div>
+
+      <button
+        onclick="fecharModal()"
+        class="w-9 h-9 rounded-xl bg-slate-50 text-slate-400 hover:bg-slate-100 hover:text-slate-600 transition flex items-center justify-center text-lg">
+
+        ×
+
+      </button>
+
+    </div>
+
+
+    <!-- CONTEÚDO -->
+    <form action="/fechamento/confirmar" method="post">
+
+      <div class="px-6 py-6 flex flex-col gap-5">
+
+
+        <!-- RESUMO -->
+        <div class="bg-slate-50 border border-slate-100 rounded-2xl p-4">
+
+          <div class="flex justify-between py-2">
+
+            <span class="text-sm text-slate-500">
+              Total de vendas
+            </span>
+
+            <span class="font-black text-slate-800">
+              {{ total_vendas }}
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between py-2 border-t border-slate-200">
+
+            <span class="text-sm text-slate-500">
+              Receita total
+            </span>
+
+            <span class="font-black text-blue-600">
+              R$ {{ "%.2f"|format(receita_total) }}
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between py-2">
+
+            <span class="text-sm text-slate-500">
+              PIX
+            </span>
+
+            <span class="font-semibold text-emerald-600">
+              R$ {{ "%.2f"|format(receita_pix) }}
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between py-2">
+
+            <span class="text-sm text-slate-500">
+              Cartão
+            </span>
+
+            <span class="font-semibold text-blue-600">
+              R$ {{ "%.2f"|format(receita_cartao) }}
+            </span>
+
+          </div>
+
+
+          <div class="flex justify-between py-2">
+
+            <span class="text-sm text-slate-500">
+              Dinheiro
+            </span>
+
+            <span class="font-semibold text-orange-600">
+              R$ {{ "%.2f"|format(receita_dinheiro) }}
+            </span>
+
+          </div>
+
+        </div>
+
+
+        <!-- OBSERVAÇÃO -->
+        <div>
+
+          <label class="block text-xs font-extrabold text-slate-500 uppercase tracking-widest mb-2">
+
+            Observação
+
+            <span class="font-normal normal-case text-slate-400">
+              (opcional)
+            </span>
+
+          </label>
+
+          <textarea
+            name="observacao"
+            rows="3"
+            placeholder="Ex: caixa conferido, sangria realizada..."
+            class="w-full border border-slate-200 bg-slate-50 rounded-2xl px-4 py-3 text-sm text-slate-700 placeholder:text-slate-400 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 resize-none transition"></textarea>
+
+        </div>
+
+      </div>
+
+
+      <!-- FOOTER -->
+      <div class="px-6 py-5 bg-slate-50 border-t border-slate-100 flex gap-3 justify-end">
+
+        <button
+          type="button"
+          onclick="fecharModal()"
+          class="text-sm font-bold text-slate-500 px-5 py-3 rounded-xl border border-slate-200 bg-white hover:bg-slate-100 transition">
+
+          Cancelar
+
+        </button>
+
+
+        <button
+          type="submit"
+          class="inline-flex items-center gap-2 bg-gradient-to-r from-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white text-sm font-bold px-6 py-3 rounded-xl shadow-lg shadow-blue-200 transition">
+
+          <svg xmlns="http://www.w3.org/2000/svg"
+            class="w-4 h-4"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+            stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round"
+              d="M5 13l4 4L19 7" />
+          </svg>
+
+          Confirmar Fechamento
+
+        </button>
+
+      </div>
+
+    </form>
+
+  </div>
+
+</div>
+
 
 <script>
+
 function abrirModal() {
-  const m = document.getElementById('modal-fechamento');
-  m.classList.remove('hidden');
-  m.classList.add('flex');
+
+  const modal = document.getElementById('modal-fechamento');
+
+  modal.classList.remove('hidden');
+
+  modal.classList.add('flex');
+
+  document.body.classList.add('overflow-hidden');
+
 }
+
+
 function fecharModal() {
-  const m = document.getElementById('modal-fechamento');
-  m.classList.add('hidden');
-  m.classList.remove('flex');
+
+  const modal = document.getElementById('modal-fechamento');
+
+  modal.classList.add('hidden');
+
+  modal.classList.remove('flex');
+
+  document.body.classList.remove('overflow-hidden');
+
 }
-document.getElementById('modal-fechamento').addEventListener('click', function(e) {
-  if (e.target === this) fecharModal();
+
+
+document
+  .getElementById('modal-fechamento')
+  .addEventListener('click', function(e) {
+
+    if (e.target === this) {
+      fecharModal();
+    }
+
+  });
+
+
+document.addEventListener('keydown', function(e) {
+
+  if (e.key === 'Escape') {
+    fecharModal();
+  }
+
 });
+
 </script>
 
 {% endblock %}

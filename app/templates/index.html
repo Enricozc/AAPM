@@ -11,12 +11,16 @@
     --blue: #0052cc;
     --blue-dark: #003b99;
     --blue-light: #e8f1ff;
+
     --orange: #ff7a18;
     --orange-dark: #e85d00;
     --orange-light: #fff0e4;
+
     --purple: #6d28d9;
+
     --green: #16a34a;
     --green-light: #e8f8ef;
+
     --bg: #f1f5ff;
     --text: #0f172a;
     --muted: #64748b;
@@ -24,25 +28,36 @@
     --border: #e2e8f0;
 }
 
-/* =========================
+
+/* =====================================================
    RESET
-========================= */
+===================================================== */
 
 html,
 body {
     margin: 0 !important;
     padding: 0 !important;
+
     width: 100%;
     min-height: 100%;
-}
 
-body {
     font-family: "Inter", sans-serif;
+
     color: var(--text);
+
     background:
-        radial-gradient(circle at 10% 20%, rgba(0,82,204,.12), transparent 30%),
-        radial-gradient(circle at 90% 70%, rgba(255,122,24,.12), transparent 30%),
+        radial-gradient(
+            circle at 10% 20%,
+            rgba(0,82,204,.10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 70%,
+            rgba(255,122,24,.10),
+            transparent 30%
+        ),
         var(--bg);
+
     overflow-x: hidden;
 }
 
@@ -53,22 +68,26 @@ main,
 .page-content {
     width: 100% !important;
     max-width: none !important;
+
     margin: 0 !important;
     padding: 0 !important;
 }
 
-/* =========================
+
+/* =====================================================
    HERO
-========================= */
+===================================================== */
 
 .hero {
     width: 100vw;
-    min-height: 560px;
+
+    min-height: 510px;
 
     margin-left: calc(50% - 50vw);
     margin-right: calc(50% - 50vw);
 
     position: relative;
+
     overflow: hidden;
 
     display: flex;
@@ -85,13 +104,13 @@ main,
         );
 
     color: white;
+
     box-sizing: border-box;
 }
 
-/* formas decorativas */
-
 .hero::before {
     content: "";
+
     position: absolute;
 
     width: 500px;
@@ -101,6 +120,7 @@ main,
     top: -180px;
 
     background: rgba(255,255,255,.08);
+
     border-radius: 50%;
 
     pointer-events: none;
@@ -108,6 +128,7 @@ main,
 
 .hero::after {
     content: "";
+
     position: absolute;
 
     width: 600px;
@@ -117,6 +138,7 @@ main,
     bottom: -350px;
 
     background: rgba(255,255,255,.10);
+
     border-radius: 50%;
 
     pointer-events: none;
@@ -124,13 +146,15 @@ main,
 
 .hero-content {
     width: 100%;
-    max-width: 1100px;
 
-    padding: 80px 30px 120px;
+    max-width: 1050px;
+
+    padding: 70px 25px 110px;
 
     text-align: center;
 
     position: relative;
+
     z-index: 2;
 
     box-sizing: border-box;
@@ -138,31 +162,38 @@ main,
 
 .hero-badge {
     display: inline-flex;
+
     align-items: center;
+    justify-content: center;
+
     gap: 8px;
 
-    padding: 10px 18px;
+    padding: 8px 16px;
 
     border-radius: 30px;
 
-    background: rgba(255,255,255,.15);
-    border: 1px solid rgba(255,255,255,.30);
+    background: rgba(255,255,255,.14);
+
+    border: 1px solid rgba(255,255,255,.28);
 
     backdrop-filter: blur(10px);
 
-    font-size: 14px;
+    font-size: 12px;
+
     font-weight: 800;
 
-    margin-bottom: 25px;
+    margin-bottom: 20px;
 }
 
 .hero-title {
     margin: 0;
 
-    font-size: clamp(55px, 8vw, 95px);
+    font-size: clamp(50px, 7vw, 82px);
+
     line-height: .95;
 
     font-weight: 900;
+
     letter-spacing: -4px;
 
     color: white;
@@ -173,11 +204,12 @@ main,
 }
 
 .hero-subtitle {
-    max-width: 700px;
+    max-width: 650px;
 
-    margin: 30px auto 35px;
+    margin: 24px auto 28px;
 
-    font-size: 19px;
+    font-size: 16px;
+
     line-height: 1.7;
 
     color: rgba(255,255,255,.90);
@@ -185,28 +217,31 @@ main,
 
 .hero-buttons {
     display: flex;
+
     justify-content: center;
     align-items: center;
 
-    gap: 14px;
+    gap: 12px;
 
     flex-wrap: wrap;
 }
 
 .hero-button {
     display: inline-flex;
+
     align-items: center;
     justify-content: center;
 
-    gap: 9px;
+    gap: 8px;
 
-    padding: 15px 25px;
+    padding: 13px 21px;
 
-    border-radius: 14px;
+    border-radius: 12px;
 
     text-decoration: none;
 
-    font-size: 15px;
+    font-size: 13px;
+
     font-weight: 800;
 
     transition: .25s;
@@ -216,20 +251,24 @@ main,
 
 .hero-button.primary {
     background: white;
+
     color: var(--blue);
 
-    box-shadow: 0 15px 35px rgba(0,0,0,.20);
+    box-shadow:
+        0 12px 30px rgba(0,0,0,.18);
 }
 
 .hero-button.primary:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 20px 45px rgba(0,0,0,.28);
+    transform: translateY(-3px);
+
+    box-shadow:
+        0 18px 38px rgba(0,0,0,.25);
 }
 
 .hero-button.secondary {
     color: white;
 
-    border: 1px solid rgba(255,255,255,.40);
+    border: 1px solid rgba(255,255,255,.35);
 
     background: rgba(255,255,255,.10);
 
@@ -238,55 +277,61 @@ main,
 
 .hero-button.secondary:hover {
     background: rgba(255,255,255,.20);
-    transform: translateY(-4px);
+
+    transform: translateY(-3px);
 }
 
-/* =========================
+
+/* =====================================================
    ESTATÍSTICAS
-========================= */
+===================================================== */
 
 .stats-wrapper {
     width: 100%;
 
-    margin-top: -65px;
+    margin-top: -45px;
 
     position: relative;
+
     z-index: 5;
 
-    padding: 0 25px;
+    padding: 0 20px;
 
     box-sizing: border-box;
 }
 
 .stats {
     width: 100%;
-    max-width: 1100px;
+
+    max-width: 1000px;
 
     margin: auto;
 
     display: grid;
+
     grid-template-columns: repeat(4, 1fr);
 
-    gap: 18px;
+    gap: 12px;
 }
 
 .metric {
     background: white;
 
-    border-radius: 22px;
+    border-radius: 16px;
 
-    padding: 25px 18px;
+    padding: 16px 12px;
 
     text-align: center;
 
     border: 1px solid rgba(226,232,240,.8);
 
     box-shadow:
-        0 20px 45px rgba(15,23,42,.10);
+        0 10px 25px rgba(15,23,42,.08);
 
     transition: .25s;
 
     position: relative;
+
     overflow: hidden;
 }
 
@@ -299,7 +344,7 @@ main,
     left: 0;
 
     width: 100%;
-    height: 5px;
+    height: 3px;
 
     background: var(--blue);
 }
@@ -317,25 +362,26 @@ main,
 }
 
 .metric:hover {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
 
     box-shadow:
-        0 25px 55px rgba(15,23,42,.15);
+        0 18px 35px rgba(15,23,42,.13);
 }
 
 .metric-icon {
-    width: 58px;
-    height: 58px;
+    width: 42px;
+    height: 42px;
 
-    margin: 0 auto 14px;
+    margin: 0 auto 8px;
 
-    border-radius: 16px;
+    border-radius: 12px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
-    font-size: 22px;
+    font-size: 17px;
 }
 
 .metric:nth-child(1) .metric-icon {
@@ -359,7 +405,8 @@ main,
 }
 
 .metric-value {
-    font-size: 34px;
+    font-size: 25px;
+
     font-weight: 900;
 
     margin: 0;
@@ -382,28 +429,32 @@ main,
 }
 
 .metric-label {
-    margin-top: 7px;
+    margin-top: 4px;
 
     color: var(--muted);
 
-    font-size: 11px;
+    font-size: 9px;
+
     font-weight: 800;
 
     text-transform: uppercase;
-    letter-spacing: 1px;
+
+    letter-spacing: .7px;
 }
 
-/* =========================
-   CONTEÚDO
-========================= */
+
+/* =====================================================
+   SEÇÕES
+===================================================== */
 
 .page-section {
     width: 100%;
-    max-width: 1100px;
 
-    margin: 60px auto 0;
+    max-width: 1050px;
 
-    padding: 0 25px;
+    margin: 40px auto 0;
+
+    padding: 0 20px;
 
     box-sizing: border-box;
 }
@@ -411,14 +462,14 @@ main,
 .section-card {
     background: white;
 
-    border-radius: 28px;
+    border-radius: 20px;
 
-    padding: 45px;
+    padding: 28px;
 
     border: 1px solid var(--border);
 
     box-shadow:
-        0 20px 60px rgba(15,23,42,.07);
+        0 12px 35px rgba(15,23,42,.06);
 
     position: relative;
 
@@ -430,36 +481,39 @@ main,
 
     position: absolute;
 
-    width: 180px;
-    height: 180px;
+    width: 150px;
+    height: 150px;
 
-    right: -80px;
-    top: -80px;
+    right: -70px;
+    top: -70px;
 
     border-radius: 50%;
 
-    background: rgba(0,82,204,.07);
+    background: rgba(0,82,204,.06);
+
+    pointer-events: none;
 }
 
 .section-card.orange-decoration::before {
-    background: rgba(255,122,24,.10);
+    background: rgba(255,122,24,.08);
 }
 
 .section-header {
     position: relative;
+
     z-index: 2;
 
     text-align: center;
 
-    max-width: 750px;
+    max-width: 700px;
 
-    margin: 0 auto 35px;
+    margin: 0 auto 22px;
 }
 
 .section-title {
-    margin: 0 0 12px;
+    margin: 0 0 8px;
 
-    font-size: 32px;
+    font-size: 26px;
 
     font-weight: 900;
 
@@ -475,54 +529,305 @@ main,
 
     color: var(--muted);
 
-    font-size: 15px;
+    font-size: 13px;
 
-    line-height: 1.7;
+    line-height: 1.6;
 }
 
-/* =========================
-   PRODUTOS
-========================= */
 
-.products-grid {
-    display: grid;
+/* =====================================================
+   CATEGORIAS DOS PRODUTOS
+===================================================== */
 
-    grid-template-columns: repeat(3, 1fr);
-
-    gap: 22px;
-
+.categories-area {
     position: relative;
-    z-index: 2;
+
+    z-index: 5;
+
+    width: 100%;
+
+    margin-bottom: 20px;
 }
 
-.product-card {
-    background: white;
+
+/* título das categorias */
+
+.categories-title {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    margin-bottom: 12px;
+
+    font-size: 12px;
+
+    font-weight: 800;
+
+    color: var(--muted);
+
+    text-transform: uppercase;
+
+    letter-spacing: .8px;
+}
+
+.categories-title i {
+    color: var(--orange);
+}
+
+
+/* lista */
+
+.categories-list {
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 8px;
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    padding: 4px 4px 10px;
+
+    scrollbar-width: none;
+}
+
+.categories-list::-webkit-scrollbar {
+    display: none;
+}
+
+
+/* botão */
+
+.category-btn {
+    flex: 0 0 auto;
+
+    display: inline-flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    gap: 7px;
+
+    padding: 9px 15px;
+
+    border-radius: 30px;
+
+    border: 1px solid var(--border);
+
+    background: #f8fafc;
+
+    color: var(--muted);
+
+    font-family: "Inter", sans-serif;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    cursor: pointer;
+
+    transition: .25s;
+
+    white-space: nowrap;
+}
+
+.category-btn i {
+    font-size: 11px;
+}
+
+.category-btn:hover {
+    color: var(--blue);
+
+    border-color: #bfd5f5;
+
+    background: var(--blue-light);
+
+    transform: translateY(-1px);
+}
+
+
+/* categoria ativa */
+
+.category-btn.active {
+    background: var(--blue);
+
+    color: white;
+
+    border-color: var(--blue);
+
+    box-shadow:
+        0 6px 15px rgba(0,82,204,.20);
+}
+
+.category-btn.active:hover {
+    color: white;
+
+    background: var(--blue-dark);
+
+    border-color: var(--blue-dark);
+}
+
+
+/* contador */
+
+.category-count {
+    min-width: 18px;
+    height: 18px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0 5px;
 
     border-radius: 20px;
+
+    background: rgba(0,0,0,.06);
+
+    font-size: 9px;
+}
+
+.category-btn.active .category-count {
+    background: rgba(255,255,255,.20);
+}
+
+
+/* =====================================================
+   PRODUTOS
+===================================================== */
+
+.products-container {
+    position: relative;
+
+    z-index: 2;
+
+    width: 100%;
+}
+
+
+/* carrossel */
+
+.products-grid {
+    display: flex;
+
+    gap: 15px;
+
+    width: 100%;
+
+    overflow-x: auto;
+
+    overflow-y: hidden;
+
+    padding: 5px 5px 18px;
+
+    scroll-behavior: smooth;
+
+    scroll-snap-type: x mandatory;
+
+    scrollbar-width: thin;
+
+    cursor: grab;
+}
+
+.products-grid:active {
+    cursor: grabbing;
+}
+
+.products-grid::-webkit-scrollbar {
+    height: 7px;
+}
+
+.products-grid::-webkit-scrollbar-track {
+    background: #eef2f7;
+
+    border-radius: 20px;
+}
+
+.products-grid::-webkit-scrollbar-thumb {
+    background: var(--blue);
+
+    border-radius: 20px;
+}
+
+.products-grid::-webkit-scrollbar-thumb:hover {
+    background: var(--blue-dark);
+}
+
+
+/* =====================================================
+   CARD DO PRODUTO
+===================================================== */
+
+.product-card {
+    flex: 0 0 245px;
+
+    width: 245px;
+
+    min-width: 245px;
+
+    background: white;
+
+    border-radius: 16px;
 
     overflow: hidden;
 
     border: 1px solid var(--border);
 
     display: flex;
+
     flex-direction: column;
 
     transition: .3s;
 
-    box-shadow: 0 8px 25px rgba(15,23,42,.05);
+    box-shadow:
+        0 6px 18px rgba(15,23,42,.06);
+
+    scroll-snap-align: start;
+
+    animation: productAppear .25s ease;
+}
+
+@keyframes productAppear {
+
+    from {
+        opacity: 0;
+
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+
+        transform: translateY(0);
+    }
+
 }
 
 .product-card:hover {
-    transform: translateY(-8px);
+    transform: translateY(-5px);
 
     box-shadow:
-        0 22px 45px rgba(0,82,204,.13);
+        0 18px 35px rgba(0,82,204,.12);
 
-    border-color: rgba(0,82,204,.25);
+    border-color:
+        rgba(0,82,204,.25);
 }
 
+
+/* imagem */
+
 .product-image {
-    height: 190px;
+    height: 145px;
 
     background:
         linear-gradient(
@@ -532,7 +837,9 @@ main,
         );
 
     display: flex;
+
     align-items: center;
+
     justify-content: center;
 
     position: relative;
@@ -541,7 +848,7 @@ main,
 
     color: var(--blue);
 
-    font-size: 45px;
+    font-size: 35px;
 }
 
 .product-card:nth-child(2n) .product-image {
@@ -568,91 +875,126 @@ main,
 
 .product-image img {
     width: 100%;
+
     height: 100%;
 
     object-fit: cover;
+
+    transition: .3s;
 }
+
+.product-card:hover .product-image img {
+    transform: scale(1.04);
+}
+
+
+/* badge */
 
 .product-badge {
     position: absolute;
 
-    top: 13px;
-    left: 13px;
+    top: 10px;
+    left: 10px;
 
-    padding: 6px 11px;
+    padding: 5px 9px;
 
     border-radius: 20px;
 
-    background: rgba(255,255,255,.90);
+    background: rgba(255,255,255,.92);
 
     backdrop-filter: blur(8px);
 
-    font-size: 10px;
+    font-size: 9px;
 
     font-weight: 900;
 
     text-transform: uppercase;
+
+    box-shadow:
+        0 4px 10px rgba(0,0,0,.06);
 }
 
+
+/* informações */
+
 .product-info {
-    padding: 20px;
+    padding: 15px;
 
     display: flex;
+
     flex-direction: column;
 
     flex-grow: 1;
 }
 
 .product-info h3 {
-    margin: 0 0 8px;
+    margin: 0 0 6px;
 
-    font-size: 18px;
+    font-size: 15px;
 
     font-weight: 800;
+
+    white-space: nowrap;
+
+    overflow: hidden;
+
+    text-overflow: ellipsis;
 }
 
 .product-info p {
-    margin: 0 0 18px;
+    margin: 0 0 12px;
 
     color: var(--muted);
 
-    font-size: 13px;
+    font-size: 11px;
 
     line-height: 1.5;
 
     flex-grow: 1;
 }
 
+
+/* rodapé */
+
 .product-footer {
     display: flex;
 
     align-items: center;
+
     justify-content: space-between;
 
-    gap: 10px;
+    gap: 8px;
 
-    padding-top: 14px;
+    padding-top: 10px;
 
     border-top: 1px dashed var(--border);
 }
 
 .product-price {
-    font-size: 20px;
+    font-size: 17px;
 
     font-weight: 900;
 
     color: var(--blue);
+
+    white-space: nowrap;
 }
+
+
+/* whatsapp */
 
 .btn-whatsapp {
     display: inline-flex;
+
     align-items: center;
 
-    gap: 6px;
+    justify-content: center;
 
-    padding: 10px 13px;
+    gap: 5px;
 
-    border-radius: 10px;
+    padding: 8px 10px;
+
+    border-radius: 8px;
 
     background: #e9f9ef;
 
@@ -660,63 +1002,203 @@ main,
 
     text-decoration: none;
 
-    font-size: 11px;
+    font-size: 10px;
 
     font-weight: 800;
 
     transition: .25s;
+
+    white-space: nowrap;
 }
 
 .btn-whatsapp:hover {
     background: #16a34a;
+
     color: white;
 
     transform: translateY(-2px);
 }
 
-/* =========================
+
+/* =====================================================
+   PRODUTOS OCULTOS
+===================================================== */
+
+.product-card.hidden {
+    display: none;
+}
+
+
+/* =====================================================
+   MENSAGEM SEM PRODUTOS
+===================================================== */
+
+.no-products {
+    width: 100%;
+
+    min-width: 100%;
+
+    padding: 35px 20px;
+
+    box-sizing: border-box;
+
+    text-align: center;
+
+    color: var(--muted);
+
+    display: none;
+}
+
+.no-products.show {
+    display: block;
+}
+
+.no-products-icon {
+    width: 55px;
+    height: 55px;
+
+    margin: 0 auto 12px;
+
+    border-radius: 16px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    background: var(--blue-light);
+
+    color: var(--blue);
+
+    font-size: 20px;
+}
+
+.no-products strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--text);
+
+    font-size: 14px;
+}
+
+.no-products span {
+    font-size: 11px;
+}
+
+
+/* =====================================================
+   NAVEGAÇÃO DOS PRODUTOS
+===================================================== */
+
+.products-navigation {
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
+
+    gap: 8px;
+
+    margin-top: 5px;
+}
+
+.product-nav {
+    width: 36px;
+    height: 36px;
+
+    border: none;
+
+    border-radius: 50%;
+
+    background: var(--blue);
+
+    color: white;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 14px;
+
+    transition: .25s;
+
+    box-shadow:
+        0 5px 15px rgba(0,82,204,.20);
+}
+
+.product-nav:hover {
+    background: var(--blue-dark);
+
+    transform: translateY(-2px);
+}
+
+.product-nav:active {
+    transform: scale(.92);
+}
+
+.product-nav:disabled {
+    opacity: .4;
+
+    cursor: not-allowed;
+
+    transform: none;
+
+    box-shadow: none;
+}
+
+
+/* =====================================================
    QUEM SOMOS
-========================= */
+===================================================== */
 
 .about-content {
     display: grid;
 
     grid-template-columns: 1fr 1fr;
 
-    gap: 25px;
+    gap: 15px;
 
     position: relative;
+
     z-index: 2;
 }
 
 .about-box {
-    padding: 25px;
+    padding: 18px;
 
-    border-radius: 18px;
+    border-radius: 14px;
 
-    background: linear-gradient(
-        135deg,
-        #f8fbff,
-        #eef5ff
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #f8fbff,
+            #eef5ff
+        );
 
     border: 1px solid #dce9ff;
 }
 
 .about-box:nth-child(2) {
-    background: linear-gradient(
-        135deg,
-        #fff9f4,
-        #fff0e4
-    );
+    background:
+        linear-gradient(
+            135deg,
+            #fff9f4,
+            #fff0e4
+        );
 
     border-color: #ffe0c7;
 }
 
 .about-box h3 {
-    margin: 0 0 10px;
+    margin: 0 0 8px;
 
-    font-size: 18px;
+    font-size: 15px;
 
     font-weight: 800;
 
@@ -732,28 +1214,34 @@ main,
 
     color: var(--muted);
 
-    font-size: 14px;
+    font-size: 12px;
 
-    line-height: 1.7;
+    line-height: 1.6;
 }
+
+
+/* =====================================================
+   OBJETIVOS
+===================================================== */
 
 .objectives {
     display: grid;
 
     grid-template-columns: repeat(3, 1fr);
 
-    gap: 18px;
+    gap: 12px;
 
-    margin-top: 25px;
+    margin-top: 15px;
 
     position: relative;
+
     z-index: 2;
 }
 
 .objective {
-    padding: 22px;
+    padding: 16px;
 
-    border-radius: 17px;
+    border-radius: 14px;
 
     background: #f8fafc;
 
@@ -763,20 +1251,22 @@ main,
 }
 
 .objective:hover {
-    transform: translateY(-5px);
+    transform: translateY(-4px);
 
     background: white;
 
-    box-shadow: 0 15px 30px rgba(0,82,204,.08);
+    box-shadow:
+        0 12px 25px rgba(0,82,204,.08);
 }
 
 .objective-icon {
-    width: 45px;
-    height: 45px;
+    width: 38px;
+    height: 38px;
 
-    border-radius: 12px;
+    border-radius: 10px;
 
     display: flex;
+
     align-items: center;
     justify-content: center;
 
@@ -784,46 +1274,45 @@ main,
 
     color: var(--blue);
 
-    margin-bottom: 14px;
+    margin-bottom: 10px;
 }
 
 .objective:nth-child(2) .objective-icon {
     background: var(--orange-light);
+
     color: var(--orange);
 }
 
 .objective:nth-child(3) .objective-icon {
     background: #f0eaff;
+
     color: var(--purple);
 }
 
 .objective strong {
     display: block;
 
-    margin-bottom: 7px;
+    margin-bottom: 5px;
 
-    font-size: 15px;
+    font-size: 13px;
 }
 
 .objective span {
     color: var(--muted);
 
-    font-size: 13px;
+    font-size: 11px;
 
     line-height: 1.5;
 }
 
-/* =========================
+
+/* =====================================================
    RESPONSIVO
-========================= */
+===================================================== */
 
 @media (max-width: 900px) {
 
     .stats {
-        grid-template-columns: repeat(2, 1fr);
-    }
-
-    .products-grid {
         grid-template-columns: repeat(2, 1fr);
     }
 
@@ -836,23 +1325,39 @@ main,
     }
 
     .hero {
-        min-height: 520px;
+        min-height: 480px;
+    }
+
+    .product-card {
+        flex: 0 0 230px;
+
+        width: 230px;
+
+        min-width: 230px;
+    }
+
+    .categories-list {
+        justify-content: flex-start;
     }
 }
+
 
 @media (max-width: 600px) {
 
     .hero-content {
-        padding: 65px 20px 100px;
+        padding: 60px 18px 90px;
     }
 
     .hero-title {
         font-size: 48px;
+
         letter-spacing: -2px;
     }
 
     .hero-subtitle {
-        font-size: 15px;
+        font-size: 14px;
+
+        margin: 20px auto 24px;
     }
 
     .hero-buttons {
@@ -861,83 +1366,198 @@ main,
 
     .hero-button {
         width: 100%;
-        max-width: 280px;
+
+        max-width: 270px;
     }
 
+
+    /* estatísticas */
+
     .stats-wrapper {
-        padding: 0 15px;
+        margin-top: -35px;
+
+        padding: 0 12px;
     }
 
     .stats {
         grid-template-columns: 1fr 1fr;
-        gap: 10px;
+
+        gap: 8px;
     }
 
     .metric {
-        padding: 18px 10px;
+        padding: 14px 8px;
+
+        border-radius: 14px;
+    }
+
+    .metric-icon {
+        width: 36px;
+        height: 36px;
+
+        font-size: 15px;
     }
 
     .metric-value {
-        font-size: 27px;
+        font-size: 22px;
     }
 
     .metric-label {
-        font-size: 9px;
+        font-size: 8px;
     }
 
+
+    /* seção */
+
     .page-section {
-        padding: 0 15px;
-        margin-top: 35px;
+        padding: 0 12px;
+
+        margin-top: 30px;
     }
 
     .section-card {
-        padding: 28px 18px;
-        border-radius: 22px;
+        padding: 22px 15px;
+
+        border-radius: 18px;
     }
 
     .section-title {
-        font-size: 26px;
+        font-size: 23px;
     }
 
+    .section-description {
+        font-size: 12px;
+    }
+
+
+    /* categorias */
+
+    .categories-title {
+        font-size: 10px;
+    }
+
+    .category-btn {
+        padding: 8px 12px;
+
+        font-size: 10px;
+    }
+
+
+    /* produtos */
+
     .products-grid {
-        grid-template-columns: 1fr;
+        gap: 12px;
+
+        padding-bottom: 15px;
+    }
+
+    .product-card {
+        flex: 0 0 215px;
+
+        width: 215px;
+
+        min-width: 215px;
+    }
+
+    .product-image {
+        height: 130px;
+    }
+
+    .product-info {
+        padding: 13px;
+    }
+
+    .product-info h3 {
+        font-size: 14px;
+    }
+
+    .product-price {
+        font-size: 15px;
+    }
+
+    .btn-whatsapp {
+        font-size: 9px;
+
+        padding: 7px 8px;
+    }
+
+
+    /* quem somos */
+
+    .about-content {
+        gap: 10px;
+    }
+
+    .about-box {
+        padding: 15px;
+    }
+
+    .objectives {
+        gap: 10px;
+    }
+
+    .objective {
+        padding: 14px;
     }
 }
 </style>
 
 
-<!-- =========================
+<!-- =====================================================
      HERO
-========================= -->
+===================================================== -->
 
 <section class="hero">
 
     <div class="hero-content">
 
         <div class="hero-badge">
+
             <i class="fa-solid fa-building-columns"></i>
+
             AAPM • SENAI
+
         </div>
 
+
         <h1 class="hero-title">
+
             AAPM<span>SENAI</span>
+
         </h1>
 
+
         <p class="hero-subtitle">
+
             Unindo tecnologia, organização e transparência
             para fortalecer a comunidade escolar.
+
         </p>
+
 
         <div class="hero-buttons">
 
-            <a href="/auth/login" class="hero-button primary">
+            <a
+                href="/auth/login"
+                class="hero-button primary"
+            >
+
                 <i class="fa-solid fa-shield-halved"></i>
+
                 Acessar Sistema AAPM
+
             </a>
 
-            <a href="#produtos" class="hero-button secondary">
+
+            <a
+                href="#produtos"
+                class="hero-button secondary"
+            >
+
                 <i class="fa-solid fa-box-open"></i>
+
                 Ver Produtos
+
             </a>
 
         </div>
@@ -947,77 +1567,106 @@ main,
 </section>
 
 
-<!-- =========================
+
+<!-- =====================================================
      ESTATÍSTICAS
-========================= -->
+===================================================== -->
 
 <div class="stats-wrapper">
 
     <div class="stats">
 
+
         <div class="metric">
 
             <div class="metric-icon">
+
                 <i class="fa-solid fa-users"></i>
+
             </div>
 
             <div class="metric-value">
+
                 567
+
             </div>
 
             <div class="metric-label">
+
                 Membros ativos
+
             </div>
 
         </div>
 
 
+
         <div class="metric">
 
             <div class="metric-icon">
+
                 <i class="fa-solid fa-chart-line"></i>
+
             </div>
 
             <div class="metric-value">
+
                 R$ 45k
+
             </div>
 
             <div class="metric-label">
+
                 Arrecadado em 2026
+
             </div>
 
         </div>
 
 
+
         <div class="metric">
 
             <div class="metric-icon">
+
                 <i class="fa-solid fa-lock"></i>
+
             </div>
 
             <div class="metric-value">
+
                 80
+
             </div>
 
             <div class="metric-label">
+
                 Armários livres
+
             </div>
 
         </div>
 
 
+
         <div class="metric">
 
             <div class="metric-icon">
+
                 <i class="fa-solid fa-star"></i>
+
             </div>
 
             <div class="metric-value">
+
                 98%
+
             </div>
 
             <div class="metric-label">
+
                 Satisfação
+
             </div>
 
         </div>
@@ -1027,111 +1676,288 @@ main,
 </div>
 
 
-<!-- =========================
-     PRODUTOS
-========================= -->
 
-<section class="page-section" id="produtos">
+<!-- =====================================================
+     PRODUTOS
+===================================================== -->
+
+<section
+    class="page-section"
+    id="produtos"
+>
 
     <div class="section-card orange-decoration">
+
 
         <div class="section-header">
 
             <h2 class="section-title orange-title">
+
                 Nossos Produtos
+
             </h2>
 
+
             <p class="section-description">
+
                 Adquira os itens oficiais da AAPM.
                 Todo o valor arrecadado é revertido diretamente
                 em melhorias e eventos para nossa escola.
+
             </p>
 
         </div>
 
 
-        <div class="products-grid">
 
-            {% for p in produtos %}
+        <!-- =================================================
+             CATEGORIAS
+        ================================================== -->
 
-            <div class="product-card">
+        <div class="categories-area">
 
-                <div class="product-image">
+            <div class="categories-title">
 
-                    {% if p.imagem_path %}
+                <i class="fa-solid fa-layer-group"></i>
 
-                        <img
-                            src="/static/{{ p.imagem_path }}"
-                            alt="{{ p.nome }}"
-                        >
+                Filtre por categoria
 
-                    {% else %}
+            </div>
+
+
+            <div
+                class="categories-list"
+                id="categoriesList"
+            >
+
+                <!-- Todos -->
+
+                <button
+                    type="button"
+                    class="category-btn active"
+                    data-category="all"
+                >
+
+                    <i class="fa-solid fa-border-all"></i>
+
+                    Todos
+
+                    <span
+                        class="category-count"
+                        id="allCount"
+                    >
+                        0
+                    </span>
+
+                </button>
+
+
+                <!--
+                    As outras categorias serão
+                    criadas automaticamente pelo JavaScript
+                    conforme os produtos cadastrados.
+                -->
+
+            </div>
+
+        </div>
+
+
+
+        <!-- =================================================
+             PRODUTOS
+        ================================================== -->
+
+        <div class="products-container">
+
+
+            <div
+                class="products-grid"
+                id="productsSlider"
+            >
+
+
+                {% for p in produtos %}
+
+
+                <div
+                    class="product-card"
+                    data-category="{{ p.categoria.nome if p.categoria else 'Produto' }}"
+                >
+
+
+                    <div class="product-image">
+
+
+                        {% if p.imagem_path %}
+
+                            <img
+                                src="/static/{{ p.imagem_path }}"
+                                alt="{{ p.nome }}"
+                            >
+
+                        {% else %}
+
+                            <i class="fa-solid fa-box-open"></i>
+
+                        {% endif %}
+
+
+                        <span class="product-badge">
+
+                            {{ p.categoria.nome if p.categoria else "Produto" }}
+
+                        </span>
+
+                    </div>
+
+
+
+                    <div class="product-info">
+
+
+                        <h3 title="{{ p.nome }}">
+
+                            {{ p.nome }}
+
+                        </h3>
+
+
+                        <p>
+
+                            {{ p.estoque_atual }}
+                            unidade(s) disponível(is)
+
+                        </p>
+
+
+
+                        <div class="product-footer">
+
+
+                            <span class="product-price">
+
+                                R$ {{ "%.2f"|format(p.preco) }}
+
+                            </span>
+
+
+                            <a
+                                href="https://api.whatsapp.com/send?phone=5500000000000&text=Olá! Gostaria de saber mais sobre {{ p.nome }}."
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="btn-whatsapp"
+                            >
+
+                                <i class="fa-brands fa-whatsapp"></i>
+
+                                Quero este
+
+                            </a>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+                {% else %}
+
+
+                <div
+                    class="no-products show"
+                    id="emptyInitial"
+                >
+
+                    <div class="no-products-icon">
 
                         <i class="fa-solid fa-box-open"></i>
 
-                    {% endif %}
+                    </div>
 
+                    <strong>
 
-                    <span class="product-badge">
+                        Nenhum produto disponível
 
-                        {{ p.categoria.nome if p.categoria else "Produto" }}
+                    </strong>
+
+                    <span>
+
+                        Os produtos aparecerão aqui quando forem cadastrados.
 
                     </span>
 
                 </div>
 
 
-                <div class="product-info">
-
-                    <h3>
-                        {{ p.nome }}
-                    </h3>
-
-                    <p>
-                        {{ p.estoque_atual }}
-                        unidade(s) disponível(is)
-                    </p>
+                {% endfor %}
 
 
-                    <div class="product-footer">
 
-                        <span class="product-price">
-                            R$ {{ "%.2f"|format(p.preco) }}
-                        </span>
+                <!-- mensagem para categoria vazia -->
 
+                <div
+                    class="no-products"
+                    id="noCategoryProducts"
+                >
 
-                        <a
-                            href="https://api.whatsapp.com/send?phone=5500000000000&text=Olá! Gostaria de saber mais sobre {{ p.nome }}."
-                            target="_blank"
-                            class="btn-whatsapp"
-                        >
+                    <div class="no-products-icon">
 
-                            <i class="fa-brands fa-whatsapp"></i>
-
-                            Quero este
-
-                        </a>
+                        <i class="fa-solid fa-box-open"></i>
 
                     </div>
 
+                    <strong>
+
+                        Nenhum produto nesta categoria
+
+                    </strong>
+
+                    <span>
+
+                        Tente selecionar outra categoria.
+
+                    </span>
+
                 </div>
+
 
             </div>
 
-            {% else %}
 
-            <p
-                style="
-                    color:var(--muted);
-                    text-align:center;
-                    grid-column:1/-1;
-                    padding:30px;
-                "
-            >
-                Nenhum produto disponível no momento.
-            </p>
 
-            {% endfor %}
+            <!-- =================================================
+                 NAVEGAÇÃO
+            ================================================== -->
+
+            <div class="products-navigation">
+
+                <button
+                    type="button"
+                    class="product-nav"
+                    id="productsPrev"
+                    aria-label="Produtos anteriores"
+                >
+
+                    <i class="fa-solid fa-chevron-left"></i>
+
+                </button>
+
+
+                <button
+                    type="button"
+                    class="product-nav"
+                    id="productsNext"
+                    aria-label="Próximos produtos"
+                >
+
+                    <i class="fa-solid fa-chevron-right"></i>
+
+                </button>
+
+            </div>
+
 
         </div>
 
@@ -1140,59 +1966,81 @@ main,
 </section>
 
 
-<!-- =========================
+
+<!-- =====================================================
      QUEM SOMOS
-========================= -->
+===================================================== -->
 
 <section class="page-section">
 
     <div class="section-card">
 
+
         <div class="section-header">
 
             <h2 class="section-title">
+
                 Quem Somos
+
             </h2>
 
+
             <p class="section-description">
+
                 A <strong>AAPM – Associação de Alunos, Ex-alunos,
                 Pais e Mestres</strong> da Escola SENAI
                 <em>"Hermenegildo Campos de Almeida"</em>
                 é uma entidade sem fins lucrativos.
+
             </p>
 
         </div>
 
 
+
         <div class="about-content">
+
 
             <div class="about-box">
 
                 <h3>
+
                     <i class="fa-solid fa-graduation-cap"></i>
+
                     Nossa missão
+
                 </h3>
 
+
                 <p>
+
                     Auxiliar a escola e contribuir para um ambiente
                     melhor para alunos, professores e toda a comunidade
                     escolar.
+
                 </p>
 
             </div>
 
 
+
             <div class="about-box">
 
                 <h3>
+
                     <i class="fa-solid fa-handshake"></i>
+
                     Nosso objetivo
+
                 </h3>
 
+
                 <p>
+
                     Mobilizar recursos e promover ações que contribuam
                     para o desenvolvimento da escola e o bem-estar
                     dos estudantes.
+
                 </p>
 
             </div>
@@ -1200,59 +2048,88 @@ main,
         </div>
 
 
+
         <div class="objectives">
 
+
             <div class="objective">
 
                 <div class="objective-icon">
+
                     <i class="fa-solid fa-book-open"></i>
+
                 </div>
 
+
                 <strong>
+
                     Melhoria do ensino
+
                 </strong>
 
+
                 <span>
+
                     Investimentos em infraestrutura acadêmica
                     e pedagógica.
+
                 </span>
 
             </div>
 
 
+
             <div class="objective">
 
                 <div class="objective-icon">
+
                     <i class="fa-solid fa-user-graduate"></i>
+
                 </div>
 
+
                 <strong>
+
                     Assistência aos alunos
+
                 </strong>
 
+
                 <span>
+
                     Suporte focado nas necessidades dos estudantes.
+
                 </span>
 
             </div>
 
 
+
             <div class="objective">
 
                 <div class="objective-icon">
+
                     <i class="fa-solid fa-calendar-days"></i>
+
                 </div>
 
+
                 <strong>
+
                     Cultura e lazer
+
                 </strong>
 
+
                 <span>
+
                     Atividades e eventos para promover integração
                     e bem-estar.
+
                 </span>
 
             </div>
+
 
         </div>
 
@@ -1261,9 +2138,595 @@ main,
 </section>
 
 
-<!-- espaço final -->
 
-<div style="height:60px;"></div>
+<div style="height:45px;"></div>
+
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     CATEGORIAS + CARROSSEL
+===================================================== -->
+
+<script>
+
+document.addEventListener("DOMContentLoaded", function () {
+
+
+    /* =================================================
+       ELEMENTOS
+    ================================================= */
+
+    const slider = document.getElementById("productsSlider");
+
+    const prevButton = document.getElementById("productsPrev");
+
+    const nextButton = document.getElementById("productsNext");
+
+    const categoriesList = document.getElementById("categoriesList");
+
+    const noCategoryProducts =
+        document.getElementById("noCategoryProducts");
+
+
+    if (!slider) {
+        return;
+    }
+
+
+    /* =================================================
+       PRODUTOS
+    ================================================= */
+
+    const productCards = Array.from(
+        slider.querySelectorAll(".product-card")
+    );
+
+
+    /* =================================================
+       CRIAR CATEGORIAS AUTOMATICAMENTE
+    ================================================= */
+
+    const categories = {};
+
+
+    productCards.forEach(function (card) {
+
+        const category =
+            card.dataset.category || "Produto";
+
+
+        if (!categories[category]) {
+
+            categories[category] = 0;
+
+        }
+
+
+        categories[category]++;
+
+    });
+
+
+    /* =================================================
+       CONTADOR DE TODOS
+    ================================================= */
+
+    const allCount =
+        document.getElementById("allCount");
+
+
+    if (allCount) {
+
+        allCount.textContent =
+            productCards.length;
+
+    }
+
+
+    /* =================================================
+       CRIAR BOTÕES DE CATEGORIA
+    ================================================= */
+
+    Object.keys(categories)
+        .sort()
+        .forEach(function (category) {
+
+
+            const button =
+                document.createElement("button");
+
+
+            button.type = "button";
+
+            button.className = "category-btn";
+
+            button.dataset.category = category;
+
+
+            /*
+             * Ícone padrão.
+             */
+
+            let icon =
+                "fa-box";
+
+
+            /*
+             * Ícones específicos
+             * para algumas categorias.
+             */
+
+            const categoryLower =
+                category.toLowerCase();
+
+
+            if (
+                categoryLower.includes("bebida") ||
+                categoryLower.includes("drink")
+            ) {
+
+                icon = "fa-bottle-water";
+
+            }
+            else if (
+                categoryLower.includes("roupa") ||
+                categoryLower.includes("vest")
+            ) {
+
+                icon = "fa-shirt";
+
+            }
+            else if (
+                categoryLower.includes("material") ||
+                categoryLower.includes("escolar")
+            ) {
+
+                icon = "fa-book";
+
+            }
+            else if (
+                categoryLower.includes("alimento") ||
+                categoryLower.includes("comida")
+            ) {
+
+                icon = "fa-utensils";
+
+            }
+            else if (
+                categoryLower.includes("acess")
+            ) {
+
+                icon = "fa-gift";
+
+            }
+            else if (
+                categoryLower.includes("armário") ||
+                categoryLower.includes("armario")
+            ) {
+
+                icon = "fa-lock";
+
+            }
+
+
+            button.innerHTML = `
+
+                <i class="fa-solid ${icon}"></i>
+
+                <span>${category}</span>
+
+                <span class="category-count">
+                    ${categories[category]}
+                </span>
+
+            `;
+
+
+            categoriesList.appendChild(button);
+
+        });
+
+
+    /* =================================================
+       FUNÇÃO DE FILTRO
+    ================================================= */
+
+    function filterProducts(category) {
+
+
+        let visibleCount = 0;
+
+
+        productCards.forEach(function (card) {
+
+
+            const cardCategory =
+                card.dataset.category || "Produto";
+
+
+            const shouldShow =
+                category === "all" ||
+                cardCategory === category;
+
+
+            if (shouldShow) {
+
+                card.classList.remove("hidden");
+
+                visibleCount++;
+
+            }
+            else {
+
+                card.classList.add("hidden");
+
+            }
+
+        });
+
+
+        /*
+         * Volta o carrossel para o começo
+         * sempre que trocar de categoria.
+         */
+
+        slider.scrollTo({
+
+            left: 0,
+
+            behavior: "smooth"
+
+        });
+
+
+        /*
+         * Mostra mensagem caso a categoria
+         * não possua produtos.
+         */
+
+        if (noCategoryProducts) {
+
+            if (visibleCount === 0) {
+
+                noCategoryProducts.classList.add("show");
+
+            }
+            else {
+
+                noCategoryProducts.classList.remove("show");
+
+            }
+
+        }
+
+
+        /*
+         * Atualiza os botões.
+         */
+
+        const buttons =
+            categoriesList.querySelectorAll(
+                ".category-btn"
+            );
+
+
+        buttons.forEach(function (button) {
+
+            if (
+                button.dataset.category === category
+            ) {
+
+                button.classList.add("active");
+
+            }
+            else {
+
+                button.classList.remove("active");
+
+            }
+
+        });
+
+
+        /*
+         * Atualiza as setas.
+         */
+
+        updateNavigation();
+
+    }
+
+
+    /* =================================================
+       EVENTO DOS BOTÕES
+    ================================================= */
+
+    categoriesList.addEventListener(
+        "click",
+        function (event) {
+
+
+            const button =
+                event.target.closest(
+                    ".category-btn"
+                );
+
+
+            if (!button) {
+                return;
+            }
+
+
+            const category =
+                button.dataset.category;
+
+
+            filterProducts(category);
+
+        }
+    );
+
+
+    /* =================================================
+       CARROSSEL
+    ================================================= */
+
+    const scrollAmount = 270;
+
+
+    function updateNavigation() {
+
+
+        if (!prevButton || !nextButton) {
+            return;
+        }
+
+
+        const maxScroll =
+            slider.scrollWidth -
+            slider.clientWidth;
+
+
+        /*
+         * Botão esquerdo.
+         */
+
+        prevButton.disabled =
+            slider.scrollLeft <= 5;
+
+
+        /*
+         * Botão direito.
+         */
+
+        nextButton.disabled =
+            slider.scrollLeft >=
+            maxScroll - 5;
+
+    }
+
+
+    /* =================================================
+       BOTÃO ESQUERDO
+    ================================================= */
+
+    if (prevButton) {
+
+        prevButton.addEventListener(
+            "click",
+            function () {
+
+                slider.scrollBy({
+
+                    left: -scrollAmount,
+
+                    behavior: "smooth"
+
+                });
+
+            }
+        );
+
+    }
+
+
+    /* =================================================
+       BOTÃO DIREITO
+    ================================================= */
+
+    if (nextButton) {
+
+        nextButton.addEventListener(
+            "click",
+            function () {
+
+                slider.scrollBy({
+
+                    left: scrollAmount,
+
+                    behavior: "smooth"
+
+                });
+
+            }
+        );
+
+    }
+
+
+    /* =================================================
+       ATUALIZA SETAS AO ROLAR
+    ================================================= */
+
+    slider.addEventListener(
+        "scroll",
+        function () {
+
+            updateNavigation();
+
+        }
+    );
+
+
+    /* =================================================
+       ATUALIZA AO REDIMENSIONAR
+    ================================================= */
+
+    window.addEventListener(
+        "resize",
+        function () {
+
+            updateNavigation();
+
+        }
+    );
+
+
+    /* =================================================
+       ARRASTAR COM MOUSE
+    ================================================= */
+
+    let isDown = false;
+
+    let startX = 0;
+
+    let scrollLeft = 0;
+
+
+    slider.addEventListener(
+        "mousedown",
+        function (event) {
+
+            isDown = true;
+
+            slider.classList.add("active");
+
+            startX =
+                event.pageX -
+                slider.offsetLeft;
+
+            scrollLeft =
+                slider.scrollLeft;
+
+        }
+    );
+
+
+    slider.addEventListener(
+        "mouseleave",
+        function () {
+
+            isDown = false;
+
+            slider.classList.remove("active");
+
+        }
+    );
+
+
+    slider.addEventListener(
+        "mouseup",
+        function () {
+
+            isDown = false;
+
+            slider.classList.remove("active");
+
+        }
+    );
+
+
+    slider.addEventListener(
+        "mousemove",
+        function (event) {
+
+
+            if (!isDown) {
+                return;
+            }
+
+
+            event.preventDefault();
+
+
+            const x =
+                event.pageX -
+                slider.offsetLeft;
+
+
+            const walk =
+                (x - startX) * 1.5;
+
+
+            slider.scrollLeft =
+                scrollLeft - walk;
+
+        }
+    );
+
+
+    /* =================================================
+       TOUCH / CELULAR
+    ================================================= */
+
+    let touchStartX = 0;
+
+    let touchStartScroll = 0;
+
+
+    slider.addEventListener(
+        "touchstart",
+        function (event) {
+
+            touchStartX =
+                event.touches[0].pageX;
+
+            touchStartScroll =
+                slider.scrollLeft;
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    slider.addEventListener(
+        "touchmove",
+        function (event) {
+
+
+            const currentX =
+                event.touches[0].pageX;
+
+
+            const distance =
+                touchStartX - currentX;
+
+
+            slider.scrollLeft =
+                touchStartScroll + distance;
+
+        },
+        {
+            passive: true
+        }
+    );
+
+
+    /* =================================================
+       INICIALIZAÇÃO
+    ================================================= */
+
+    filterProducts("all");
+
+    updateNavigation();
+
+
+});
+
+</script>
 
 
 {% endblock %}

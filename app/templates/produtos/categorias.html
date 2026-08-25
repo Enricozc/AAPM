@@ -38,6 +38,10 @@
     box-shadow:0 12px 30px rgba(0,0,0,.06);
 }
 
+.item.inativo{
+    opacity:0.6;
+}
+
 /* LEFT */
 .left{
     display:flex;
@@ -133,7 +137,7 @@
 
     {% for cat in categorias %}
 
-    <div class="item" style="opacity:{{ '1' if cat.ativo else '0.6' }}">
+    <div class="item{% if not cat.ativo %} inativo{% endif %}">
 
         <!-- LEFT INFO -->
         <div class="left">

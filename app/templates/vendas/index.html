@@ -227,6 +227,8 @@
 // produtos = [{ id, nome, variacoes: [{ id, descricao, preco, estoque_atual }] }]
 const produtos = {{ produtos | tojson }};
 
+console.log('Produtos carregados:', produtos);
+
 function abrirModal() {
   const m = document.getElementById('modal-venda');
   m.classList.remove('hidden');

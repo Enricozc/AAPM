@@ -1,0 +1,104 @@
+{% extends "base.html" %}
+
+{% block titulo %}Produtos Desativados | AAPM SENAI{% endblock %}
+
+{% block conteudo %}
+
+<div class="max-w-6xl mx-auto pt-6 pb-12 px-4">
+
+    <!-- CABEÇALHO -->
+    <div class="flex items-center justify-between mb-8">
+        <div>
+            <h1 class="text-4xl font-extrabold text-gray-800">🗑️ Produtos Desativados</h1>
+            <p class="text-sm text-gray-500 mt-2">Visualize e reative produtos do seu catálogo</p>
+        </div>
+        <a href="/produtos" class="bg-[#0052cc] hover:bg-blue-700 text-white font-bold px-6 py-3 rounded-xl transition shadow-sm">
+            ← Voltar
+        </a>
+    </div>
+
+    <!-- MENSAGENS DE SUCESSO -->
+    {% if request.query_params.get('ativado') == 'ok' %}
+    <div class="bg-green-100 text-green-700 font-bold text-sm px-4 py-3 rounded-xl mb-6">
+        ✅ Produto ativado com sucesso!
+    </div>
+    {% endif %}
+
+    <!-- LISTAGEM -->
+    <div class="bg-white rounded-2xl shadow-lg border border-gray-200 overflow-hidden">
+
+        {% if produtos %}
+
+        <div class="overflow-x-auto">
+            <table class="w-full">
+                <thead class="bg-gray-50 border-b border-gray-200">
+                    <tr>
+                        <th class="text-left px-6 py-4 font-bold text-gray-700 text-sm">Produto</th>
+                        <th class="text-left px-6 py-4 font-bold text-gray-700 text-sm">Categoria</th>
+                        <th class="text-left px-6 py-4 font-bold text-gray-700 text-sm">Preço</th>
+                        <th class="text-left px-6 py-4 font-bold text-gray-700 text-sm">Estoque</th>
+                        <th class="text-center px-6 py-4 font-bold text-gray-700 text-sm">Ações</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for produto in produtos %}
+                    <tr class="border-b border-gray-100 hover:bg-gray-50 transition">
+                        <td class="px-6 py-4">
+                            <div class="flex items-center gap-3">
+                                {% if produto.imagem_url %}
+                                <img src="{{ produto.imagem_url }}" alt="{{ produto.nome }}" class="w-12 h-12 rounded-lg object-cover">
+                                {% else %}
+                                <div class="w-12 h-12 bg-gray-200 rounded-lg flex items-center justify-center">
+                                    <span class="text-gray-500 text-xs">Sem img</span>
+                                </div>
+                                {% endif %}
+                                <span class="font-semibold text-gray-800">{{ produto.nome }}</span>
+                            </div>
+                        </td>
+                        <td class="px-6 py-4 text-gray-600 text-sm">
+                            {{ produto.categoria.nome if produto.categoria else "Sem categoria" }}
+                        </td>
+                        <td class="px-6 py-4 font-bold text-gray-800">
+                            R$ {{ "%.2f"|format(produto.preco) }}
+                        </td>
+                        <td class="px-6 py-4 text-sm">
+                            <span class="bg-orange-100 text-orange-700 font-bold px-3 py-1 rounded-lg">
+                                📦 {{ produto.estoque_total }}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4 text-center">
+                            <form action="/produtos/{{ produto.id }}/ativar" method="post" style="display: inline;">
+                                <button type="submit" class="bg-green-500 hover:bg-green-600 text-white font-bold px-4 py-2 rounded-lg transition text-sm" onclick="return confirm('Ativar {{ produto.nome }}?')">
+                                    ✓ Ativar
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <div class="px-6 py-4 bg-gray-50 border-t border-gray-200 text-sm text-gray-600">
+            {{ produtos|length }} produto(s) desativado(s)
+        </div>
+
+        {% else %}
+
+        <div class="px-6 py-12 text-center">
+            <div class="text-6xl mb-3">📦</div>
+            <h3 class="text-xl font-bold text-gray-800 mb-2">Nenhum produto desativado</h3>
+            <p class="text-gray-500">Todos os seus produtos estão ativos no catálogo!</p>
+            <a href="/produtos" class="inline-block mt-6 bg-[#0052cc] text-white font-bold px-6 py-3 rounded-xl hover:bg-blue-700 transition">
+                ← Voltar para Produtos
+            </a>
+        </div>
+
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endblock %}

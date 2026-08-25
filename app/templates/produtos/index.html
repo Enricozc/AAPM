@@ -683,12 +683,23 @@
 
         {% if usuario.role == 'ADMIN' %}
 
-        <a
-            href="/produtos/novo"
-            class="btn-novo"
-        >
-            + Novo Produto
-        </a>
+        <div style="display: flex; gap: 10px;">
+            <a
+                href="/produtos/novo"
+                class="btn-novo"
+            >
+                + Novo Produto
+            </a>
+            
+            <a
+                href="/produtos/desativados/listar"
+                style="background: #f59e0b; border: none; text-decoration: none; padding: 13px 20px; border-radius: 12px; font-weight: 800; color: white; box-shadow: 0 8px 20px rgba(245, 158, 11, .22); transition: .2s;"
+                onmouseover="this.style.background='#d97706'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 12px 25px rgba(245, 158, 11, .3)';"
+                onmouseout="this.style.background='#f59e0b'; this.style.transform='translateY(0)'; this.style.boxShadow='0 8px 20px rgba(245, 158, 11, .22)';"
+            >
+                🗑️ Desativados
+            </a>
+        </div>
 
         {% endif %}
 
@@ -921,7 +932,7 @@
                 <span class="estoque">
 
                     📦 Estoque:
-                    {{ p.estoque_atual }}
+                    {{ p.estoque_total }}
 
                 </span>
 

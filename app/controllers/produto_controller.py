@@ -17,6 +17,7 @@ from sqlalchemy.orm import Session
 from app.config.database import get_db
 from app.models.produto_model import Produto
 from app.models.categoria_model import Categoria
+from app.models.produto_variacao_model import ProdutoVariacao
 from app.config.security import get_current_user, require_admin
 
 
@@ -207,7 +208,9 @@ def listar_produtos(
 
     else:
 
-        campo = Produto.estoque_atual
+        # Ordenação por estoque não funciona com propriedade
+        # Usar nome como fallback
+        campo = Produto.nome
 
 
     if direcao == "desc":
@@ -385,8 +388,6 @@ async def criar_produto(
 
     preco: float = Form(...),
 
-    estoque_atual: int = Form(...),
-
     categoria_id: int = Form(0),
 
     imagem: UploadFile = File(None),
@@ -406,8 +407,6 @@ async def criar_produto(
         nome=nome,
 
         preco=preco,
-
-        estoque_atual=estoque_atual,
 
         categoria_id=(
             categoria_id
@@ -492,8 +491,6 @@ async def atualizar_produto(
 
     preco: float = Form(...),
 
-    estoque_atual: int = Form(...),
-
     categoria_id: int = Form(0),
 
     imagem: UploadFile = File(None),
@@ -517,8 +514,6 @@ async def atualizar_produto(
         produto.nome = nome
 
         produto.preco = preco
-
-        produto.estoque_atual = estoque_atual
 
         produto.categoria_id = (
             categoria_id
@@ -579,5 +574,113 @@ def desativar_produto(
 
     return RedirectResponse(
         url="/produtos?desativado=ok",
+        status_code=302
+    )
+
+
+# ============================================================
+# EDITAR ESTOQUE DAS VARIAÇÕES
+# ============================================================
+
+@router.post("/{prod_id}/variacao/{var_id}/estoque")
+def atualizar_estoque_variacao(
+
+    prod_id: int,
+
+    var_id: int,
+
+    estoque_atual: int = Form(...),
+
+    db: Session = Depends(get_db),
+
+    admin=Depends(require_admin)
+
+):
+
+    variacao = (
+        db.query(ProdutoVariacao)
+        .filter(
+            ProdutoVariacao.id == var_id,
+            ProdutoVariacao.produto_id == prod_id
+        )
+        .first()
+    )
+
+    if variacao:
+
+        variacao.estoque_atual = max(0, estoque_atual)
+
+        db.commit()
+
+
+    return RedirectResponse(
+        url=f"/produtos/{prod_id}/editar?estoque=ok",
+        status_code=302
+    )
+
+
+# ============================================================
+# LISTAR PRODUTOS DESATIVADOS
+# ============================================================
+
+@router.get("/desativados/listar")
+def listar_desativados(
+
+    request: Request,
+
+    db: Session = Depends(get_db),
+
+    admin=Depends(require_admin)
+
+):
+
+    produtos_desativados = (
+        db.query(Produto)
+        .filter(Produto.ativo == False)
+        .order_by(Produto.nome.asc())
+        .all()
+    )
+
+    return templates.TemplateResponse(
+        request,
+        "produtos/desativados.html",
+        {
+            "request": request,
+            "usuario": admin,
+            "produtos": produtos_desativados,
+        }
+    )
+
+
+# ============================================================
+# ATIVAR PRODUTO
+# ============================================================
+
+@router.post("/{prod_id}/ativar")
+def ativar_produto(
+
+    prod_id: int,
+
+    db: Session = Depends(get_db),
+
+    admin=Depends(require_admin)
+
+):
+
+    produto = (
+        db.query(Produto)
+        .filter(Produto.id == prod_id)
+        .first()
+    )
+
+    if produto:
+
+        produto.ativo = True
+
+        db.commit()
+
+
+    return RedirectResponse(
+        url="/produtos/desativados/listar?ativado=ok",
         status_code=302
     )

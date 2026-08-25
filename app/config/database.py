@@ -1,20 +1,33 @@
 from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker, DeclarativeBase
+from sqlalchemy.orm import sessionmaker, declarative_base
+
 from app.config.settings import settings
 
-# O 'check_same_thread' é obrigatório para SQLite
-if settings.DATABASE_URL.startswith("sqlite"):
 
-    engine = create_engine(
-        settings.DATABASE_URL,
-        connect_args={"check_same_thread": False}
-    )
+DATABASE_URL = settings.database_url
 
-else:
 
-    engine = create_engine(
-        settings.DATABASE_URL
-    )
+# =====================================================
+# ENGINE
+# =====================================================
+
+connect_args = {}
+
+if DATABASE_URL.startswith("sqlite"):
+    connect_args = {
+        "check_same_thread": False
+    }
+
+
+engine = create_engine(
+    DATABASE_URL,
+    connect_args=connect_args
+)
+
+
+# =====================================================
+# SESSION
+# =====================================================
 
 SessionLocal = sessionmaker(
     autocommit=False,
@@ -22,9 +35,17 @@ SessionLocal = sessionmaker(
     bind=engine
 )
 
-class Base(DeclarativeBase):
-    pass
 
+# =====================================================
+# BASE
+# =====================================================
+
+Base = declarative_base()
+
+
+# =====================================================
+# DEPENDÊNCIA DO BANCO
+# =====================================================
 
 def get_db():
 

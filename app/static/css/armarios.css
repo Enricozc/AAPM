@@ -1,0 +1,873 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+:root {
+    --blue: #2563eb;
+    --blue-dark: #1d4ed8;
+    --blue-light: #eff6ff;
+
+    --green: #16a34a;
+    --green-dark: #15803d;
+    --green-light: #f0fdf4;
+
+    --orange: #f97316;
+    --orange-dark: #ea580c;
+    --orange-light: #fff7ed;
+
+    --red: #dc2626;
+    --red-light: #fef2f2;
+
+    --text: #0f172a;
+    --text-secondary: #475569;
+    --muted: #64748b;
+
+    --border: #e2e8f0;
+    --border-light: #eef2f7;
+
+    --bg: #f8fafc;
+    --white: #ffffff;
+
+    --shadow-sm: 0 2px 8px rgba(15, 23, 42, .04);
+    --shadow-md: 0 8px 25px rgba(15, 23, 42, .07);
+}
+
+/* =========================================================
+   BASE
+========================================================= */
+
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: "Inter", sans-serif;
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(37, 99, 235, .04),
+            transparent 35%
+        ),
+        var(--bg);
+    color: var(--text);
+}
+
+button,
+input,
+select {
+    font-family: inherit;
+}
+
+/* =========================================================
+   CONTAINER
+========================================================= */
+
+.armarios-wrapper {
+    width: min(1180px, calc(100% - 40px));
+    margin: 0 auto;
+    padding: 30px 0 50px;
+}
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.armarios-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 24px;
+}
+
+.armarios-title-area {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.armarios-icon {
+    width: 48px;
+    height: 48px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    background: var(--blue-light);
+    border: 1px solid #dbeafe;
+    border-radius: 14px;
+
+    font-size: 24px;
+}
+
+.armarios-title {
+    margin: 0;
+
+    font-size: 30px;
+    line-height: 1.1;
+
+    font-weight: 800;
+    letter-spacing: -1px;
+
+    color: var(--text);
+}
+
+.armarios-subtitle {
+    margin-top: 7px;
+
+    font-size: 13px;
+    color: var(--muted);
+}
+
+/* =========================================================
+   ESTATÍSTICAS
+========================================================= */
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.stat-card {
+    position: relative;
+
+    background: var(--white);
+
+    border: 1px solid var(--border);
+    border-radius: 16px;
+
+    padding: 20px 22px;
+
+    box-shadow: var(--shadow-sm);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.stat-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.stat-label {
+    font-size: 11px;
+    font-weight: 700;
+
+    color: var(--muted);
+
+    text-transform: uppercase;
+    letter-spacing: .7px;
+}
+
+.stat-icon {
+    width: 34px;
+    height: 34px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 10px;
+
+    font-size: 16px;
+}
+
+.stat-card.total .stat-icon {
+    background: var(--blue-light);
+    color: var(--blue);
+}
+
+.stat-card.free .stat-icon {
+    background: var(--green-light);
+    color: var(--green);
+}
+
+.stat-card.busy .stat-icon {
+    background: var(--orange-light);
+    color: var(--orange);
+}
+
+.stat-value {
+    margin-top: 10px;
+
+    font-size: 30px;
+    font-weight: 800;
+
+    letter-spacing: -1px;
+    color: var(--text);
+}
+
+.stat-description {
+    margin-top: 4px;
+
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* =========================================================
+   PAINEL PRINCIPAL
+========================================================= */
+
+.armarios-panel {
+    background: var(--white);
+
+    border: 1px solid var(--border);
+    border-radius: 18px;
+
+    box-shadow: var(--shadow-sm);
+
+    overflow: hidden;
+}
+
+/* =========================================================
+   CABEÇALHO DO PAINEL
+========================================================= */
+
+.panel-header {
+    padding: 22px 22px 18px;
+
+    border-bottom: 1px solid var(--border-light);
+}
+
+.panel-title {
+    margin: 0;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    color: var(--text);
+}
+
+.panel-subtitle {
+    margin-top: 5px;
+
+    font-size: 12px;
+    color: var(--muted);
+}
+
+/* =========================================================
+   FILTROS
+========================================================= */
+
+.filters {
+    display: grid;
+
+    grid-template-columns:
+        minmax(220px, 1.5fr)
+        minmax(160px, .9fr)
+        minmax(160px, .9fr)
+        120px
+        auto;
+
+    gap: 10px;
+
+    margin-top: 18px;
+}
+
+.filter-group {
+    position: relative;
+}
+
+.filter-input,
+.filter-select {
+    width: 100%;
+
+    height: 44px;
+
+    padding: 0 13px;
+
+    border: 1px solid var(--border);
+    border-radius: 11px;
+
+    background: #fff;
+
+    color: var(--text);
+
+    font-size: 12px;
+
+    outline: none;
+
+    transition:
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.filter-input::placeholder {
+    color: #94a3b8;
+}
+
+.filter-input:focus,
+.filter-select:focus {
+    border-color: #93c5fd;
+
+    box-shadow:
+        0 0 0 3px rgba(37, 99, 235, .08);
+}
+
+.filter-button {
+    height: 44px;
+
+    padding: 0 17px;
+
+    border: 0;
+    border-radius: 11px;
+
+    background: var(--blue);
+    color: #fff;
+
+    font-size: 12px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .15s ease;
+}
+
+.filter-button:hover {
+    background: var(--blue-dark);
+}
+
+.filter-button:active {
+    transform: scale(.98);
+}
+
+/* =========================================================
+   LISTA DE ARMÁRIOS
+========================================================= */
+
+.armarios-list {
+    padding: 22px;
+
+    display: grid;
+
+    grid-template-columns: repeat(5, 1fr);
+
+    gap: 14px;
+}
+
+/* =========================================================
+   CARD ARMÁRIO
+========================================================= */
+
+.armario-card {
+    min-height: 250px;
+
+    display: flex;
+    flex-direction: column;
+
+    padding: 16px;
+
+    border-radius: 15px;
+
+    background: #fff;
+
+    border: 1.5px solid var(--border);
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+}
+
+.armario-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}
+
+/* LIVRE */
+
+.armario-card.livre {
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #f8fffa 100%
+    );
+
+    border-color: #86efac;
+}
+
+.armario-card.livre:hover {
+    border-color: var(--green);
+}
+
+/* OCUPADO */
+
+.armario-card.ocupado {
+    background: linear-gradient(
+        180deg,
+        #ffffff 0%,
+        #fffaf5 100%
+    );
+
+    border-color: #fdba74;
+}
+
+.armario-card.ocupado:hover {
+    border-color: var(--orange);
+}
+
+/* =========================================================
+   ÍCONE
+========================================================= */
+
+.armario-lock {
+    width: 40px;
+    height: 40px;
+
+    margin: 0 auto 10px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 11px;
+
+    font-size: 19px;
+}
+
+.armario-card.livre .armario-lock {
+    background: var(--green-light);
+}
+
+.armario-card.ocupado .armario-lock {
+    background: var(--orange-light);
+}
+
+/* =========================================================
+   NÚMERO
+========================================================= */
+
+.armario-number {
+    text-align: center;
+
+    font-size: 16px;
+    font-weight: 800;
+
+    color: var(--text);
+}
+
+.armario-location {
+    margin-top: 5px;
+
+    min-height: 18px;
+
+    text-align: center;
+
+    font-size: 11px;
+    color: var(--muted);
+}
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge {
+    width: fit-content;
+
+    margin: 10px auto 12px;
+
+    padding: 5px 10px;
+
+    border-radius: 999px;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    letter-spacing: .4px;
+}
+
+.status-badge.livre {
+    background: #dcfce7;
+    color: var(--green-dark);
+}
+
+.status-badge.ocupado {
+    background: #ffedd5;
+    color: var(--orange-dark);
+}
+
+/* =========================================================
+   RESPONSÁVEL
+========================================================= */
+
+.armario-responsavel {
+    min-height: 36px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    gap: 5px;
+
+    margin-bottom: 10px;
+
+    font-size: 11px;
+    font-weight: 600;
+
+    color: var(--text-secondary);
+
+    text-align: center;
+}
+
+.armario-responsavel.empty {
+    color: #94a3b8;
+    font-weight: 500;
+}
+
+/* =========================================================
+   FORMULÁRIO / SELECT
+========================================================= */
+
+.armario-form {
+    margin-top: auto;
+}
+
+.armario-select {
+    width: 100%;
+    height: 35px;
+
+    padding: 0 8px;
+
+    border: 1px solid var(--border);
+    border-radius: 9px;
+
+    background: #fff;
+
+    color: var(--text-secondary);
+
+    font-size: 10px;
+
+    outline: none;
+}
+
+.armario-select:focus {
+    border-color: #93c5fd;
+}
+
+/* =========================================================
+   BOTÕES
+========================================================= */
+
+.armario-actions {
+    display: flex;
+    flex-direction: column;
+
+    gap: 7px;
+
+    margin-top: 8px;
+}
+
+.btn-armario {
+    width: 100%;
+    height: 34px;
+
+    border: 0;
+    border-radius: 9px;
+
+    font-size: 10px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        background .2s ease,
+        transform .15s ease;
+}
+
+.btn-armario:hover {
+    transform: translateY(-1px);
+}
+
+/* ATRIBUIR */
+
+.btn-atribuir {
+    background: var(--blue);
+    color: #fff;
+}
+
+.btn-atribuir:hover {
+    background: var(--blue-dark);
+}
+
+/* LIBERAR */
+
+.btn-liberar {
+    background: var(--orange);
+    color: #fff;
+}
+
+.btn-liberar:hover {
+    background: var(--orange-dark);
+}
+
+/* DESATIVAR */
+
+.btn-desativar {
+    background: var(--red-light);
+    color: var(--red);
+}
+
+.btn-desativar:hover {
+    background: #fee2e2;
+}
+
+/* =========================================================
+   PAGINAÇÃO
+========================================================= */
+
+.pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 16px 22px;
+
+    border-top: 1px solid var(--border-light);
+}
+
+.pagination-info {
+    font-size: 11px;
+    color: var(--muted);
+}
+
+.pagination-buttons {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.page-button {
+    min-width: 34px;
+    height: 34px;
+
+    padding: 0 9px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid var(--border);
+    border-radius: 8px;
+
+    background: #fff;
+
+    color: var(--text-secondary);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    text-decoration: none;
+
+    transition: .2s;
+}
+
+.page-button:hover {
+    background: var(--blue-light);
+    border-color: #bfdbfe;
+    color: var(--blue);
+}
+
+.page-button.active {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: #fff;
+}
+
+.page-button.disabled {
+    opacity: .45;
+    pointer-events: none;
+}
+
+/* =========================================================
+   ESTADO VAZIO
+========================================================= */
+
+.empty-state {
+    grid-column: 1 / -1;
+
+    padding: 60px 20px;
+
+    text-align: center;
+
+    color: var(--muted);
+}
+
+.empty-icon {
+    font-size: 34px;
+    margin-bottom: 10px;
+}
+
+.empty-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--text);
+}
+
+.empty-text {
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+/* =========================================================
+   RESPONSIVIDADE
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .armarios-list {
+        grid-template-columns: repeat(4, 1fr);
+    }
+
+    .filters {
+        grid-template-columns:
+            1fr 1fr 1fr
+            auto;
+    }
+}
+
+@media (max-width: 850px) {
+
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .armarios-list {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .filters {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+
+    .armarios-wrapper {
+        width: min(100% - 24px, 1180px);
+        padding-top: 20px;
+    }
+
+    .armarios-header {
+        align-items: flex-start;
+    }
+
+    .armarios-title {
+        font-size: 24px;
+    }
+
+    .armarios-list {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 14px;
+    }
+
+    .filters {
+        grid-template-columns: 1fr;
+    }
+
+    .pagination {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 400px) {
+
+    .armarios-list {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   CORES DOS ARMÁRIOS — VISUAL CLEAN
+========================================================= */
+
+.armario-card {
+    background: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: 16px;
+    box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.armario-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.08);
+}
+
+
+/* =========================================================
+   ARMÁRIO LIVRE
+========================================================= */
+
+.armario-card.livre {
+    background: #f8fffa;
+    border-color: #bbf7d0;
+}
+
+.armario-card.livre:hover {
+    border-color: #86efac;
+}
+
+
+/* ÍCONE DO ARMÁRIO LIVRE */
+
+.armario-card.livre .armario-lock {
+    background: #ecfdf5;
+    color: #16a34a;
+}
+
+
+/* =========================================================
+   ARMÁRIO OCUPADO
+========================================================= */
+
+.armario-card.ocupado {
+    background: #fffaf5;
+    border-color: #fed7aa;
+}
+
+.armario-card.ocupado:hover {
+    border-color: #fdba74;
+}
+
+
+/* ÍCONE DO ARMÁRIO OCUPADO */
+
+.armario-card.ocupado .armario-lock {
+    background: #fff7ed;
+    color: #ea580c;
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.status-badge.livre {
+    background: #ecfdf5;
+    color: #15803d;
+    border: 1px solid #bbf7d0;
+}
+
+.status-badge.ocupado {
+    background: #fff7ed;
+    color: #ea580c;
+    border: 1px solid #fed7aa;
+}

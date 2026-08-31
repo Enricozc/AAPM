@@ -1,239 +1,728 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
-:root{
-  --blue:#0052cc;
-  --orange:#ff6a00;
-  --bg:#f5f7fb;
-  --text:#0f172a;
-  --muted:#64748b;
+/* =========================================================
+   VARIÁVEIS
+========================================================= */
+
+:root {
+    --blue: #0052cc;
+    --blue-dark: #003f9e;
+    --blue-light: #eaf2ff;
+
+    --orange: #ff6a00;
+    --orange-light: #fff1e8;
+
+    --green: #16a34a;
+    --green-light: #ecfdf3;
+
+    --red: #dc2626;
+    --red-light: #fef2f2;
+
+    --bg: #f5f7fb;
+    --surface: #ffffff;
+
+    --text: #0f172a;
+    --text-secondary: #334155;
+    --muted: #64748b;
+    --muted-light: #94a3b8;
+
+    --border: #e5eaf1;
+    --border-light: #eef2f7;
+
+    --shadow-sm: 0 4px 15px rgba(15, 23, 42, .04);
+    --shadow-md: 0 10px 30px rgba(15, 23, 42, .06);
+    --shadow-lg: 0 20px 45px rgba(15, 23, 42, .10);
+
+    --radius-sm: 10px;
+    --radius-md: 14px;
+    --radius-lg: 18px;
+    --radius-xl: 22px;
 }
 
-/* FUNDO */
-body{
-  margin:0;
-  font-family:Inter, sans-serif;
-  background:
-    radial-gradient(circle at 10% 10%, rgba(0,82,204,.10), transparent 45%),
-    radial-gradient(circle at 90% 20%, rgba(255,106,0,.08), transparent 45%),
-    radial-gradient(circle at 50% 90%, rgba(0,82,204,.05), transparent 50%),
-    var(--bg);
+
+/* =========================================================
+   RESET BÁSICO
+========================================================= */
+
+* {
+    box-sizing: border-box;
 }
 
-/* WRAP */
-.dash-wrap{
-  padding-top:20px;
-  display:flex;
-  flex-direction:column;
-  gap:22px;
+html {
+    scroll-behavior: smooth;
 }
 
-/* ALERT */
-.alert{
-  padding:14px 18px;
-  border-radius:14px;
-  font-weight:700;
-  font-size:13px;
+body {
+    margin: 0;
+    min-height: 100vh;
+
+    font-family: Inter, Arial, sans-serif;
+
+    color: var(--text);
+
+    background:
+        radial-gradient(
+            circle at 10% 10%,
+            rgba(0, 82, 204, .09),
+            transparent 42%
+        ),
+        radial-gradient(
+            circle at 90% 20%,
+            rgba(255, 106, 0, .07),
+            transparent 42%
+        ),
+        radial-gradient(
+            circle at 50% 90%,
+            rgba(0, 82, 204, .045),
+            transparent 50%
+        ),
+        var(--bg);
+
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
 }
 
-.alert-error{
-  background:#fee2e2;
-  color:#991b1b;
+
+/* =========================================================
+   CONTAINER PRINCIPAL
+========================================================= */
+
+.dash-wrap {
+    width: 100%;
+    max-width: 1400px;
+
+    margin: 0 auto;
+
+    padding: 24px 28px 40px;
+
+    display: flex;
+    flex-direction: column;
+    gap: 22px;
 }
 
-.alert-success{
-  background:#dcfce7;
-  color:#166534;
+
+/* =========================================================
+   ALERTAS
+========================================================= */
+
+.alert {
+    width: 100%;
+
+    padding: 14px 18px;
+
+    border-radius: var(--radius-md);
+
+    font-size: 13px;
+    font-weight: 700;
+
+    border: 1px solid transparent;
+
+    box-shadow: var(--shadow-sm);
 }
 
-/* WELCOME */
-.welcome{
-  background:#ffffff;
-  border-radius:18px;
-  padding:26px;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  border:1px solid #eef2f7;
-  box-shadow:0 10px 30px rgba(0,0,0,.05);
+.alert-error {
+    background: var(--red-light);
+    color: #991b1b;
+    border-color: #fecaca;
 }
 
-.welcome-name{
-  font-size:22px;
-  font-weight:900;
-  color:var(--blue);
+.alert-success {
+    background: var(--green-light);
+    color: #166534;
+    border-color: #bbf7d0;
 }
 
-.role-badge{
-  padding:6px 14px;
-  border-radius:999px;
-  font-weight:800;
-  font-size:12px;
+
+/* =========================================================
+   WELCOME
+========================================================= */
+
+.welcome {
+    position: relative;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    gap: 20px;
+
+    padding: 26px 28px;
+
+    background: rgba(255, 255, 255, .94);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-md);
+
+    overflow: hidden;
 }
 
-.role-admin{ background:#fee2e2; color:#b91c1c; }
-.role-user{ background:#dcfce7; color:#166534; }
+/* detalhe visual no canto */
 
-/* GRID */
-.stats-row{
-  display:grid;
-  grid-template-columns:repeat(4,1fr);
-  gap:18px;
+.welcome::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -80px;
+    top: -100px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 82, 204, .06);
+
+    filter: blur(10px);
+
+    pointer-events: none;
 }
 
-/* CARD — FIX PRINCIPAL */
-.stat-card{
-  background:#ffffff; /* FIX: remove transparência */
-  border-radius:18px;
-  padding:20px;
-  border:1px solid #eef2f7;
-  box-shadow:0 10px 25px rgba(0,0,0,.05);
-  position:relative;
-  overflow:hidden;
-  transition:.25s;
+.welcome-name {
+    position: relative;
+    z-index: 2;
+
+    font-size: 23px;
+    font-weight: 900;
+
+    color: var(--blue);
+
+    letter-spacing: -.5px;
 }
 
-/* glow agora fica FORA do texto */
-.stat-card::before{
-  content:"";
-  position:absolute;
-  width:180px;
-  height:180px;
-  top:-60px;
-  right:-60px;
-  border-radius:50%;
-  background:rgba(0,82,204,.08);
-  filter:blur(20px);
-  z-index:0;
+.role-badge {
+    position: relative;
+    z-index: 2;
+
+    padding: 7px 14px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: .3px;
+
+    white-space: nowrap;
+
+    border: 1px solid transparent;
 }
 
-.stat-card.orange::before{
-  background:rgba(255,106,0,.08);
+.role-admin {
+    background: var(--red-light);
+    color: #b91c1c;
+    border-color: #fecaca;
 }
 
-/* conteúdo acima do glow */
-.stat-card *{
-  position:relative;
-  z-index:2;
+.role-user {
+    background: var(--green-light);
+    color: #166534;
+    border-color: #bbf7d0;
 }
+
+
+/* =========================================================
+   GRID DE ESTATÍSTICAS
+========================================================= */
+
+.stats-row {
+    display: grid;
+
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+
+/* =========================================================
+   CARD DE ESTATÍSTICA
+========================================================= */
+
+.stat-card {
+    position: relative;
+
+    min-height: 145px;
+
+    padding: 22px;
+
+    background: rgba(255, 255, 255, .96);
+
+    border: 1px solid var(--border);
+
+    border-radius: var(--radius-lg);
+
+    box-shadow: var(--shadow-md);
+
+    overflow: hidden;
+
+    transition:
+        transform .25s ease,
+        box-shadow .25s ease,
+        border-color .25s ease;
+}
+
+
+/* brilho decorativo */
+
+.stat-card::before {
+    content: "";
+
+    position: absolute;
+
+    width: 190px;
+    height: 190px;
+
+    top: -75px;
+    right: -75px;
+
+    border-radius: 50%;
+
+    background: rgba(0, 82, 204, .08);
+
+    filter: blur(20px);
+
+    pointer-events: none;
+
+    z-index: 0;
+}
+
+.stat-card.orange::before {
+    background: rgba(255, 106, 0, .09);
+}
+
+.stat-card.green::before {
+    background: rgba(22, 163, 74, .08);
+}
+
+.stat-card.red::before {
+    background: rgba(220, 38, 38, .08);
+}
+
+
+/* conteúdo acima do efeito */
+
+.stat-card > * {
+    position: relative;
+
+    z-index: 2;
+}
+
 
 /* hover */
-.stat-card:hover{
-  transform:translateY(-5px);
-  box-shadow:0 20px 45px rgba(0,0,0,.10);
+
+.stat-card:hover {
+    transform: translateY(-5px);
+
+    box-shadow: var(--shadow-lg);
+
+    border-color: #d8e0eb;
 }
 
-/* LABEL */
-.stat-label{
-  font-size:11px;
-  font-weight:800;
-  color:var(--muted);
-  text-transform:uppercase;
-  letter-spacing:.8px;
+
+/* =========================================================
+   LABEL
+========================================================= */
+
+.stat-label {
+    font-size: 11px;
+
+    font-weight: 800;
+
+    color: var(--muted);
+
+    text-transform: uppercase;
+
+    letter-spacing: .8px;
 }
 
-/* 🔥 FIX PRINCIPAL DOS NÚMEROS */
-.stat-value{
-  font-size:32px;
-  font-weight:900;
-  margin-top:10px;
-  color:var(--text); /* SEM MAIS SOMBRA OU ESCURO RUIM */
-  letter-spacing:-1px;
+
+/* =========================================================
+   VALOR
+========================================================= */
+
+.stat-value {
+    margin-top: 10px;
+
+    font-size: 34px;
+
+    line-height: 1;
+
+    font-weight: 900;
+
+    color: var(--text);
+
+    letter-spacing: -1.5px;
 }
 
-/* cores só destaque leve (não apaga leitura) */
-.stat-card.blue .stat-value{
-  color:#1d4ed8;
+.stat-card.blue .stat-value {
+    color: #1d4ed8;
 }
 
-.stat-card.orange .stat-value{
-  color:#ea580c;
+.stat-card.orange .stat-value {
+    color: #ea580c;
 }
 
-/* META */
-.stat-trend{
-  font-size:12px;
-  margin-top:6px;
-  color:#16a34a;
-  font-weight:700;
+.stat-card.green .stat-value {
+    color: #15803d;
 }
 
-/* BOTTOM */
-.bottom-row{
-  display:grid;
-  grid-template-columns:1.6fr .9fr;
-  gap:18px;
+.stat-card.red .stat-value {
+    color: #dc2626;
 }
 
-.card{
-  background:#fff;
-  border-radius:18px;
-  padding:22px;
-  border:1px solid #eef2f7;
-  box-shadow:0 10px 30px rgba(0,0,0,.05);
+
+/* =========================================================
+   META / TENDÊNCIA
+========================================================= */
+
+.stat-trend {
+    margin-top: 9px;
+
+    font-size: 12px;
+
+    color: var(--green);
+
+    font-weight: 700;
 }
 
-/* ACTIVITY */
-.act-item{
-  display:flex;
-  gap:12px;
-  padding:12px 0;
-  border-bottom:1px solid #f1f5f9;
+
+/* =========================================================
+   CARD GENÉRICO
+========================================================= */
+
+.card {
+    position: relative;
+
+    background: rgba(255, 255, 255, .96);
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-lg);
+
+    padding: 22px;
+
+    box-shadow: var(--shadow-md);
+
+    transition:
+        box-shadow .25s ease,
+        transform .25s ease;
 }
 
-.act-dot{
-  width:10px;
-  height:10px;
-  border-radius:50%;
-  margin-top:6px;
+.card:hover {
+    box-shadow: var(--shadow-lg);
 }
 
-.blue{ background:var(--blue); }
-.orange{ background:var(--orange); }
-.green{ background:#16a34a; }
 
-.act-strong{
-  font-weight:800;
-  font-size:13px;
-  color:var(--text);
+/* =========================================================
+   PARTE INFERIOR
+========================================================= */
+
+.bottom-row {
+    display: grid;
+
+    grid-template-columns: minmax(0, 1.6fr) minmax(280px, .9fr);
+
+    gap: 18px;
 }
 
-.act-by{
-  font-size:12px;
-  color:var(--muted);
+
+/* =========================================================
+   TÍTULOS DOS CARDS
+========================================================= */
+
+.card-title {
+    font-size: 16px;
+
+    font-weight: 900;
+
+    color: var(--text);
+
+    letter-spacing: -.2px;
 }
 
-.act-time{
-  margin-left:auto;
-  font-size:11px;
-  color:#cbd5e1;
+.card-subtitle {
+    margin-top: 4px;
+
+    font-size: 12px;
+
+    color: var(--muted);
 }
 
-/* ACTION */
-.action-btn{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:12px;
-  border-radius:12px;
-  text-decoration:none;
-  font-weight:800;
-  color:var(--text);
-  border:1px solid #eef2f7;
-  margin-bottom:10px;
-  transition:.2s;
+
+/* =========================================================
+   ATIVIDADES
+========================================================= */
+
+.act-item {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 12px;
+
+    padding: 13px 0;
+
+    border-bottom: 1px solid #f1f5f9;
 }
 
-.action-btn:hover{
-  transform:translateX(6px);
-  background:rgba(0,82,204,.06);
+.act-item:last-child {
+    border-bottom: none;
 }
 
-/* RESPONSIVO */
-@media(max-width:900px){
-  .stats-row{ grid-template-columns:1fr 1fr; }
-  .bottom-row{ grid-template-columns:1fr; }
+
+.act-dot {
+    flex: 0 0 auto;
+
+    width: 10px;
+    height: 10px;
+
+    margin-top: 5px;
+
+    border-radius: 50%;
 }
 
-@media(max-width:500px){
-  .stats-row{ grid-template-columns:1fr; }
+
+/* cores das atividades */
+
+.blue {
+    background: var(--blue);
+}
+
+.orange {
+    background: var(--orange);
+}
+
+.green {
+    background: var(--green);
+}
+
+
+/* texto principal */
+
+.act-strong {
+    font-size: 13px;
+
+    font-weight: 800;
+
+    line-height: 1.4;
+
+    color: var(--text);
+}
+
+
+/* responsável */
+
+.act-by {
+    margin-top: 3px;
+
+    font-size: 12px;
+
+    color: var(--muted);
+}
+
+
+/* horário */
+
+.act-time {
+    margin-left: auto;
+
+    padding-left: 10px;
+
+    font-size: 11px;
+
+    color: var(--muted-light);
+
+    white-space: nowrap;
+}
+
+
+/* =========================================================
+   AÇÕES RÁPIDAS
+========================================================= */
+
+.action-btn {
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    width: 100%;
+
+    padding: 13px 14px;
+
+    margin-bottom: 10px;
+
+    text-decoration: none;
+
+    color: var(--text);
+
+    font-size: 13px;
+
+    font-weight: 800;
+
+    background: #fff;
+
+    border: 1px solid var(--border-light);
+
+    border-radius: var(--radius-md);
+
+    transition:
+        transform .2s ease,
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease;
+}
+
+.action-btn:last-child {
+    margin-bottom: 0;
+}
+
+.action-btn:hover {
+    transform: translateX(5px);
+
+    background: var(--blue-light);
+
+    border-color: rgba(0, 82, 204, .18);
+
+    box-shadow: var(--shadow-sm);
+
+    color: var(--blue);
+}
+
+
+/* =========================================================
+   BOTÕES GERAIS
+========================================================= */
+
+button,
+a {
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    font-family: inherit;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+::-webkit-scrollbar {
+    width: 9px;
+}
+
+::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+
+    border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: #94a3b8;
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — TABLET
+========================================================= */
+
+@media (max-width: 1100px) {
+
+    .dash-wrap {
+        padding: 22px;
+    }
+
+    .stats-row {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .bottom-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR
+========================================================= */
+
+@media (max-width: 700px) {
+
+    .dash-wrap {
+        padding: 18px 14px 30px;
+
+        gap: 16px;
+    }
+
+    .welcome {
+        padding: 20px;
+
+        flex-direction: column;
+
+        align-items: flex-start;
+    }
+
+    .welcome-name {
+        font-size: 20px;
+    }
+
+    .stats-row {
+        grid-template-columns: 1fr;
+    }
+
+    .stat-card {
+        min-height: 125px;
+
+        padding: 20px;
+    }
+
+    .stat-value {
+        font-size: 30px;
+    }
+
+    .card {
+        padding: 18px;
+    }
+
+    .act-time {
+        display: none;
+    }
+}
+
+
+/* =========================================================
+   RESPONSIVIDADE — CELULAR PEQUENO
+========================================================= */
+
+@media (max-width: 420px) {
+
+    .dash-wrap {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
+
+    .welcome {
+        border-radius: 14px;
+    }
+
+    .stat-card {
+        border-radius: 14px;
+    }
+
+    .card {
+        border-radius: 14px;
+    }
+
+    .action-btn {
+        padding: 12px;
+    }
 }

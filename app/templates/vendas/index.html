@@ -133,51 +133,80 @@
 </div>
 
 <!-- MODAL NOVA VENDA -->
-<div id="modal-venda" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40">
-  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-lg mx-4 max-h-[90vh] overflow-y-auto">
+<div id="modal-venda" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/40 p-4">
+  <div class="bg-white rounded-2xl shadow-2xl w-full max-w-xl mx-auto max-h-[92vh] overflow-y-auto">
 
-    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100">
-      <h2 class="text-lg font-extrabold text-gray-800">Nova Venda</h2>
-      <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold">✕</button>
+    <!-- CABEÇALHO DO MODAL -->
+    <div class="flex items-center justify-between px-6 py-5 border-b border-gray-100 sticky top-0 bg-white z-10 rounded-t-2xl">
+      <div class="flex items-center gap-2.5">
+        <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#0052cc" stroke-width="2.2"><circle cx="9" cy="21" r="1"/><circle cx="20" cy="21" r="1"/><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"/></svg>
+        </div>
+        <h2 class="text-lg font-extrabold text-gray-800">Nova Venda</h2>
+      </div>
+      <button onclick="fecharModal()" class="text-gray-400 hover:text-gray-600 text-xl font-bold w-8 h-8 rounded-lg hover:bg-gray-50 transition flex items-center justify-center">✕</button>
     </div>
 
     <form action="/vendas/" method="post">
-      <div class="px-6 py-5 flex flex-col gap-4">
+      <div class="px-6 py-5 flex flex-col gap-6">
 
-        <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Responsável</label>
-          <input type="text" name="responsavel" required placeholder="Nome do responsável"
+        <!-- RESPONSÁVEL -->
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+            <label class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Responsável</label>
+          </div>
+          <input type="text" name="responsavel" required placeholder="Nome do responsável pela venda"
             class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 focus:ring-1 focus:ring-blue-200">
         </div>
 
+        <hr class="border-gray-100">
+
         <!-- LISTA DE ITENS -->
-        <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Produtos</label>
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+              <label class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Produtos da Venda</label>
+            </div>
+            <span id="contador-itens" class="text-xs font-bold text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">0 itens</span>
+          </div>
+
           <div id="lista-itens" class="flex flex-col gap-2.5"></div>
+
           <button type="button" onclick="adicionarItem()"
-            class="mt-2 text-sm text-[#0052cc] font-bold hover:underline">+ Adicionar produto</button>
+            class="flex items-center justify-center gap-1.5 border border-dashed border-blue-300 text-[#0052cc] text-sm font-bold py-2.5 rounded-xl hover:bg-blue-50 transition">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            Adicionar produto
+          </button>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-2">Forma de Pagamento</label>
+        <hr class="border-gray-100">
+
+        <!-- FORMA DE PAGAMENTO -->
+        <div class="flex flex-col gap-3">
+          <div class="flex items-center gap-2">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
+            <label class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Forma de Pagamento</label>
+          </div>
           <div class="grid grid-cols-3 gap-2">
             <label class="cursor-pointer">
               <input type="radio" name="forma_pagamento" value="pix" class="peer sr-only" required>
-              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] transition-all">
+              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3.5 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] hover:border-gray-300 transition-all">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
                 PIX
               </div>
             </label>
             <label class="cursor-pointer">
               <input type="radio" name="forma_pagamento" value="cartao" class="peer sr-only">
-              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] transition-all">
+              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3.5 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] hover:border-gray-300 transition-all">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
                 Cartão
               </div>
             </label>
             <label class="cursor-pointer">
               <input type="radio" name="forma_pagamento" value="dinheiro" class="peer sr-only">
-              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] transition-all">
+              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3.5 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] hover:border-gray-300 transition-all">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
                 Dinheiro
               </div>
@@ -185,31 +214,37 @@
           </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">Status</label>
-          <select name="status"
-            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-blue-400">
-            <option value="concluida">Concluída</option>
-            <option value="pendente">Pendente</option>
-          </select>
+        <!-- STATUS + OBSERVAÇÃO -->
+        <div class="grid grid-cols-2 gap-3">
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Status</label>
+            <select name="status"
+              class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm text-gray-700 focus:outline-none focus:border-blue-400">
+              <option value="concluida">Concluída</option>
+              <option value="pendente">Pendente</option>
+            </select>
+          </div>
+          <div class="flex flex-col gap-1.5">
+            <label class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">
+              Observação <span class="font-normal normal-case text-gray-400">(opcional)</span>
+            </label>
+            <input type="text" name="observacao" placeholder="Ex: pagamento em 2x"
+              class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400">
+          </div>
         </div>
 
-        <div>
-          <label class="block text-xs font-bold text-gray-500 uppercase tracking-widest mb-1.5">
-            Observação <span class="font-normal normal-case">(opcional)</span>
-          </label>
-          <textarea name="observacao" rows="2" placeholder="Ex: entrega parcial, pagamento em 2x..."
-            class="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:border-blue-400 resize-none"></textarea>
-        </div>
-
-        <div class="bg-gray-50 border border-gray-200 rounded-xl px-4 py-3 flex justify-between items-center">
-          <span class="text-sm font-bold text-gray-500">Total da Venda</span>
-          <span class="text-xl font-extrabold text-[#0052cc]" id="total-display">R$ 0,00</span>
+        <!-- TOTAL -->
+        <div class="bg-gradient-to-r from-blue-50 to-blue-50/40 border border-blue-100 rounded-xl px-5 py-4 flex justify-between items-center">
+          <div>
+            <span class="text-xs font-bold text-gray-500 uppercase tracking-widest block">Total da Venda</span>
+            <span id="contador-itens-total" class="text-[11px] text-gray-400">0 produto(s) selecionado(s)</span>
+          </div>
+          <span class="text-2xl font-extrabold text-[#0052cc]" id="total-display">R$ 0,00</span>
         </div>
 
       </div>
 
-      <div class="px-6 py-4 border-t border-gray-100 flex gap-3 justify-end">
+      <div class="px-6 py-4 border-t border-gray-100 flex gap-3 justify-end sticky bottom-0 bg-white rounded-b-2xl">
         <button type="button" onclick="fecharModal()"
           class="text-sm font-semibold text-gray-500 hover:text-gray-700 px-5 py-2.5 rounded-xl border border-gray-200 hover:bg-gray-50 transition">
           Cancelar
@@ -228,7 +263,7 @@
 const produtos = {{ produtos | tojson }};
 
 const ICONE_SEM_IMAGEM = `
-  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.8">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#cbd5e1" stroke-width="1.8">
     <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
     <polyline points="3.27 6.96 12 12.01 20.73 6.96"/>
     <line x1="12" y1="22.08" x2="12" y2="12"/>
@@ -253,39 +288,51 @@ document.getElementById('modal-venda').addEventListener('click', function(e) {
   if (e.target === this) fecharModal();
 });
 
+function atualizarContador() {
+  const qtdLinhas = document.querySelectorAll('#lista-itens .item-linha').length;
+  document.getElementById('contador-itens').textContent = qtdLinhas + (qtdLinhas === 1 ? ' item' : ' itens');
+  document.getElementById('contador-itens-total').textContent = qtdLinhas + (qtdLinhas === 1 ? ' produto selecionado' : ' produtos selecionados');
+}
+
 function adicionarItem() {
   const lista = document.getElementById('lista-itens');
 
   const div = document.createElement('div');
-  div.className = 'item-linha flex gap-3 items-center border border-gray-200 rounded-xl p-2.5 bg-gray-50/60';
+  div.className = 'item-linha flex gap-3 items-start border border-gray-200 rounded-xl p-3 bg-gray-50/50 hover:border-gray-300 transition';
   div.innerHTML = `
     <div class="foto-produto shrink-0 w-14 h-14 rounded-lg border border-gray-200 bg-white flex items-center justify-center overflow-hidden">
       ${ICONE_SEM_IMAGEM}
     </div>
 
-    <div class="flex-1 flex flex-col gap-1.5 min-w-0">
-      <select class="select-produto w-full border border-gray-200 rounded-lg px-2.5 py-1.5 text-sm font-semibold text-gray-700 focus:outline-none focus:border-blue-400 bg-white"
+    <div class="flex-1 flex flex-col gap-2 min-w-0">
+      <select class="select-produto w-full border border-gray-200 rounded-lg px-2.5 py-2 text-sm font-semibold text-gray-700 focus:outline-none focus:border-blue-400 bg-white"
         onchange="atualizarVariacoes(this)">
         <option value="">Selecione o produto...</option>
         ${produtos.map(p => `<option value="${p.id}">${p.nome}</option>`).join('')}
       </select>
 
-      <div class="grid grid-cols-[1fr_54px_74px_74px_24px] gap-1.5 items-center">
+      <div class="flex flex-col gap-1.5">
         <select name="variacao_ids" required onchange="preencherPreco(this)"
           class="select-variacao w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-gray-600 focus:outline-none focus:border-blue-400 bg-white">
           <option value="">Variação</option>
         </select>
-        <input type="number" name="quantidades" min="1" value="1" required oninput="calcularTotal()"
-          class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-center focus:outline-none focus:border-blue-400">
-        <input type="number" name="precos" step="0.01" min="0" value="0.00" required oninput="calcularTotal()"
-          class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-center focus:outline-none focus:border-blue-400">
-        <div class="subtotal-linha text-xs font-bold text-gray-700 text-right pr-1">R$ 0,00</div>
-        <button type="button" onclick="removerItem(this)"
-          class="text-red-400 hover:text-red-600 font-bold text-base justify-self-end">✕</button>
+
+        <div class="grid grid-cols-[auto_1fr_1fr_1fr] gap-1.5 items-center">
+          <span class="text-[10px] font-bold text-gray-400 uppercase pl-0.5">Qtd × Preço =</span>
+          <input type="number" name="quantidades" min="1" value="1" required oninput="calcularTotal()"
+            class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-center focus:outline-none focus:border-blue-400" placeholder="Qtd">
+          <input type="number" name="precos" step="0.01" min="0" value="0.00" required oninput="calcularTotal()"
+            class="w-full border border-gray-200 rounded-lg px-2 py-1.5 text-xs text-center focus:outline-none focus:border-blue-400" placeholder="Preço">
+          <div class="subtotal-linha text-xs font-extrabold text-[#0052cc] text-right pr-1">R$ 0,00</div>
+        </div>
       </div>
     </div>
+
+    <button type="button" onclick="removerItem(this)"
+      class="shrink-0 text-red-300 hover:text-red-600 hover:bg-red-50 rounded-lg w-7 h-7 flex items-center justify-center font-bold text-base transition">✕</button>
   `;
   lista.appendChild(div);
+  atualizarContador();
 }
 
 function atualizarVariacoes(selProduto) {
@@ -345,6 +392,7 @@ function removerItem(btn) {
   if (lista.querySelectorAll('.item-linha').length > 1) {
     btn.closest('.item-linha').remove();
     calcularTotal();
+    atualizarContador();
   }
 }
 

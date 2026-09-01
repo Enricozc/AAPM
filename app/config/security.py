@@ -1,10 +1,9 @@
+import bcrypt
 import jwt
 
 from datetime import datetime, timedelta
 
 from typing import Optional
-
-from passlib.context import CryptContext
 
 from fastapi import Request, HTTPException
 
@@ -12,13 +11,13 @@ from app.config.settings import settings
 
 
 # ============================================================
-# CRIPTOGRAFIA
+# CRIPTOGRAFIA (bcrypt puro, sem passlib)
 # ============================================================
 
-pwd_context = CryptContext(
-    schemes=["bcrypt"],
-    deprecated="auto"
-)
+def _truncar_72_bytes(password: str) -> bytes:
+    # bcrypt só usa os primeiros 72 bytes da senha; truncamos manualmente
+    # pra evitar erro em senhas muito longas.
+    return password.encode("utf-8")[:72]
 
 
 # ============================================================
@@ -27,7 +26,11 @@ pwd_context = CryptContext(
 
 def hash_password(password: str):
 
-    return pwd_context.hash(password)
+    senha_bytes = _truncar_72_bytes(password)
+    salt = bcrypt.gensalt()
+    hashed = bcrypt.hashpw(senha_bytes, salt)
+
+    return hashed.decode("utf-8")
 
 
 # ============================================================
@@ -39,10 +42,14 @@ def verify_password(
     hashed_password: str
 ):
 
-    return pwd_context.verify(
-        plain_password,
-        hashed_password
-    )
+    senha_bytes = _truncar_72_bytes(plain_password)
+    hash_bytes = hashed_password.encode("utf-8")
+
+    try:
+        return bcrypt.checkpw(senha_bytes, hash_bytes)
+    except ValueError:
+        # hash em formato inválido/corrompido
+        return False
 
 
 # ============================================================

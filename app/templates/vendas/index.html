@@ -11,7 +11,14 @@
   {% endif %}
 
   {% if request.query_params.get('erro') == 'estoque' %}
-  <div class="bg-red-100 text-red-700 font-bold text-sm px-4 py-3 rounded-xl">❌ Nenhum item tinha estoque suficiente. Venda cancelada.</div>
+  <div class="bg-red-100 text-red-700 font-bold text-sm px-4 py-3 rounded-xl">❌ Estoque insuficiente em um ou mais itens. Venda cancelada.</div>
+  {% endif %}
+  {% if request.query_params.get('erro') == 'pagamento' %}
+  <div class="bg-red-100 text-red-700 font-bold text-sm px-4 py-3 rounded-xl">❌ Confira as formas de pagamento: a soma precisa corresponder ao total.</div>
+  {% elif request.query_params.get('erro') == 'desconto' %}
+  <div class="bg-red-100 text-red-700 font-bold text-sm px-4 py-3 rounded-xl">❌ O desconto informado é inválido ou ultrapassa o subtotal.</div>
+  {% elif request.query_params.get('erro') == 'itens' %}
+  <div class="bg-red-100 text-red-700 font-bold text-sm px-4 py-3 rounded-xl">❌ Os itens da venda são inválidos. Confira os produtos e tente novamente.</div>
   {% endif %}
 
   <!-- HEADER -->
@@ -99,6 +106,12 @@
               {% else %}
                 <span class="bg-orange-100 text-orange-700 text-xs font-bold px-2.5 py-1 rounded-full">Dinheiro</span>
               {% endif %}
+              {% if venda.forma_pagamento_2 %}
+                <span class="block text-xs text-gray-500 mt-1">+ {{ venda.forma_pagamento_2|capitalize }} — R$ {{ "%.2f"|format(venda.valor_pagamento_2) }}</span>
+              {% endif %}
+              {% if venda.desconto %}
+                <span class="block text-xs text-green-700 mt-1">Desconto: R$ {{ "%.2f"|format(venda.desconto) }}</span>
+              {% endif %}
             </td>
             <td class="px-6 py-4 font-bold text-gray-800">R$ {{ "%.2f"|format(venda.valor_total) }}</td>
             <td class="px-6 py-4 text-gray-400">{{ venda.data_venda.strftime('%d/%m/%Y') }}</td>
@@ -183,34 +196,45 @@
 
         <hr class="border-gray-100">
 
-        <!-- FORMA DE PAGAMENTO -->
+        <!-- FORMAS DE PAGAMENTO -->
         <div class="flex flex-col gap-3">
           <div class="flex items-center gap-2">
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#94a3b8" stroke-width="2.5"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-            <label class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Forma de Pagamento</label>
+            <label class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Formas de Pagamento</label>
           </div>
-          <div class="grid grid-cols-3 gap-2">
-            <label class="cursor-pointer">
-              <input type="radio" name="forma_pagamento" value="pix" class="peer sr-only" required>
-              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3.5 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] hover:border-gray-300 transition-all">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg>
-                PIX
-              </div>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="forma_pagamento" value="cartao" class="peer sr-only">
-              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3.5 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] hover:border-gray-300 transition-all">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>
-                Cartão
-              </div>
-            </label>
-            <label class="cursor-pointer">
-              <input type="radio" name="forma_pagamento" value="dinheiro" class="peer sr-only">
-              <div class="flex flex-col items-center gap-1.5 border border-gray-200 rounded-xl py-3.5 text-sm font-semibold text-gray-500 peer-checked:border-[#0052cc] peer-checked:bg-blue-50 peer-checked:text-[#0052cc] hover:border-gray-300 transition-all">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="3"/></svg>
-                Dinheiro
-              </div>
-            </label>
+          <div class="grid grid-cols-2 gap-3">
+            <div class="flex flex-col gap-1.5">
+              <label for="forma-pagamento-1" class="text-xs font-semibold text-gray-500">1ª forma</label>
+              <select id="forma-pagamento-1" name="forma_pagamento" required class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm">
+                <option value="">Selecione</option>
+                <option value="pix">PIX</option>
+                <option value="cartao">Cartão</option>
+                <option value="dinheiro">Dinheiro</option>
+              </select>
+              <input id="valor-pagamento-1" type="number" name="valor_pagamento_1" min="0" step="0.01" required oninput="calcularTotal('primeiro')" class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm" aria-label="Valor da primeira forma de pagamento">
+            </div>
+            <div class="flex flex-col gap-1.5">
+              <label for="forma-pagamento-2" class="text-xs font-semibold text-gray-500">2ª forma (opcional)</label>
+              <select id="forma-pagamento-2" name="forma_pagamento_2" onchange="alterarSegundaForma()" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm">
+                <option value="">Sem segunda forma</option>
+                <option value="pix">PIX</option>
+                <option value="cartao">Cartão</option>
+                <option value="dinheiro">Dinheiro</option>
+              </select>
+              <input id="valor-pagamento-2" type="number" name="valor_pagamento_2" min="0.01" step="0.01" oninput="calcularTotal('segundo')" disabled class="w-full border border-gray-200 rounded-xl px-3 py-2 text-sm disabled:bg-gray-100" aria-label="Valor da segunda forma de pagamento">
+            </div>
+          </div>
+        </div>
+
+        <!-- DESCONTO -->
+        <div class="flex flex-col gap-2">
+          <label for="desconto" class="text-xs font-extrabold text-gray-500 uppercase tracking-widest">Desconto manual</label>
+          <div class="grid grid-cols-[1fr_auto] gap-2">
+            <input id="desconto" type="number" name="desconto" min="0" step="0.01" value="0" oninput="calcularTotal()" class="w-full border border-gray-200 rounded-xl px-3 py-2.5 text-sm" aria-label="Valor do desconto">
+            <select id="tipo-desconto" name="tipo_desconto" onchange="calcularTotal()" class="border border-gray-200 rounded-xl px-3 py-2.5 text-sm">
+              <option value="valor">R$</option>
+              <option value="percentual">%</option>
+            </select>
           </div>
         </div>
 
@@ -233,13 +257,19 @@
           </div>
         </div>
 
-        <!-- TOTAL -->
-        <div class="bg-gradient-to-r from-blue-50 to-blue-50/40 border border-blue-100 rounded-xl px-5 py-4 flex justify-between items-center">
-          <div>
-            <span class="text-xs font-bold text-gray-500 uppercase tracking-widest block">Total da Venda</span>
-            <span id="contador-itens-total" class="text-[11px] text-gray-400">0 produto(s) selecionado(s)</span>
+        <!-- RESUMO -->
+        <div class="bg-gradient-to-r from-blue-50 to-blue-50/40 border border-blue-100 rounded-xl px-5 py-4">
+          <div class="flex justify-between text-sm text-gray-600"><span>Subtotal</span><span id="subtotal-display">R$ 0,00</span></div>
+          <div class="flex justify-between text-sm text-green-700 mt-1"><span>Desconto</span><span id="desconto-display">R$ 0,00</span></div>
+          <div class="flex justify-between items-center border-t border-blue-100 mt-2 pt-2">
+            <div>
+              <span class="text-xs font-bold text-gray-500 uppercase tracking-widest block">Total da Venda</span>
+              <span id="contador-itens-total" class="text-[11px] text-gray-400">0 produto(s) selecionado(s)</span>
+            </div>
+            <span class="text-2xl font-extrabold text-[#0052cc]" id="total-display">R$ 0,00</span>
           </div>
-          <span class="text-2xl font-extrabold text-[#0052cc]" id="total-display">R$ 0,00</span>
+          <div class="flex justify-between text-xs text-gray-500 mt-2"><span>Valor pago</span><span id="pago-display">R$ 0,00</span></div>
+          <div class="flex justify-between text-xs font-bold text-gray-600 mt-1"><span>Saldo restante</span><span id="saldo-display">R$ 0,00</span></div>
         </div>
 
       </div>
@@ -396,16 +426,66 @@ function removerItem(btn) {
   }
 }
 
-function calcularTotal() {
-  let total = 0;
+function centavos(valor) {
+  return Math.round((valor + Number.EPSILON) * 100);
+}
+
+function moedaCentavos(valor) {
+  return 'R$ ' + (valor / 100).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+}
+
+function alterarSegundaForma() {
+  const forma2 = document.getElementById('forma-pagamento-2');
+  const valor2 = document.getElementById('valor-pagamento-2');
+  const temSegunda = Boolean(forma2.value);
+  valor2.disabled = !temSegunda;
+  valor2.required = temSegunda;
+  valor2.value = '';
+  calcularTotal(temSegunda ? 'segunda-selecionada' : 'forma-removida');
+}
+
+function calcularTotal(alteracao = '') {
+  let subtotalCentavos = 0;
   document.querySelectorAll('#lista-itens .item-linha').forEach(linha => {
     const qtd   = parseFloat(linha.querySelector('input[name="quantidades"]').value) || 0;
     const preco = parseFloat(linha.querySelector('input[name="precos"]').value) || 0;
-    total += qtd * preco;
+    subtotalCentavos += centavos(qtd * preco);
     atualizarSubtotalLinha(linha);
   });
-  document.getElementById('total-display').textContent =
-    'R$ ' + total.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+  const tipo = document.getElementById('tipo-desconto').value;
+  const valorDesconto = parseFloat(document.getElementById('desconto').value) || 0;
+  const descontoCentavos = tipo === 'percentual'
+    ? centavos(subtotalCentavos * valorDesconto / 100)
+    : centavos(valorDesconto);
+  const descontoValido = descontoCentavos >= 0 && descontoCentavos <= subtotalCentavos;
+  const totalCentavos = Math.max(0, subtotalCentavos - descontoCentavos);
+  const primeiro = document.getElementById('valor-pagamento-1');
+  const segundo = document.getElementById('valor-pagamento-2');
+  const temSegunda = Boolean(document.getElementById('forma-pagamento-2').value);
+
+  if (!temSegunda || alteracao === 'forma-removida') {
+    primeiro.value = (totalCentavos / 100).toFixed(2);
+  } else if (alteracao !== 'primeiro') {
+    const segundoCentavos = centavos(parseFloat(segundo.value) || 0);
+    primeiro.value = (Math.max(0, totalCentavos - segundoCentavos) / 100).toFixed(2);
+  }
+
+  const pagoCentavos = centavos(parseFloat(primeiro.value) || 0)
+    + (temSegunda ? centavos(parseFloat(segundo.value) || 0) : 0);
+  const saldoCentavos = totalCentavos - pagoCentavos;
+  document.getElementById('subtotal-display').textContent = moedaCentavos(subtotalCentavos);
+  document.getElementById('desconto-display').textContent = moedaCentavos(descontoCentavos);
+  document.getElementById('total-display').textContent = moedaCentavos(totalCentavos);
+  document.getElementById('pago-display').textContent = moedaCentavos(pagoCentavos);
+  document.getElementById('saldo-display').textContent = moedaCentavos(saldoCentavos);
+  document.getElementById('desconto').setCustomValidity(descontoValido ? '' : 'Desconto acima do subtotal.');
+  document.querySelector('#modal-venda form').onsubmit = function(event) {
+    const pagamentosFecham = pagoCentavos === totalCentavos;
+    if (!descontoValido || !pagamentosFecham) {
+      event.preventDefault();
+      alert(!descontoValido ? 'O desconto não pode ultrapassar o subtotal.' : 'Os pagamentos precisam fechar o total da venda.');
+    }
+  };
 }
 
 function filtrarTabela() {

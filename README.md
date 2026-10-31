@@ -13,7 +13,6 @@ Cauã Theodoro - RESPONSAVEL POR BACK- END
 # Instalar o requirements.txt
 
 pip install -r requirements.txt
-pip install jwt
 python -m pip install pydantic-settings
 
 # Instalar esses dois juntos 
@@ -97,3 +96,19 @@ Caso o erro persista mesmo após reinstalar, verificar se o terminal está apont
 where python
 ```
 Comparar esse caminho com o Python usado dentro do ambiente virtual do projeto.
+
+## Testes de regressão
+
+Instale as dependências de teste e execute a suíte:
+
+```powershell
+python -m pip install -r requirements-test.txt
+python -m pytest
+```
+
+Os testes usam um banco SQLite temporário separado do banco da aplicação. Antes
+de usar o PDV com a estrutura atualizada, aplique as migrations:
+
+```powershell
+python -m alembic upgrade head
+```

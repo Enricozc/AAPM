@@ -6,6 +6,7 @@ from sqlalchemy import pool
 from alembic import context
 
 from app.config.database import Base
+from app.config.settings import settings
 
 # IMPORTAR OS MODELS
 from app.models.user_model import Usuario
@@ -16,6 +17,7 @@ from app.models.venda_model import Venda
 from app.models.venda_item_model import VendaItem
 
 config = context.config
+config.set_main_option("sqlalchemy.url", settings.database_url.replace("%", "%%"))
 
 # Logs
 if config.config_file_name is not None:

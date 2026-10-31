@@ -62,6 +62,42 @@ def upgrade() -> None:
                type_=sa.String(length=20),
                existing_nullable=True)
 
+    # ---- vendas e itens: criar as tabelas quando a instalação é nova ----
+    if 'vendas' not in existing_tables:
+        op.create_table(
+            'vendas',
+            sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+            sa.Column('responsavel', sa.String(length=150), nullable=False),
+            sa.Column('valor_total', sa.Float(), nullable=False),
+            sa.Column('forma_pagamento', sa.String(length=50), nullable=False),
+            sa.Column('observacao', sa.String(length=500), nullable=True),
+            sa.Column('status', sa.String(length=30), nullable=True),
+            sa.Column('data_venda', sa.DateTime(), nullable=True),
+            sa.PrimaryKeyConstraint('id')
+        )
+        op.create_index('ix_vendas_id', 'vendas', ['id'], unique=False)
+
+    if 'venda_itens' not in existing_tables:
+        op.create_table(
+            'venda_itens',
+            sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
+            sa.Column('venda_id', sa.Integer(), nullable=False),
+            sa.Column('produto_variacao_id', sa.Integer(), nullable=True),
+            sa.Column('quantidade', sa.Integer(), nullable=False),
+            sa.Column('preco_unitario', sa.Float(), nullable=False),
+            sa.Column('valor_total', sa.Float(), nullable=False),
+            sa.ForeignKeyConstraint(
+                ['venda_id'], ['vendas.id'], ondelete='CASCADE'
+            ),
+            sa.ForeignKeyConstraint(
+                ['produto_variacao_id'],
+                ['produto_variacoes.id'],
+                ondelete='SET NULL'
+            ),
+            sa.PrimaryKeyConstraint('id')
+        )
+        op.create_index('ix_venda_itens_id', 'venda_itens', ['id'], unique=False)
+
     # ---- venda_itens: trocar produto_id por produto_variacao_id ----
     venda_itens_columns = [c['name'] for c in inspector.get_columns('venda_itens')]
     if 'produto_variacao_id' not in venda_itens_columns:

@@ -4,6 +4,8 @@ from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from pathlib import Path
 from datetime import datetime
+from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
+import math
 from typing import List
 
 from app.config.database import get_db
@@ -18,6 +20,7 @@ router = APIRouter(prefix="/vendas", tags=["Vendas"], redirect_slashes=False)
 BASE_DIR = Path(__file__).resolve().parent.parent
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
+FORMAS_PAGAMENTO = {"pix", "cartao", "dinheiro"}
 
 @router.get("")
 @router.get("/")
@@ -75,6 +78,11 @@ def criar_venda(
     quantidades:     List[int]   = Form(...),
     precos:          List[float] = Form(...),
     forma_pagamento: str         = Form(...),
+    valor_pagamento_1: float | None = Form(None),
+    forma_pagamento_2: str | None = Form(None),
+    valor_pagamento_2: float | None = Form(None),
+    desconto: float = Form(0),
+    tipo_desconto: str = Form("valor"),
     observacao:      str         = Form(""),
     status:          str         = Form("concluida"),
     db: Session = Depends(get_db),
@@ -82,21 +90,108 @@ def criar_venda(
 ):
     itens_validos = []
 
+    if len(variacao_ids) != len(quantidades) or len(variacao_ids) != len(precos):
+        return RedirectResponse(url="/vendas?erro=itens", status_code=303)
+
     for variacao_id, quantidade, preco in zip(variacao_ids, quantidades, precos):
         variacao = db.query(ProdutoVariacao).filter(ProdutoVariacao.id == variacao_id).first()
-        if not variacao or variacao.estoque_atual < quantidade:
-            continue
+        if (
+            not variacao
+            or not variacao.ativo
+            or quantidade <= 0
+            or variacao.estoque_atual < quantidade
+            or not math.isfinite(preco)
+            or preco < 0
+        ):
+            return RedirectResponse(url="/vendas?erro=estoque", status_code=303)
         itens_validos.append((variacao, quantidade, preco))
 
     if not itens_validos:
         return RedirectResponse(url="/vendas?erro=estoque", status_code=303)
 
-    valor_total = sum(q * p for _, q, p in itens_validos)
+    def centavos(valor: float) -> int:
+        return int(
+            (Decimal(str(valor)) * 100).quantize(
+                Decimal("1"), rounding=ROUND_HALF_UP
+            )
+        )
+
+    try:
+        subtotal_centavos = sum(
+            centavos(Decimal(quantidade) * Decimal(str(preco)))
+            for _, quantidade, preco in itens_validos
+        )
+    except (InvalidOperation, ValueError, OverflowError):
+        return RedirectResponse(url="/vendas?erro=itens", status_code=303)
+
+    if not math.isfinite(desconto) or desconto < 0:
+        return RedirectResponse(url="/vendas?erro=desconto", status_code=303)
+
+    try:
+        if tipo_desconto == "percentual":
+            if desconto > 100:
+                return RedirectResponse(url="/vendas?erro=desconto", status_code=303)
+            desconto_centavos = int(
+                (Decimal(subtotal_centavos) * Decimal(str(desconto)) / 100)
+                .quantize(Decimal("1"), rounding=ROUND_HALF_UP)
+            )
+        elif tipo_desconto == "valor":
+            desconto_centavos = centavos(desconto)
+        else:
+            return RedirectResponse(url="/vendas?erro=desconto", status_code=303)
+    except (InvalidOperation, ValueError, OverflowError):
+        return RedirectResponse(url="/vendas?erro=desconto", status_code=303)
+
+    if desconto_centavos > subtotal_centavos:
+        return RedirectResponse(url="/vendas?erro=desconto", status_code=303)
+
+    total_centavos = subtotal_centavos - desconto_centavos
+    forma_pagamento = forma_pagamento.strip().lower()
+    forma_pagamento_2 = (forma_pagamento_2 or "").strip().lower() or None
+
+    if forma_pagamento not in FORMAS_PAGAMENTO:
+        return RedirectResponse(url="/vendas?erro=pagamento", status_code=303)
+    if forma_pagamento_2 and (
+        forma_pagamento_2 not in FORMAS_PAGAMENTO
+        or forma_pagamento_2 == forma_pagamento
+        or valor_pagamento_2 is None
+    ):
+        return RedirectResponse(url="/vendas?erro=pagamento", status_code=303)
+    if not forma_pagamento_2 and valor_pagamento_2 not in (None, 0):
+        return RedirectResponse(url="/vendas?erro=pagamento", status_code=303)
+
+    try:
+        primeiro_centavos = (
+            total_centavos
+            if valor_pagamento_1 is None
+            else centavos(valor_pagamento_1)
+        )
+        segundo_centavos = (
+            0 if valor_pagamento_2 is None else centavos(valor_pagamento_2)
+        )
+    except (InvalidOperation, ValueError, OverflowError):
+        return RedirectResponse(url="/vendas?erro=pagamento", status_code=303)
+
+    if (
+        (valor_pagamento_1 is not None and (not math.isfinite(valor_pagamento_1) or valor_pagamento_1 < 0))
+        or (valor_pagamento_2 is not None and (not math.isfinite(valor_pagamento_2) or valor_pagamento_2 < 0))
+        or (
+            forma_pagamento_2
+            and (primeiro_centavos <= 0 or segundo_centavos <= 0)
+        )
+        or primeiro_centavos + segundo_centavos != total_centavos
+    ):
+        return RedirectResponse(url="/vendas?erro=pagamento", status_code=303)
 
     venda = Venda(
         responsavel=responsavel,
-        valor_total=valor_total,
+        valor_subtotal=subtotal_centavos / 100,
+        desconto=desconto_centavos / 100,
+        valor_total=total_centavos / 100,
         forma_pagamento=forma_pagamento,
+        valor_pagamento_1=primeiro_centavos / 100,
+        forma_pagamento_2=forma_pagamento_2,
+        valor_pagamento_2=segundo_centavos / 100 if forma_pagamento_2 else None,
         observacao=observacao,
         status=status,
     )
@@ -109,7 +204,9 @@ def criar_venda(
             produto_variacao_id=variacao.id,
             quantidade=quantidade,
             preco_unitario=preco,
-            valor_total=quantidade * preco,
+            valor_total=centavos(
+                Decimal(quantidade) * Decimal(str(preco))
+            ) / 100,
         ))
         variacao.estoque_atual -= quantidade
 

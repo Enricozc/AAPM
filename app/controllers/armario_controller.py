@@ -537,7 +537,7 @@ def historico(
 
     return templates.TemplateResponse(
         request=request,
-        name="armarios/historico.html",
+        name="armarios/historico.htm",
         context={
             "request": request,
 

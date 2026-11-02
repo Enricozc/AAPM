@@ -6,12 +6,11 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 
 from sqlalchemy.orm import Session
-from sqlalchemy import or_
+from sqlalchemy import func, or_
 
 from app.config.database import get_db
 from app.config.security import get_current_user
-from app.models.armario_model import Armario, ArmarioHistorico
-from app.models.user_model import Usuario
+from app.models.armario_model import Aluno, Armario, ArmarioHistorico
 from app.services.log_service import registrar_log
 
 
@@ -99,7 +98,10 @@ def listar(
         query = query.filter(
             or_(
                 Armario.numero.ilike(f"%{busca}%"),
-                Armario.localizacao.ilike(f"%{busca}%")
+                Armario.localizacao.ilike(f"%{busca}%"),
+                Armario.aluno.has(Aluno.nome.ilike(f"%{busca}%")),
+                Armario.aluno.has(Aluno.ra.ilike(f"%{busca}%")),
+                Armario.aluno.has(Aluno.turma_curso.ilike(f"%{busca}%")),
             )
         )
 
@@ -196,19 +198,21 @@ def listar(
     )
 
     # --------------------------------------------------------
-    # USUÁRIOS ATIVOS
-    # --------------------------------------------------------
-
-    usuarios = (
-        db.query(Usuario)
-        .filter(
-            Usuario.ativo == True
-        )
-        .order_by(
-            Usuario.nome.asc()
-        )
+    alunos = db.query(Aluno).order_by(Aluno.nome.asc()).all()
+    alunos_disponiveis = (
+        db.query(Aluno)
+        .filter(Aluno.ra.isnot(None), ~Aluno.armario.has())
+        .order_by(Aluno.nome.asc())
         .all()
     )
+    armario_por_aluno = {
+        aluno_id: numero
+        for aluno_id, numero in (
+            db.query(Armario.aluno_id, Armario.numero)
+            .filter(Armario.aluno_id.isnot(None))
+            .all()
+        )
+    }
 
     # --------------------------------------------------------
     # ESTATÍSTICAS
@@ -250,7 +254,9 @@ def listar(
 
             "armarios": armarios,
 
-            "usuarios": usuarios,
+            "alunos": alunos,
+            "alunos_disponiveis": alunos_disponiveis,
+            "armario_por_aluno": armario_por_aluno,
 
             # Estatísticas
             "total": total,
@@ -334,6 +340,133 @@ def criar(
     )
 
 
+@router.post("/alunos/novo")
+def criar_aluno(
+    nome: str = Form(..., max_length=100),
+    ra: str = Form(..., max_length=30),
+    turma_curso: str = Form("", max_length=100),
+    payload=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    usuario = _obj(payload)
+    nome = nome.strip()
+    ra = ra.strip().upper()
+    turma_curso = turma_curso.strip() or None
+    if len(nome) < 2 or not ra:
+        return RedirectResponse(
+            url="/armarios/?erro=aluno_nome",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+    if db.query(Aluno).filter(func.lower(Aluno.ra) == ra.lower()).first():
+        return RedirectResponse(
+            url="/armarios/?erro=ra_duplicado",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    aluno = Aluno(nome=nome, ra=ra, turma_curso=turma_curso)
+    db.add(aluno)
+    db.commit()
+    registrar_log(
+        db,
+        f"Aluno cadastrado para armários: {nome}",
+        f"Por: {usuario.nome}",
+        "sucesso",
+        usuario.id,
+    )
+    return RedirectResponse(
+        url="/armarios/?sucesso=aluno_cadastrado",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.post("/alunos/{aluno_id}/editar")
+def editar_aluno(
+    aluno_id: int,
+    nome: str = Form(..., max_length=100),
+    ra: str = Form(..., max_length=30),
+    turma_curso: str = Form("", max_length=100),
+    payload=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    usuario = _obj(payload)
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id).first()
+    nome = nome.strip()
+    ra = ra.strip().upper()
+    turma_curso = turma_curso.strip() or None
+    if not aluno or len(nome) < 2 or not ra:
+        return RedirectResponse(
+            url="/armarios/?erro=aluno_nome",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+    ra_em_uso = (
+        db.query(Aluno)
+        .filter(
+            func.lower(Aluno.ra) == ra.lower(),
+            Aluno.id != aluno.id,
+        )
+        .first()
+    )
+    if ra_em_uso:
+        return RedirectResponse(
+            url="/armarios/?erro=ra_duplicado",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    nome_anterior = aluno.nome
+    ra_anterior = aluno.ra
+    aluno.nome = nome
+    aluno.ra = ra
+    aluno.turma_curso = turma_curso
+    db.commit()
+    registrar_log(
+        db,
+        f"Cadastro de aluno atualizado: {nome_anterior} ({ra_anterior or 'sem RA'}) "
+        f"para {nome} ({ra})",
+        f"Por: {usuario.nome}",
+        "sucesso",
+        usuario.id,
+    )
+    return RedirectResponse(
+        url="/armarios/?sucesso=aluno_atualizado",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
+@router.post("/alunos/{aluno_id}/excluir")
+def excluir_aluno(
+    aluno_id: int,
+    payload=Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    usuario = _obj(payload)
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id).first()
+    if not aluno:
+        return RedirectResponse(
+            url="/armarios/?erro=aluno_nao_encontrado",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+    if aluno.armario:
+        return RedirectResponse(
+            url="/armarios/?erro=aluno_vinculado",
+            status_code=status.HTTP_303_SEE_OTHER,
+        )
+
+    nome = aluno.nome
+    db.delete(aluno)
+    db.commit()
+    registrar_log(
+        db,
+        f"Aluno removido do cadastro de armários: {nome}",
+        f"Por: {usuario.nome}",
+        "alerta",
+        usuario.id,
+    )
+    return RedirectResponse(
+        url="/armarios/?sucesso=aluno_excluido",
+        status_code=status.HTTP_303_SEE_OTHER,
+    )
+
+
 # ============================================================
 # ATRIBUIR ARMÁRIO
 # ============================================================
@@ -342,7 +475,7 @@ def criar(
 def atribuir(
     aid: int,
 
-    usuario_id: int = Form(...),
+    aluno_id: int = Form(...),
 
     payload=Depends(get_current_user),
 
@@ -359,20 +492,15 @@ def atribuir(
         .first()
     )
 
-    usuario = (
-        db.query(Usuario)
-        .filter(
-            Usuario.id == usuario_id
-        )
-        .first()
-    )
+    aluno = db.query(Aluno).filter(Aluno.id == aluno_id).first()
 
     # Validação
 
     if (
         not armario
         or armario.ocupado
-        or not usuario
+        or not aluno
+        or aluno.armario is not None
     ):
 
         return RedirectResponse(
@@ -384,7 +512,7 @@ def atribuir(
 
     armario.ocupado = True
 
-    armario.usuario_id = usuario.id
+    armario.aluno_id = aluno.id
 
     armario.atribuido_em = datetime.utcnow()
 
@@ -392,8 +520,9 @@ def atribuir(
 
     historico = ArmarioHistorico(
         armario_id=armario.id,
-        usuario_id=usuario.id,
-        usuario_nome=usuario.nome,
+        usuario_nome=aluno.nome,
+        aluno_ra=aluno.ra,
+        aluno_turma_curso=aluno.turma_curso,
         acao="ATRIBUIDO"
     )
 
@@ -405,7 +534,7 @@ def atribuir(
 
     registrar_log(
         db,
-        f"Armário {armario.numero} atribuído a {usuario.nome}",
+        f"Armário {armario.numero} atribuído a {aluno.nome}",
         f"Por: {usuario_logado.nome}",
         "sucesso",
         usuario_logado.id
@@ -450,20 +579,15 @@ def liberar(
             status_code=status.HTTP_303_SEE_OTHER
         )
 
-    # Nome do usuário anterior
-
-    nome_usuario = (
-        armario.usuario.nome
-        if armario.usuario
-        else "—"
-    )
+    nome_aluno = armario.aluno.nome if armario.aluno else "—"
 
     # Histórico
 
     historico = ArmarioHistorico(
         armario_id=armario.id,
-        usuario_id=armario.usuario_id,
-        usuario_nome=nome_usuario,
+        usuario_nome=nome_aluno,
+        aluno_ra=armario.aluno.ra if armario.aluno else None,
+        aluno_turma_curso=armario.aluno.turma_curso if armario.aluno else None,
         acao="LIBERADO"
     )
 
@@ -473,7 +597,7 @@ def liberar(
 
     armario.ocupado = False
 
-    armario.usuario_id = None
+    armario.aluno_id = None
 
     armario.atribuido_em = None
 
@@ -483,7 +607,7 @@ def liberar(
 
     registrar_log(
         db,
-        f"Armário {armario.numero} liberado (era de {nome_usuario})",
+        f"Armário {armario.numero} liberado (era de {nome_aluno})",
         f"Por: {usuario_logado.nome}",
         "alerta",
         usuario_logado.id
@@ -585,12 +709,25 @@ def desativar(
     if armario:
 
         numero = armario.numero
+        if armario.ocupado:
+            db.add(
+                ArmarioHistorico(
+                    armario_id=armario.id,
+                    usuario_nome=armario.aluno.nome if armario.aluno else None,
+                    aluno_ra=armario.aluno.ra if armario.aluno else None,
+                    aluno_turma_curso=(
+                        armario.aluno.turma_curso if armario.aluno else None
+                    ),
+                    acao="LIBERADO",
+                )
+            )
 
         armario.ativo = False
 
         armario.ocupado = False
 
-        armario.usuario_id = None
+        armario.aluno_id = None
+        armario.atribuido_em = None
 
         db.commit()
 

@@ -33,7 +33,25 @@ python -m alembic upgrade head
 #Rodar o código
 python -m uvicorn main:app --reload
 
+## Cadastro de alunos nos armários
 
+Na tela **Armários**, cadastre alunos e associe cada aluno a um armário. Esse
+cadastro é independente das contas de acesso: não cria login, usuário ou
+permissão para o aluno. Informe nome e RA único; turma/curso é opcional. O RA
+ajuda a diferenciar alunos com nomes iguais e pode ser pesquisado na tela.
+Cadastros antigos sem RA continuam preservados, mas pedem um RA ao serem
+editados. Para remover um aluno, libere primeiro o armário associado.
+
+Antes de iniciar uma base existente com esta versão, aplique a migration:
+
+```powershell
+python -m alembic upgrade head
+```
+
+Esta migration libera as atribuições antigas a contas do sistema. Os armários
+permanecem cadastrados, mas precisarão ser associados novamente aos alunos.
+As migrations seguintes adicionam RA e turma/curso, preservando os alunos e o
+histórico já cadastrados.
 
 
 ## Troubleshooting: `AttributeError: module 'jwt' has no attribute 'encode'`

@@ -1,4 +1,4 @@
-from app.models.armario_model import Armario
+from app.models.armario_model import Aluno, Armario, ArmarioHistorico
 from app.models.categoria_model import Categoria
 from app.models.fechamento_model import Fechamento
 from app.models.produto_model import Produto
@@ -161,14 +161,41 @@ def test_armario_atribuicao_historico_liberacao_e_desativacao(client, db, admin_
     assert created.status_code == 303
     locker = db.query(Armario).one()
     assert client.post(
-        f"/armarios/{locker.id}/atribuir",
-        data={"usuario_id": admin_user.id},
+        "/armarios/alunos/novo",
+        data={
+            "nome": "Aluno de teste",
+            "ra": "20260001",
+            "turma_curso": "2º ano - Informática",
+        },
         follow_redirects=False,
     ).status_code == 303
-    assert client.get(f"/armarios/{locker.id}/historico").status_code == 200
+    student = db.query(Aluno).one()
+    assert client.post(
+        f"/armarios/{locker.id}/atribuir",
+        data={"aluno_id": student.id},
+        follow_redirects=False,
+    ).status_code == 303
+    db.refresh(locker)
+    assert locker.aluno_id == student.id
+    history_page = client.get(f"/armarios/{locker.id}/historico")
+    assert history_page.status_code == 200
+    assert "20260001" in history_page.text
+    assert "2º ano - Informática" in history_page.text
     assert client.post(
         f"/armarios/{locker.id}/liberar", follow_redirects=False
     ).status_code == 303
+    history = (
+        db.query(ArmarioHistorico)
+        .filter_by(armario_id=locker.id)
+        .order_by(ArmarioHistorico.id)
+        .all()
+    )
+    assert [entry.usuario_nome for entry in history] == [
+        "Aluno de teste",
+        "Aluno de teste",
+    ]
+    assert history[0].aluno_ra == "20260001"
+    assert history[0].aluno_turma_curso == "2º ano - Informática"
     assert client.post(
         f"/armarios/{locker.id}/desativar", follow_redirects=False
     ).status_code == 303
@@ -189,6 +216,112 @@ def test_paginacao_busca_e_ordenacao_de_armarios(client, db):
     assert response.status_code == 200
     assert "B1" in response.text
     assert "B6" not in response.text
+
+
+def test_cadastro_de_alunos_independente_e_regras_de_atribuicao(client, db):
+    assert client.post(
+        "/armarios/alunos/novo",
+        data={"nome": "Aluno sem RA"},
+        follow_redirects=False,
+    ).status_code == 422
+    assert db.query(Aluno).count() == 0
+
+    assert client.post(
+        "/armarios/alunos/novo",
+        data={"nome": "   ", "ra": "RA-1"},
+        follow_redirects=False,
+    ).status_code == 303
+    assert db.query(Aluno).count() == 0
+
+    assert client.post(
+        "/armarios/alunos/novo",
+        data={
+            "nome": "Marina Souza",
+            "ra": " ab-123 ",
+            "turma_curso": "3º ano - Redes",
+        },
+        follow_redirects=False,
+    ).status_code == 303
+    student = db.query(Aluno).one()
+    assert student.ra == "AB-123"
+    assert student.turma_curso == "3º ano - Redes"
+    duplicate_ra = client.post(
+        "/armarios/alunos/novo",
+        data={"nome": "Outra aluna", "ra": "ab-123"},
+        follow_redirects=False,
+    )
+    assert duplicate_ra.status_code == 303
+    assert "ra_duplicado" in duplicate_ra.headers["location"]
+    assert db.query(Aluno).count() == 1
+    another_student = Aluno(nome="Outro aluno", ra="AB-999")
+    db.add(another_student)
+    db.commit()
+    duplicate_edit = client.post(
+        f"/armarios/alunos/{another_student.id}/editar",
+        data={"nome": "Outro aluno", "ra": "ab-123"},
+        follow_redirects=False,
+    )
+    assert duplicate_edit.status_code == 303
+    assert "ra_duplicado" in duplicate_edit.headers["location"]
+    assert db.query(Usuario).count() == 0
+    first_locker = Armario(numero="C1")
+    second_locker = Armario(numero="C2")
+    db.add_all([first_locker, second_locker])
+    db.commit()
+    db.refresh(first_locker)
+    db.refresh(second_locker)
+
+    page = client.get("/armarios/")
+    assert page.status_code == 200
+    assert "Cadastro independente" in page.text
+    assert "Marina Souza" in page.text
+    assert "AB-123" in page.text
+    assert "3º ano - Redes" in page.text
+    assert client.post(
+        f"/armarios/{first_locker.id}/atribuir",
+        data={"aluno_id": student.id},
+        follow_redirects=False,
+    ).status_code == 303
+    searched = client.get("/armarios/?busca=AB-123")
+    assert "Armário C1" in searched.text
+    assert "Armário C2" not in searched.text
+    assert client.post(
+        f"/armarios/{second_locker.id}/atribuir",
+        data={"aluno_id": student.id},
+        follow_redirects=False,
+    ).status_code == 303
+    db.refresh(second_locker)
+    assert second_locker.ocupado is False
+
+    assert client.post(
+        f"/armarios/alunos/{student.id}/excluir",
+        follow_redirects=False,
+    ).status_code == 303
+    assert db.query(Aluno).filter_by(id=student.id).one()
+
+    assert client.post(
+        f"/armarios/alunos/{student.id}/editar",
+        data={
+            "nome": "Marina Silva",
+            "ra": "AB-456",
+            "turma_curso": "3º ano - Desenvolvimento",
+        },
+        follow_redirects=False,
+    ).status_code == 303
+    db.refresh(student)
+    assert student.nome == "Marina Silva"
+    assert student.ra == "AB-456"
+    assert student.turma_curso == "3º ano - Desenvolvimento"
+
+    assert client.post(
+        f"/armarios/{first_locker.id}/liberar",
+        follow_redirects=False,
+    ).status_code == 303
+    assert client.post(
+        f"/armarios/alunos/{student.id}/excluir",
+        follow_redirects=False,
+    ).status_code == 303
+    assert db.query(Aluno).filter_by(id=student.id).first() is None
 
 
 def test_fechamento_registrado_e_token_reset_invalido(client, db):

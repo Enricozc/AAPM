@@ -44,7 +44,9 @@
       <thead>
         <tr>
           <th>#</th>
-          <th>Usuário</th>
+          <th>Aluno</th>
+          <th>RA</th>
+          <th>Turma/curso</th>
           <th>Ação</th>
           <th>Data / Hora</th>
         </tr>
@@ -54,6 +56,8 @@
         <tr>
           <td style="font-family:'DM Mono',monospace; color:#94a3b8;">{{ loop.index }}</td>
           <td>{{ h.usuario_nome or '—' }}</td>
+          <td>{{ h.aluno_ra or '—' }}</td>
+          <td>{{ h.aluno_turma_curso or '—' }}</td>
           <td>
             <span class="badge {{ 'badge-atrib' if h.acao == 'ATRIBUIDO' else 'badge-lib' }}">
               {{ '🔒 Atribuído' if h.acao == 'ATRIBUIDO' else '🔓 Liberado' }}

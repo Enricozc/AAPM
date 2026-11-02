@@ -525,6 +525,15 @@ select {
     font-weight: 500;
 }
 
+.armario-responsavel span {
+    display: inline-block;
+    margin-top: 4px;
+    color: var(--muted);
+    font-size: 10px;
+    font-weight: 500;
+    line-height: 1.5;
+}
+
 /* =========================================================
    FORMULÁRIO / SELECT
 ========================================================= */
@@ -870,4 +879,422 @@ select {
     background: #fff7ed;
     color: #ea580c;
     border: 1px solid #fed7aa;
+}
+
+/* =========================================================
+   CADASTRO DE ALUNOS E AÇÕES
+========================================================= */
+
+.armarios-header {
+    gap: 18px;
+}
+
+.armarios-title-area {
+    align-items: flex-start;
+}
+
+.armarios-title-area > div:last-child {
+    min-width: 0;
+}
+
+.armarios-title {
+    margin: 0;
+}
+
+.header-action {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0 17px;
+    border: 0;
+    border-radius: 10px;
+    background: var(--blue);
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer;
+    transition: background .2s ease, transform .15s ease;
+}
+
+.header-action:hover {
+    background: var(--blue-dark);
+    color: #fff;
+    transform: translateY(-1px);
+}
+
+.armario-message {
+    margin: 0 0 18px;
+    padding: 13px 16px;
+    border: 1px solid;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.armario-message.success {
+    border-color: #bbf7d0;
+    background: #f0fdf4;
+    color: #166534;
+}
+
+.armario-message.error {
+    border-color: #fecaca;
+    background: #fef2f2;
+    color: #991b1b;
+}
+
+.student-panel {
+    margin-bottom: 20px;
+    padding: 22px;
+    border: 1px solid var(--border);
+    border-radius: 18px;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+}
+
+.student-panel-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+}
+
+.student-panel-heading h2 {
+    margin: 4px 0 0;
+    color: var(--text);
+    font-size: 19px;
+    font-weight: 800;
+    letter-spacing: -.3px;
+}
+
+.student-panel-heading p {
+    max-width: 680px;
+    margin: 7px 0 0;
+    color: var(--muted);
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.section-eyebrow {
+    color: var(--blue);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.student-count,
+.student-locker,
+.student-unassigned {
+    display: inline-flex;
+    align-items: center;
+    min-height: 27px;
+    padding: 0 10px;
+    border-radius: 999px;
+    background: #eff6ff;
+    color: #1d4ed8;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.student-create-form {
+    margin-top: 20px;
+    padding: 15px;
+    border: 1px solid var(--border-light);
+    border-radius: 12px;
+    background: #f8fafc;
+}
+
+.student-create-form > label,
+.locker-create-form label {
+    display: block;
+    margin-bottom: 7px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.student-create-controls {
+    display: grid;
+    grid-template-columns: minmax(180px, 1.4fr) minmax(130px, .7fr) minmax(180px, 1fr) auto;
+    align-items: end;
+    gap: 10px;
+}
+
+.student-create-controls label {
+    display: grid;
+    gap: 7px;
+    color: var(--text-secondary);
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.student-create-controls label span {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.student-create-controls input,
+.student-table input,
+.locker-create-form input {
+    width: 100%;
+    min-width: 0;
+    height: 42px;
+    padding: 0 12px;
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    background: #fff;
+    color: var(--text);
+    font: inherit;
+    font-size: 13px;
+}
+
+.student-create-controls input:focus,
+.student-table input:focus,
+.locker-create-form input:focus {
+    outline: none;
+    border-color: #93c5fd;
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, .09);
+}
+
+.student-table-wrap {
+    margin-top: 17px;
+    overflow-x: auto;
+}
+
+.student-table {
+    width: 100%;
+    min-width: 760px;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.student-table th {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--muted);
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+}
+
+.student-table td {
+    padding: 9px 12px;
+    border-bottom: 1px solid var(--border-light);
+    color: var(--text-secondary);
+    font-size: 12px;
+}
+
+.student-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.student-table input {
+    height: 36px;
+    font-size: 12px;
+}
+
+.student-unassigned {
+    background: #f1f5f9;
+    color: #64748b;
+}
+
+.student-actions {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+}
+
+.student-actions form {
+    margin: 0;
+}
+
+.student-save,
+.student-delete {
+    min-height: 32px;
+    padding: 0 10px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--text-secondary);
+    font: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.student-save:hover {
+    border-color: #bfdbfe;
+    background: #eff6ff;
+    color: var(--blue);
+}
+
+.student-delete {
+    border-color: #fee2e2;
+    color: #b91c1c;
+}
+
+.student-delete:hover {
+    background: #fef2f2;
+}
+
+.student-empty {
+    display: grid;
+    gap: 5px;
+    margin-top: 16px;
+    padding: 22px;
+    border: 1px dashed #cbd5e1;
+    border-radius: 11px;
+    color: var(--muted);
+    font-size: 12px;
+    text-align: center;
+}
+
+.student-empty strong {
+    color: var(--text);
+    font-size: 13px;
+}
+
+.locker-create {
+    margin-bottom: 20px;
+    padding: 0 18px;
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    background: #fff;
+    box-shadow: var(--shadow-sm);
+}
+
+.locker-create summary {
+    padding: 15px 0;
+    color: var(--text);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.locker-create-form {
+    display: grid;
+    grid-template-columns: minmax(140px, .7fr) minmax(200px, 1fr) auto;
+    align-items: end;
+    gap: 12px;
+    padding: 0 0 16px;
+}
+
+.locker-create-form label {
+    margin: 0;
+}
+
+.locker-create-form label span {
+    color: var(--muted);
+    font-weight: 400;
+}
+
+.locker-create-form input {
+    display: block;
+    margin-top: 6px;
+}
+
+.locker-history-link {
+    color: var(--blue);
+    font-size: 11px;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.locker-history-link:hover,
+.locker-no-students a:hover {
+    text-decoration: underline;
+}
+
+.locker-no-students {
+    margin: auto 0;
+    color: var(--muted);
+    font-size: 11px;
+    line-height: 1.5;
+    text-align: center;
+}
+
+.locker-no-students a {
+    color: var(--blue);
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.armario-disable-form {
+    margin-top: 8px;
+}
+
+.filter-reset {
+    align-self: center;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.filter-reset:hover {
+    color: var(--blue);
+}
+
+.header-action:focus-visible,
+.student-save:focus-visible,
+.student-delete:focus-visible,
+.filter-button:focus-visible,
+.btn-armario:focus-visible {
+    outline: 3px solid #93c5fd;
+    outline-offset: 2px;
+}
+
+@media (max-width: 850px) {
+    .student-panel {
+        padding: 17px;
+    }
+
+    .locker-create-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .student-create-controls {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .locker-create-form .header-action {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 600px) {
+    .armarios-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .header-action {
+        width: 100%;
+    }
+
+    .student-panel-heading {
+        flex-direction: column;
+    }
+
+    .student-count {
+        align-self: flex-start;
+    }
+
+    .student-create-controls {
+        grid-template-columns: 1fr;
+    }
+
+    .locker-create-form {
+        grid-template-columns: 1fr;
+    }
+
+    .locker-create-form .header-action {
+        grid-column: auto;
+    }
 }

@@ -1,853 +1,271 @@
 {% extends "base.html" %}
 
-{% block title %}Armários | AAPM SENAI{% endblock %}
+{% block titulo %}Armários | AAPM SENAI{% endblock %}
+
+{% block css_extra %}
+<link rel="stylesheet" href="/static/css/armarios.css">
+{% endblock %}
 
 {% block conteudo %}
-
-<style>
-    :root {
-        --blue: #2563eb;
-        --blue-dark: #1d4ed8;
-        --green: #16a34a;
-        --orange: #f97316;
-        --red: #dc2626;
-        --bg: #f5f7fb;
-        --text: #0f172a;
-        --muted: #64748b;
-        --border: #e2e8f0;
-    }
-
-    body {
-        background: var(--bg);
-        font-family: Inter, Arial, sans-serif;
-    }
-
-    .wrapper {
-        max-width: 1250px;
-        margin: 0 auto;
-        padding-bottom: 40px;
-    }
-
-    /* =========================
-       CABEÇALHO
-    ========================= */
-
-    .top {
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        margin-bottom: 22px;
-    }
-
-    .title {
-        font-size: 32px;
-        font-weight: 900;
-        color: var(--text);
-        letter-spacing: -1px;
-    }
-
-    .subtitle {
-        margin-top: 5px;
-        color: var(--muted);
-        font-size: 14px;
-    }
-
-    /* =========================
-       ESTATÍSTICAS
-    ========================= */
-
-    .stats {
-        display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 18px;
-        margin-bottom: 22px;
-    }
-
-    .stat {
-        padding: 22px;
-        border-radius: 20px;
-        color: white;
-        box-shadow: 0 12px 30px rgba(0,0,0,.08);
-    }
-
-    .stat.blue {
-        background: linear-gradient(135deg, #2563eb, #3156d9);
-    }
-
-    .stat.green {
-        background: linear-gradient(135deg, #059669, #16a34a);
-    }
-
-    .stat.orange {
-        background: linear-gradient(135deg, #f97316, #fb923c);
-    }
-
-    .stat-label {
-        font-size: 12px;
-        font-weight: 800;
-        text-transform: uppercase;
-        opacity: .9;
-    }
-
-    .stat-number {
-        margin-top: 8px;
-        font-size: 32px;
-        font-weight: 900;
-    }
-
-    /* =========================
-       PAINEL PRINCIPAL
-    ========================= */
-
-    .panel {
-        background: white;
-        border: 1px solid var(--border);
-        border-radius: 22px;
-        overflow: hidden;
-        box-shadow: 0 10px 30px rgba(0,0,0,.04);
-    }
-
-    .panel-header {
-        padding: 20px;
-        border-bottom: 1px solid var(--border);
-    }
-
-    .panel-title {
-        font-size: 18px;
-        font-weight: 900;
-        color: var(--text);
-    }
-
-    .panel-subtitle {
-        color: var(--muted);
-        font-size: 13px;
-        margin-top: 4px;
-    }
-
-    /* =========================
-       FILTROS
-    ========================= */
-
-    .filters {
-        display: grid;
-        grid-template-columns: 1.5fr 1fr 1fr auto auto;
-        gap: 10px;
-        margin-top: 18px;
-    }
-
-    .filters input,
-    .filters select {
-        width: 100%;
-        box-sizing: border-box;
-        padding: 12px 13px;
-        border: 1px solid var(--border);
-        border-radius: 12px;
-        background: #fff;
-        outline: none;
-        font-size: 14px;
-    }
-
-    .filters input:focus,
-    .filters select:focus {
-        border-color: var(--blue);
-        box-shadow: 0 0 0 3px rgba(37,99,235,.1);
-    }
-
-    .btn {
-        border: none;
-        border-radius: 12px;
-        padding: 12px 17px;
-        font-weight: 800;
-        cursor: pointer;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-        white-space: nowrap;
-    }
-
-    .btn-primary {
-        background: var(--blue);
-        color: white;
-    }
-
-    .btn-primary:hover {
-        background: var(--blue-dark);
-    }
-
-    .btn-light {
-        background: #f1f5f9;
-        color: var(--text);
-    }
-
-    /* =========================
-       ARMÁRIOS
-    ========================= */
-
-    .armarios {
-        padding: 22px;
-        display: grid;
-        grid-template-columns: repeat(5, 1fr);
-        gap: 16px;
-    }
-
-    .armario {
-        border: 2px solid;
-        border-radius: 18px;
-        padding: 18px 12px;
-        text-align: center;
-        transition: .2s;
-        background: white;
-    }
-
-    .armario:hover {
-        transform: translateY(-4px);
-        box-shadow: 0 12px 25px rgba(0,0,0,.08);
-    }
-
-    .armario.livre {
-        border-color: #22c55e;
-        background: #f0fdf4;
-    }
-
-    .armario.ocupado {
-        border-color: #f97316;
-        background: #fff7ed;
-    }
-
-    .armario-icon {
-        font-size: 30px;
-        margin-bottom: 8px;
-    }
-
-    .armario-numero {
-        font-size: 18px;
-        font-weight: 900;
-        color: var(--text);
-    }
-
-    .armario-local {
-        margin-top: 5px;
-        font-size: 12px;
-        color: var(--muted);
-        min-height: 18px;
-    }
-
-    .status {
-        display: inline-block;
-        margin-top: 10px;
-        padding: 5px 10px;
-        border-radius: 999px;
-        font-size: 10px;
-        font-weight: 900;
-    }
-
-    .status.livre {
-        color: #15803d;
-        background: #dcfce7;
-    }
-
-    .status.ocupado {
-        color: #c2410c;
-        background: #ffedd5;
-    }
-
-    .responsavel {
-        margin-top: 10px;
-        font-size: 12px;
-        font-weight: 700;
-        color: #334155;
-    }
-
-    .armario-actions {
-        margin-top: 14px;
-        display: flex;
-        flex-direction: column;
-        gap: 7px;
-    }
-
-    .small-btn {
-        width: 100%;
-        padding: 8px;
-        border-radius: 9px;
-        border: none;
-        font-size: 12px;
-        font-weight: 800;
-        cursor: pointer;
-        text-decoration: none;
-        box-sizing: border-box;
-    }
-
-    .assign {
-        background: #2563eb;
-        color: white;
-    }
-
-    .release {
-        background: #f97316;
-        color: white;
-    }
-
-    .history {
-        background: #e2e8f0;
-        color: #334155;
-    }
-
-    .disable {
-        background: #fee2e2;
-        color: #b91c1c;
-    }
-
-    /* =========================
-       FORM ATRIBUIR
-    ========================= */
-
-    .assign-form {
-        margin-top: 10px;
-    }
-
-    .assign-form select {
-        width: 100%;
-        padding: 8px;
-        border-radius: 9px;
-        border: 1px solid var(--border);
-        font-size: 12px;
-        margin-bottom: 7px;
-    }
-
-    /* =========================
-       PAGINAÇÃO
-    ========================= */
-
-    .pagination {
-        border-top: 1px solid var(--border);
-        padding: 18px 22px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        gap: 15px;
-    }
-
-    .pagination-info {
-        color: var(--muted);
-        font-size: 13px;
-    }
-
-    .pages {
-        display: flex;
-        gap: 6px;
-    }
-
-    .page {
-        min-width: 36px;
-        height: 36px;
-        padding: 0 10px;
-        border-radius: 9px;
-        border: 1px solid var(--border);
-        background: white;
-        color: var(--text);
-        text-decoration: none;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        font-weight: 800;
-        font-size: 13px;
-    }
-
-    .page.active {
-        background: var(--blue);
-        color: white;
-        border-color: var(--blue);
-    }
-
-    .page.disabled {
-        opacity: .4;
-        pointer-events: none;
-    }
-
-    /* =========================
-       VAZIO
-    ========================= */
-
-    .empty {
-        grid-column: 1 / -1;
-        padding: 60px 20px;
-        text-align: center;
-        color: var(--muted);
-    }
-
-    .empty-icon {
-        font-size: 40px;
-        margin-bottom: 10px;
-    }
-
-    /* =========================
-       RESPONSIVO
-    ========================= */
-
-    @media(max-width: 1100px) {
-        .armarios {
-            grid-template-columns: repeat(4, 1fr);
-        }
-
-        .filters {
-            grid-template-columns: 1fr 1fr;
-        }
-    }
-
-    @media(max-width: 800px) {
-        .stats {
-            grid-template-columns: 1fr;
-        }
-
-        .armarios {
-            grid-template-columns: repeat(2, 1fr);
-        }
-
-        .top {
-            flex-direction: column;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .pagination {
-            flex-direction: column;
-        }
-    }
-
-    @media(max-width: 500px) {
-        .armarios {
-            grid-template-columns: 1fr;
-        }
-
-        .filters {
-            grid-template-columns: 1fr;
-        }
-    }
-</style>
-
-
-<div class="wrapper">
-
-    <!-- CABEÇALHO -->
-
-    <div class="top">
-
-        <div>
-            <div class="title">🔐 Armários</div>
-
-            <div class="subtitle">
-                Controle de disponibilidade, responsáveis e histórico
+<div class="armarios-wrapper">
+    <header class="armarios-header">
+        <div class="armarios-title-area">
+            <div class="armarios-icon" aria-hidden="true">▤</div>
+            <div>
+                <h1 class="armarios-title">Gestão de armários</h1>
+                <p class="armarios-subtitle">Cadastre alunos e organize a ocupação dos armários.</p>
             </div>
         </div>
+        <a class="header-action" href="#cadastro-alunos">Cadastrar aluno</a>
+    </header>
 
+    {% set sucesso = request.query_params.get('sucesso') %}
+    {% set erro = request.query_params.get('erro') %}
+    {% if sucesso %}
+    <div class="armario-message success" role="status">
+        {% if sucesso == 'aluno_cadastrado' %}Aluno cadastrado com sucesso.
+        {% elif sucesso == 'aluno_atualizado' %}Cadastro do aluno atualizado.
+        {% elif sucesso == 'aluno_excluido' %}Aluno removido do cadastro.
+        {% elif sucesso == 'atribuido' %}Aluno associado ao armário.
+        {% elif sucesso == 'liberado' %}Armário liberado.
+        {% elif sucesso == 'criado' %}Armário cadastrado.
+        {% elif sucesso == 'desativado' %}Armário desativado.
+        {% else %}Operação concluída.{% endif %}
     </div>
-
-
-    <!-- ESTATÍSTICAS -->
-
-    <div class="stats">
-
-        <div class="stat blue">
-            <div class="stat-label">
-                Total de armários
-            </div>
-
-            <div class="stat-number">
-                {{ total }}
-            </div>
-        </div>
-
-
-        <div class="stat green">
-            <div class="stat-label">
-                Armários livres
-            </div>
-
-            <div class="stat-number">
-                {{ livres }}
-            </div>
-        </div>
-
-
-        <div class="stat orange">
-            <div class="stat-label">
-                Armários ocupados
-            </div>
-
-            <div class="stat-number">
-                {{ ocupados }}
-            </div>
-        </div>
-
+    {% elif erro %}
+    <div class="armario-message error" role="alert">
+        {% if erro == 'aluno_nome' %}Informe um nome válido com até 100 caracteres.
+        {% elif erro == 'ra_duplicado' %}Já existe um aluno cadastrado com esse RA.
+        {% elif erro == 'aluno_vinculado' %}Libere o armário antes de remover este aluno.
+        {% elif erro == 'aluno_nao_encontrado' %}Aluno não encontrado.
+        {% elif erro == 'indisponivel' %}Não foi possível fazer a atribuição. Confira o aluno e o armário.
+        {% elif erro == 'nao_ocupado' %}Este armário já está livre.
+        {% elif erro == 'numero_duplicado' %}Já existe um armário com esse número.
+        {% elif erro == 'sem_permissao' %}Você não tem permissão para desativar armários.
+        {% else %}Não foi possível concluir a operação.{% endif %}
     </div>
+    {% endif %}
 
+    <section class="stats-grid" aria-label="Resumo dos armários">
+        <article class="stat-card total">
+            <div class="stat-top"><span class="stat-label">Total de armários</span><span class="stat-icon" aria-hidden="true">▤</span></div>
+            <div class="stat-value">{{ total }}</div>
+            <p class="stat-description">Armários ativos cadastrados</p>
+        </article>
+        <article class="stat-card free">
+            <div class="stat-top"><span class="stat-label">Livres</span><span class="stat-icon" aria-hidden="true">✓</span></div>
+            <div class="stat-value">{{ livres }}</div>
+            <p class="stat-description">Disponíveis para atribuição</p>
+        </article>
+        <article class="stat-card busy">
+            <div class="stat-top"><span class="stat-label">Ocupados</span><span class="stat-icon" aria-hidden="true">●</span></div>
+            <div class="stat-value">{{ ocupados }}</div>
+            <p class="stat-description">Associados a um aluno</p>
+        </article>
+    </section>
 
-    <!-- PAINEL -->
+    <section class="student-panel" id="cadastro-alunos" aria-labelledby="student-title">
+        <div class="student-panel-heading">
+            <div>
+                <span class="section-eyebrow">Cadastro independente</span>
+                <h2 id="student-title">Alunos</h2>
+                <p>Este cadastro serve apenas para identificar quem ocupa cada armário. Não cria usuário nem acesso ao sistema.</p>
+            </div>
+            <span class="student-count">{{ alunos|length }} cadastrado(s)</span>
+        </div>
 
-    <div class="panel">
+        <form class="student-create-form" action="/armarios/alunos/novo" method="post">
+            <div class="student-create-controls">
+                <label for="novo-aluno">Nome completo
+                    <input id="novo-aluno" name="nome" type="text" maxlength="100" minlength="2" required
+                        placeholder="Ex.: Maria da Silva" autocomplete="off">
+                </label>
+                <label for="novo-ra">RA
+                    <input id="novo-ra" name="ra" type="text" maxlength="30" required
+                        placeholder="Ex.: 202600123" autocomplete="off">
+                </label>
+                <label for="nova-turma">Turma/curso <span>(opcional)</span>
+                    <input id="nova-turma" name="turma_curso" type="text" maxlength="100"
+                        placeholder="Ex.: 2º ano — Informática">
+                </label>
+                <button class="header-action" type="submit">Adicionar aluno</button>
+            </div>
+        </form>
 
+        {% if alunos %}
+        <div class="student-table-wrap">
+            <table class="student-table">
+                <thead>
+                    <tr><th scope="col">Nome</th><th scope="col">RA</th><th scope="col">Turma/curso</th><th scope="col">Armário</th><th scope="col">Ações</th></tr>
+                </thead>
+                <tbody>
+                    {% for aluno in alunos %}
+                    <tr>
+                        <td>
+                            <form id="editar-aluno-{{ aluno.id }}" action="/armarios/alunos/{{ aluno.id }}/editar" method="post">
+                                <label class="sr-only" for="nome-aluno-{{ aluno.id }}">Nome de {{ aluno.nome }}</label>
+                                <input id="nome-aluno-{{ aluno.id }}" name="nome" value="{{ aluno.nome }}" maxlength="100" minlength="2" required>
+                            </form>
+                        </td>
+                        <td>
+                            <label class="sr-only" for="ra-aluno-{{ aluno.id }}">RA de {{ aluno.nome }}</label>
+                            <input id="ra-aluno-{{ aluno.id }}" name="ra" form="editar-aluno-{{ aluno.id }}"
+                                value="{{ aluno.ra or '' }}" maxlength="30" required placeholder="RA obrigatório">
+                        </td>
+                        <td>
+                            <label class="sr-only" for="turma-aluno-{{ aluno.id }}">Turma ou curso de {{ aluno.nome }}</label>
+                            <input id="turma-aluno-{{ aluno.id }}" name="turma_curso" form="editar-aluno-{{ aluno.id }}"
+                                value="{{ aluno.turma_curso or '' }}" maxlength="100" placeholder="Opcional">
+                        </td>
+                        <td>
+                            {% if armario_por_aluno.get(aluno.id) %}
+                            <span class="student-locker">Armário {{ armario_por_aluno.get(aluno.id) }}</span>
+                            {% else %}
+                            <span class="student-unassigned">Sem armário</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="student-actions">
+                                <button class="student-save" type="submit" form="editar-aluno-{{ aluno.id }}">Salvar</button>
+                                {% if not armario_por_aluno.get(aluno.id) %}
+                                <form action="/armarios/alunos/{{ aluno.id }}/excluir" method="post"
+                                    onsubmit="return confirm('Remover este aluno do cadastro?')">
+                                    <button class="student-delete" type="submit">Remover</button>
+                                </form>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="student-empty">
+            <strong>Nenhum aluno cadastrado</strong>
+            <span>Adicione os alunos aqui para poder associá-los aos armários.</span>
+        </div>
+        {% endif %}
+    </section>
+
+    <details class="locker-create">
+        <summary>Cadastrar armário</summary>
+        <form action="/armarios/novo" method="post" class="locker-create-form">
+            <label>Número<input type="text" name="numero" maxlength="20" required placeholder="Ex.: 01"></label>
+            <label>Localização <span>(opcional)</span><input type="text" name="localizacao" maxlength="100" placeholder="Ex.: Bloco A"></label>
+            <button class="header-action" type="submit">Salvar armário</button>
+        </form>
+    </details>
+
+    <section class="armarios-panel" aria-labelledby="lockers-title">
         <div class="panel-header">
-
-            <div class="panel-title">
-                Gerenciar armários
-            </div>
-
-            <div class="panel-subtitle">
-                Pesquise, filtre e organize os armários.
-            </div>
-
-
-            <!-- FILTROS -->
-
-            <form class="filters" method="get">
-
-                <input
-                    type="text"
-                    name="busca"
-                    placeholder="🔎 Número ou localização..."
-                    value="{{ busca }}"
-                >
-
-
-                <select name="situacao">
-
-                    <option value="">
-                        Todas situações
-                    </option>
-
-                    <option value="livre"
-                        {% if situacao == "livre" %}selected{% endif %}>
-                        🟢 Livres
-                    </option>
-
-                    <option value="ocupado"
-                        {% if situacao == "ocupado" %}selected{% endif %}>
-                        🟠 Ocupados
-                    </option>
-
+            <h2 class="panel-title" id="lockers-title">Armários cadastrados</h2>
+            <p class="panel-subtitle">Pesquise, filtre e associe alunos aos armários disponíveis.</p>
+            <form class="filters" method="get" action="/armarios/">
+                <label class="sr-only" for="busca-armario">Pesquisar armários ou alunos</label>
+                <input class="filter-input" id="busca-armario" type="search" name="busca"
+                    placeholder="Número, localização ou aluno" value="{{ busca }}">
+                <label class="sr-only" for="situacao-armario">Filtrar por situação</label>
+                <select class="filter-select" id="situacao-armario" name="situacao">
+                    <option value="">Todas as situações</option>
+                    <option value="livre" {% if situacao == "livre" %}selected{% endif %}>Livres</option>
+                    <option value="ocupado" {% if situacao == "ocupado" %}selected{% endif %}>Ocupados</option>
                 </select>
-
-
-                <select name="ordenar">
-
-                    <option value="numero_asc"
-                        {% if ordenar == "numero_asc" %}selected{% endif %}>
-                        Número ↑
-                    </option>
-
-                    <option value="numero_desc"
-                        {% if ordenar == "numero_desc" %}selected{% endif %}>
-                        Número ↓
-                    </option>
-
-                    <option value="localizacao"
-                        {% if ordenar == "localizacao" %}selected{% endif %}>
-                        Localização
-                    </option>
-
-                    <option value="ocupados"
-                        {% if ordenar == "ocupados" %}selected{% endif %}>
-                        Ocupados primeiro
-                    </option>
-
-                    <option value="livres"
-                        {% if ordenar == "livres" %}selected{% endif %}>
-                        Livres primeiro
-                    </option>
-
+                <label class="sr-only" for="ordenar-armario">Ordenar armários</label>
+                <select class="filter-select" id="ordenar-armario" name="ordenar">
+                    <option value="numero_asc" {% if ordenar == "numero_asc" %}selected{% endif %}>Número crescente</option>
+                    <option value="numero_desc" {% if ordenar == "numero_desc" %}selected{% endif %}>Número decrescente</option>
+                    <option value="localizacao" {% if ordenar == "localizacao" %}selected{% endif %}>Localização</option>
+                    <option value="ocupados" {% if ordenar == "ocupados" %}selected{% endif %}>Ocupados primeiro</option>
+                    <option value="livres" {% if ordenar == "livres" %}selected{% endif %}>Livres primeiro</option>
                 </select>
-
-
-                <input
-                    type="hidden"
-                    name="pagina"
-                    value="1"
-                >
-
-
-                <select name="por_pagina">
-
-                    <option value="5"
-                        {% if por_pagina == 5 %}selected{% endif %}>
-                        5 por página
-                    </option>
-
-                    <option value="10"
-                        {% if por_pagina == 10 %}selected{% endif %}>
-                        10 por página
-                    </option>
-
-                    <option value="20"
-                        {% if por_pagina == 20 %}selected{% endif %}>
-                        20 por página
-                    </option>
-
-                    <option value="50"
-                        {% if por_pagina == 50 %}selected{% endif %}>
-                        50 por página
-                    </option>
-
+                <label class="sr-only" for="por-pagina">Resultados por página</label>
+                <select class="filter-select" id="por-pagina" name="por_pagina">
+                    {% for quantidade in [5, 10, 20, 50] %}
+                    <option value="{{ quantidade }}" {% if por_pagina == quantidade %}selected{% endif %}>{{ quantidade }} por página</option>
+                    {% endfor %}
                 </select>
-
-
-                <button class="btn btn-primary" type="submit">
-                    Filtrar
-                </button>
-
-
-                {% if busca or situacao or ordenar != "numero_asc" %}
-
-                <a
-                    class="btn btn-light"
-                    href="/armarios/"
-                >
-                    Limpar
-                </a>
-
+                <input type="hidden" name="pagina" value="1">
+                <button class="filter-button" type="submit">Aplicar filtros</button>
+                {% if busca or situacao or ordenar != "numero_asc" or por_pagina != 10 %}
+                <a class="filter-reset" href="/armarios/">Limpar</a>
                 {% endif %}
-
             </form>
-
         </div>
 
-
-        <!-- ARMÁRIOS -->
-
-        <div class="armarios">
-
-            {% for a in armarios %}
-
-            <div class="armario {% if a.ocupado %}ocupado{% else %}livre{% endif %}">
-
-                <div class="armario-icon">
-                    {% if a.ocupado %}
-                        🔒
-                    {% else %}
-                        🔓
-                    {% endif %}
-                </div>
-
-
-                <div class="armario-numero">
-                    Nº {{ a.numero }}
-                </div>
-
-
-                <div class="armario-local">
-                    {% if a.localizacao %}
-                        📍 {{ a.localizacao }}
-                    {% else %}
-                        Sem localização
-                    {% endif %}
-                </div>
-
-
-                {% if a.ocupado %}
-
-                    <div class="status ocupado">
-                        OCUPADO
-                    </div>
-
-
-                    <div class="responsavel">
-
-                        👤
-
-                        {% if a.usuario %}
-                            {{ a.usuario.nome }}
-                        {% else %}
-                            Sem responsável
-                        {% endif %}
-
-                    </div>
-
-
-                    <div class="armario-actions">
-
-                        <form
-                            action="/armarios/{{ a.id }}/liberar"
-                            method="post"
-                        >
-
-                            <button
-                                class="small-btn release"
-                                type="submit"
-                                onclick="return confirm('Liberar este armário?')"
-                            >
-                                🔓 Liberar
-                            </button>
-
-                        </form>
-
-
-                    </div>
-
-
-                {% else %}
-
-                    <div class="status livre">
-                        LIVRE
-                    </div>
-
-
-                    <form
-                        class="assign-form"
-                        action="/armarios/{{ a.id }}/atribuir"
-                        method="post"
-                    >
-
-                        <select name="usuario_id" required>
-
-                            <option value="">
-                                Selecionar usuário
-                            </option>
-
-                            {% for u in usuarios %}
-
-                            <option value="{{ u.id }}">
-                                {{ u.nome }}
-                            </option>
-
-                            {% endfor %}
-
-                        </select>
-
-
-                        <button
-                            class="small-btn assign"
-                            type="submit"
-                        >
-                            👤 Atribuir
-                        </button>
-
-                    </form>
-
-
-
+        <div class="armarios-list">
+            {% for armario in armarios %}
+            <article class="armario-card {% if armario.ocupado %}ocupado{% else %}livre{% endif %}">
+                <div class="armario-lock" aria-hidden="true">{% if armario.ocupado %}●{% else %}✓{% endif %}</div>
+                <h3 class="armario-number">Armário {{ armario.numero }}</h3>
+                <p class="armario-location">{{ armario.localizacao or "Localização não informada" }}</p>
+                {% if armario.ocupado %}
+                <span class="status-badge ocupado">Ocupado</span>
+                <p class="armario-responsavel">
+                    {% if armario.aluno %}
+                    {{ armario.aluno.nome }}<br>
+                    <span>RA {{ armario.aluno.ra or "pendente" }}{% if armario.aluno.turma_curso %} · {{ armario.aluno.turma_curso }}{% endif %}</span>
+                    {% else %}Aluno não identificado{% endif %}
+                </p>
                 <div class="armario-actions">
-
-                    <form
-                        action="/armarios/{{ a.id }}/desativar"
-                        method="post"
-                    >
-
-                        <button
-                            class="small-btn disable"
-                            type="submit"
-                            onclick="return confirm('Desativar este armário?')"
-                        >
-                            🗑 Desativar
-                        </button>
-
+                    <a class="locker-history-link" href="/armarios/{{ armario.id }}/historico">Ver histórico</a>
+                    <form action="/armarios/{{ armario.id }}/liberar" method="post"
+                        onsubmit="return confirm('Liberar este armário?')">
+                        <button class="btn-armario btn-liberar" type="submit">Liberar armário</button>
                     </form>
-
                 </div>
-
+                {% else %}
+                <span class="status-badge livre">Livre</span>
+                {% if alunos_disponiveis %}
+                <form class="armario-form" action="/armarios/{{ armario.id }}/atribuir" method="post">
+                    <label class="sr-only" for="aluno-armario-{{ armario.id }}">Aluno para o armário {{ armario.numero }}</label>
+                    <select class="armario-select" id="aluno-armario-{{ armario.id }}" name="aluno_id" required>
+                        <option value="">Selecionar aluno</option>
+                        {% for aluno in alunos_disponiveis %}
+                        <option value="{{ aluno.id }}">{{ aluno.nome }} — RA {{ aluno.ra }}{% if aluno.turma_curso %} · {{ aluno.turma_curso }}{% endif %}</option>
+                        {% endfor %}
+                    </select>
+                    <button class="btn-armario btn-atribuir" type="submit">Associar aluno</button>
+                </form>
+                {% else %}
+                {% if alunos %}
+                <p class="locker-no-students">Não há alunos disponíveis com RA completo. Confira o cadastro ou libere outro armário.</p>
+                {% else %}
+                <p class="locker-no-students"><a href="#cadastro-alunos">Cadastre um aluno</a> para atribuir este armário.</p>
                 {% endif %}
-
-            </div>
-
+                {% endif %}
+                {% endif %}
+                {% if usuario.role == "ADMIN" %}
+                <form class="armario-disable-form" action="/armarios/{{ armario.id }}/desativar" method="post"
+                    onsubmit="return confirm('Desativar este armário?')">
+                    <button class="btn-armario btn-desativar" type="submit">Desativar</button>
+                </form>
+                {% endif %}
+            </article>
             {% else %}
-
-            <div class="empty">
-
-                <div class="empty-icon">
-                    🔎
-                </div>
-
-                <strong>Nenhum armário encontrado</strong>
-
-                <div>
-                    Tente alterar os filtros da pesquisa.
-                </div>
-
+            <div class="empty-state">
+                <div class="empty-icon" aria-hidden="true">⌕</div>
+                <div class="empty-title">Nenhum armário encontrado</div>
+                <p class="empty-text">Ajuste os filtros ou cadastre um armário para começar.</p>
             </div>
-
             {% endfor %}
-
         </div>
 
-
-        <!-- PAGINAÇÃO -->
-
-        <div class="pagination">
-
-            <div class="pagination-info">
-
-                Página <strong>{{ pagina }}</strong>
-                de <strong>{{ total_paginas }}</strong>
-
-                · {{ total_armarios }} armário(s)
-
-            </div>
-
-
-            <div class="pages">
-
+        <nav class="pagination" aria-label="Paginação dos armários">
+            <p class="pagination-info">Página <strong>{{ pagina }}</strong> de <strong>{{ total_paginas }}</strong> · {{ total_armarios }} resultado(s)</p>
+            <div class="pagination-buttons">
                 {% if pagina > 1 %}
-
-                <a
-                    class="page"
-                    href="/armarios/?pagina={{ pagina - 1 }}&por_pagina={{ por_pagina }}&busca={{ busca }}&situacao={{ situacao }}&ordenar={{ ordenar }}"
-                >
-                    ←
-                </a>
-
-                {% else %}
-
-                <span class="page disabled">
-                    ←
-                </span>
-
-                {% endif %}
-
-
+                <a class="page-button" href="/armarios/?pagina={{ pagina - 1 }}&por_pagina={{ por_pagina }}&busca={{ busca|urlencode }}&situacao={{ situacao }}&ordenar={{ ordenar }}" aria-label="Página anterior">‹</a>
+                {% else %}<span class="page-button disabled" aria-hidden="true">‹</span>{% endif %}
                 {% for p in range(1, total_paginas + 1) %}
-
-                    {% if p == pagina %}
-
-                    <span class="page active">
-                        {{ p }}
-                    </span>
-
-                    {% else %}
-
-                    <a
-                        class="page"
-                        href="/armarios/?pagina={{ p }}&por_pagina={{ por_pagina }}&busca={{ busca }}&situacao={{ situacao }}&ordenar={{ ordenar }}"
-                    >
-                        {{ p }}
-                    </a>
-
-                    {% endif %}
-
+                    {% if p == pagina %}<span class="page-button active" aria-current="page">{{ p }}</span>
+                    {% else %}<a class="page-button" href="/armarios/?pagina={{ p }}&por_pagina={{ por_pagina }}&busca={{ busca|urlencode }}&situacao={{ situacao }}&ordenar={{ ordenar }}">{{ p }}</a>{% endif %}
                 {% endfor %}
-
-
                 {% if pagina < total_paginas %}
-
-                <a
-                    class="page"
-                    href="/armarios/?pagina={{ pagina + 1 }}&por_pagina={{ por_pagina }}&busca={{ busca }}&situacao={{ situacao }}&ordenar={{ ordenar }}"
-                >
-                    →
-                </a>
-
-                {% else %}
-
-                <span class="page disabled">
-                    →
-                </span>
-
-                {% endif %}
-
+                <a class="page-button" href="/armarios/?pagina={{ pagina + 1 }}&por_pagina={{ por_pagina }}&busca={{ busca|urlencode }}&situacao={{ situacao }}&ordenar={{ ordenar }}" aria-label="Próxima página">›</a>
+                {% else %}<span class="page-button disabled" aria-hidden="true">›</span>{% endif %}
             </div>
-
-        </div>
-
-    </div>
-
+        </nav>
+    </section>
 </div>
-
 {% endblock %}

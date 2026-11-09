@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 
 from app.config.database import get_db
 from app.config.security import get_current_user
@@ -61,7 +61,7 @@ def confirmar_fechamento(
     db: Session = Depends(get_db),
     usuario=Depends(get_current_user),
 ):
-    hoje   = datetime.utcnow().date()
+    hoje   = datetime.now(timezone.utc).date()
     vendas = db.query(Venda).all()
     vendas_hoje = [v for v in vendas if v.data_venda.date() == hoje]
 
@@ -69,7 +69,7 @@ def confirmar_fechamento(
     nome_usuario = usuario.get("nome", "desconhecido") if isinstance(usuario, dict) else str(usuario)
 
     fechamento = Fechamento(
-        data_fechamento  = datetime.utcnow(),
+        data_fechamento  = datetime.now(timezone.utc),
         total_vendas     = len(vendas_hoje),
         receita_total    = sum(v.valor_total for v in vendas_hoje),
         receita_pix      = sum(v.valor_total for v in vendas_hoje if v.forma_pagamento == "pix"),

@@ -2,7 +2,7 @@ from fastapi import APIRouter, Request, Depends
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from sqlalchemy import func
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 from app.config.security import get_current_user
 from app.config.database import get_db
@@ -22,7 +22,7 @@ async def dashboard(
     user=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    hoje = datetime.utcnow().date()  # mesmo fuso das vendas salvas
+    hoje = datetime.now(timezone.utc).date()  # mesmo fuso das vendas salvas
 
     total_usuarios   = db.query(func.count(Usuario.id)).filter(Usuario.ativo == True).scalar() or 0
     total_produtos   = db.query(func.count(Produto.id)).filter(Produto.ativo == True).scalar() or 0

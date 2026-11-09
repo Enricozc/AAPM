@@ -1,7 +1,5 @@
 import secrets
-
-from datetime import datetime, timedelta
-
+from datetime import datetime, timedelta, timezone
 from fastapi import (
     APIRouter,
     Depends,
@@ -9,19 +7,12 @@ from fastapi import (
     Form,
     status
 )
-
 from fastapi.responses import RedirectResponse
-
 from fastapi.templating import Jinja2Templates
-
 from sqlalchemy.orm import Session
-
 from app.config.database import get_db
-
 from app.models.user_model import Usuario
-
 from app.models.password_reset_model import PasswordResetToken
-
 from app.config.security import (
     hash_password,
     verify_password,
@@ -29,17 +20,14 @@ from app.config.security import (
     get_usuario_opcional
 )
 
-
 router = APIRouter(
     prefix="/auth",
     tags=["Autenticação"]
 )
 
-
 templates = Jinja2Templates(
     directory="app/templates"
 )
-
 
 # ============================================================
 # LOGIN
@@ -288,7 +276,7 @@ def forgot_password(
     # --------------------------------------------------------
 
     expira_em = (
-        datetime.utcnow()
+        datetime.now(timezone.utc)
         + timedelta(minutes=30)
     )
 
@@ -396,7 +384,7 @@ def reset_password_page(
         )
 
 
-    if reset_token.expira_em < datetime.utcnow():
+    if reset_token.expira_em < datetime.now(timezone.utc):
 
         db.delete(reset_token)
 
@@ -502,7 +490,7 @@ def reset_password(
     # Verificar validade
     # --------------------------------------------------------
 
-    if reset_token.expira_em < datetime.utcnow():
+    if reset_token.expira_em < datetime.now(timezone.utc):
 
         db.delete(reset_token)
 

@@ -3,7 +3,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.templating import Jinja2Templates
 from sqlalchemy.orm import Session
 from pathlib import Path
-from datetime import datetime
+from datetime import datetime, timezone
 from decimal import Decimal, InvalidOperation, ROUND_HALF_UP
 import math
 from typing import List
@@ -47,7 +47,7 @@ def listar_vendas(
             ]
         })
 
-    hoje        = datetime.utcnow().date()
+    hoje        = datetime.now(timezone.utc).date()
     vendas_hoje = sum(1 for v in vendas if v.data_venda.date() == hoje)
     total_mes   = sum(1 for v in vendas if v.data_venda.month == hoje.month)
     receita_mes = sum(v.valor_total for v in vendas if v.data_venda.month == hoje.month)

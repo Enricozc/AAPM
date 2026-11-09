@@ -1,14 +1,137 @@
-# AAPM
+# AAPM - Sistema de Gestão Escolar e PDV
 
-Enrico Candido - (LIDER) RESPONSAVEL POR BACK-END E PRODUCT MASTER
+## 1. Visão geral
 
-Izabelly Esteves- RESPONSAVEL POR FRONT-END, E PRODUCT OWNER 
+O projeto AAPM é um sistema de gestão para a escola, com módulos de:
+- autenticação e usuários
+- categorias e produtos
+- controle de estoque
+- armários e alunos
+- dashboard e fechamento de caixa
+- ponto de venda (PDV)
 
-Eduardo Furtado - RESPONSAVEL POR FRONT-END
+O objetivo principal deste trabalho foi evoluir o módulo de vendas para atender ao fluxo real do ponto de venda, incluindo múltiplas formas de pagamento e descontos manuais, além de validar a estabilidade do backend com testes de regressão.
 
-Cauã Theodoro - RESPONSAVEL POR BACK- END
+## 2. Equipe
 
+- Enrico Candido — Líder / Back-end
+- Izabelly Esteves — Front-end / Product Owner
+- Eduardo Furtado — Front-end
+- Cauã Theodoro — Back-end
 
+## 3. Funcionalidades implementadas
+
+### PDV
+- venda com duas formas de pagamento na mesma transação
+- desconto manual em valor ou percentual
+- validação do subtotal e total final
+- controle de estoque ao registrar venda
+- registro de vendas e histórico de pagamentos
+
+### Gestão
+- cadastro e controle de usuários
+- cadastro de categorias e produtos
+- gestão de variações de produto
+- controle de armários e associação de alunos
+- fechamento do dia com resumo financeiro
+- dashboard com indicadores de vendas e receitas
+
+### Segurança
+- login e autenticação por token
+- recuperação de senha
+- controle de acesso por perfil de usuário
+
+## 4. Requisitos
+
+Python 3.10+
+
+Instale as dependências:
+
+```powershell
+python -m pip install -r requirements.txt
+python -m pip install -r requirements-test.txt
+```
+
+Se necessário, também pode instalar a versão correta do PyJWT:
+
+```powershell
+python -m pip uninstall jwt -y
+python -m pip install PyJWT --upgrade --force-reinstall
+```
+
+## 5. Execução do projeto
+
+Para iniciar a aplicação:
+
+```powershell
+python -m uvicorn main:app --reload
+```
+
+A aplicação ficará disponível em:
+- http://127.0.0.1:8000
+
+## 6. Banco de dados e migrations
+
+Para aplicar as migrations do projeto:
+
+```powershell
+python -m alembic upgrade head
+```
+
+Se for necessário gerar uma nova migration:
+
+```powershell
+python -m alembic revision --autogenerate -m "Descrição da alteração"
+```
+
+## 7. Testes de regressão
+
+O projeto possui testes automatizados com pytest para validar o funcionamento de rotas e fluxos principais do sistema.
+
+Para executar a suíte completa:
+
+```powershell
+python -m pytest -q
+```
+
+Para executar apenas os testes de vendas:
+
+```powershell
+python -m pytest -q tests/test_vendas.py
+```
+
+Para executar a pasta de testes:
+
+```powershell
+python -m pytest -q tests
+```
+
+## 8. Casos de validação do PDV
+
+Os principais cenários validados incluem:
+- venda com pagamento dividido em duas formas
+- desconto inválido acima do subtotal
+- desconto percentual acima de 100%
+- pagamento sem fechar o total
+- estoque insuficiente
+- exclusão de venda
+- rotas e fluxos principais do backend
+
+## 9. Resultado da validação
+
+A suíte de testes foi executada com sucesso e o projeto passou na validação atual:
+
+```powershell
+python -m pytest -q
+```
+
+Resultado esperado:
+- todos os testes aprovados
+- sem falhas funcionais no fluxo principal
+
+## 10. Observação final
+
+Este projeto integra gestão escolar e operação de ponto de venda, com foco em funcionalidade, validação de regras de negócio e segurança da aplicação. Aumentamos a confiabilidade do sistema com testes automatizados e reforçamos o fluxo de vendas com funcionalidades que atendem ao uso real do PDV.
 
 # Instalar o requirements.txt
 

@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from pathlib import Path
 
 from fastapi import APIRouter, Depends, Request, Form, status
@@ -514,7 +514,7 @@ def atribuir(
 
     armario.aluno_id = aluno.id
 
-    armario.atribuido_em = datetime.utcnow()
+    armario.atribuido_em = datetime.now(timezone.utc)
 
     # Histórico
 

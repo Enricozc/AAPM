@@ -455,7 +455,7 @@ function calcularTotal(alteracao = '') {
   const tipo = document.getElementById('tipo-desconto').value;
   const valorDesconto = parseFloat(document.getElementById('desconto').value) || 0;
   const descontoCentavos = tipo === 'percentual'
-    ? centavos(subtotalCentavos * valorDesconto / 100)
+    ? Math.round((subtotalCentavos * valorDesconto) / 100)
     : centavos(valorDesconto);
   const descontoValido = descontoCentavos >= 0 && descontoCentavos <= subtotalCentavos;
   const totalCentavos = Math.max(0, subtotalCentavos - descontoCentavos);

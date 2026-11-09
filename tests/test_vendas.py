@@ -179,3 +179,66 @@ def test_venda_pode_ser_excluida(client, db, product_variation):
     db.expire_all()
     assert db.query(Venda).count() == 0
     assert db.query(VendaItem).count() == 0
+
+
+def test_desconto_percentual_de_100_porcento_reduz_total_ao_zero(client, db, product_variation):
+    response = client.post(
+        "/vendas/",
+        data=sale_data(
+            product_variation.id,
+            quantidades="1",
+            precos="19.99",
+            desconto="100",
+            tipo_desconto="percentual",
+            valor_pagamento_1="0.00",
+        ),
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    venda = db.query(Venda).one()
+    assert venda.valor_subtotal == 19.99
+    assert venda.desconto == 19.99
+    assert venda.valor_total == 0
+    assert venda.valor_pagamento_1 == 0
+
+
+def test_desconto_percentual_de_10_porcento_aplica_2_reais(client, db, product_variation):
+    response = client.post(
+        "/vendas/",
+        data=sale_data(
+            product_variation.id,
+            quantidades="1",
+            precos="19.99",
+            desconto="10",
+            tipo_desconto="percentual",
+            valor_pagamento_1="17.99",
+        ),
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    venda = db.query(Venda).one()
+    assert venda.valor_subtotal == 19.99
+    assert venda.desconto == 2.0
+    assert venda.valor_total == 17.99
+    assert venda.valor_pagamento_1 == 17.99
+
+
+def test_desconto_percentual_acima_de_100_e_rejeitado(client, db, product_variation):
+    response = client.post(
+        "/vendas/",
+        data=sale_data(
+            product_variation.id,
+            quantidades="1",
+            precos="19.99",
+            desconto="150",
+            tipo_desconto="percentual",
+            valor_pagamento_1="19.99",
+        ),
+        follow_redirects=False,
+    )
+
+    assert response.status_code == 303
+    assert "erro=desconto" in response.headers["location"]
+    assert db.query(Venda).count() == 0
